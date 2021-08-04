@@ -20,5 +20,6 @@ class DataTypeHandlerTest {
         DataTypeHandler.INSTANCE.registerTypes(mockedConnection);
         verify(mockedConnection, atLeastOnce()).addDataType("period", Period.class);
         verify(mockedConnection, atLeastOnce()).addDataType("tbox", TBox.class);
+        verify(mockedConnection, atLeastOnce()).addDataType("stbox", TBox.class);
     }
 }
