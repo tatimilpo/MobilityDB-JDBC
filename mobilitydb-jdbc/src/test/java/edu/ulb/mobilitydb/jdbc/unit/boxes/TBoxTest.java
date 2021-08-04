@@ -1,7 +1,6 @@
 package edu.ulb.mobilitydb.jdbc.unit.boxes;
 
 import edu.ulb.mobilitydb.jdbc.boxes.TBox;
-import edu.ulb.mobilitydb.jdbc.time.Period;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

@@ -86,7 +86,7 @@ public class Period extends DataType {
         DateTimeFormatter format = DateTimeFormatter.ofPattern(FORMAT);
 
         if (values.length != 2) {
-            throw new SQLException("Could not parse period value");
+            throw new SQLException("Could not parse period value.");
         }
 
         if (values[0].startsWith(LOWER_INCLUSIVE)) {
@@ -94,7 +94,7 @@ public class Period extends DataType {
         } else if (values[0].startsWith(LOWER_EXCLUSIVE)) {
             this.lowerInclusive = false;
         } else {
-            throw new SQLException("Lower bound flag must be either '[' or '('");
+            throw new SQLException("Lower bound flag must be either '[' or '('.");
         }
 
         if (values[1].endsWith(UPPER_INCLUSIVE)) {
@@ -102,7 +102,7 @@ public class Period extends DataType {
         } else if (values[1].endsWith(UPPER_EXCLUSIVE)) {
             this.upperInclusive = false;
         } else {
-            throw new SQLException("Upper bound flag must be either ']' or ')'");
+            throw new SQLException("Upper bound flag must be either ']' or ')'.");
         }
 
         this.lower = OffsetDateTime.parse(values[0].substring(1).trim(), format);
@@ -142,15 +142,15 @@ public class Period extends DataType {
 
     private void validate() throws SQLException {
         if (lower == null || upper == null) {
-            throw new SQLException("The lower and upper bounds must be defined");
+            throw new SQLException("The lower and upper bounds must be defined.");
         }
 
         if (lower.isAfter(upper)) {
-            throw new SQLException("The lower bound must be less than or equal to the upper bound");
+            throw new SQLException("The lower bound must be less than or equal to the upper bound.");
         }
 
         if (lower.isEqual(upper) && (!lowerInclusive || !upperInclusive)) {
-            throw new SQLException("The lower and upper bounds must be inclusive for an instant period");
+            throw new SQLException("The lower and upper bounds must be inclusive for an instant period.");
         }
     }
 }
