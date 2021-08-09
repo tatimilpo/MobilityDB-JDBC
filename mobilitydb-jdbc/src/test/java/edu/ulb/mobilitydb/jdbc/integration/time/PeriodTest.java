@@ -2,8 +2,6 @@ package edu.ulb.mobilitydb.jdbc.integration.time;
 
 import edu.ulb.mobilitydb.jdbc.integration.BaseIntegrationTest;
 import edu.ulb.mobilitydb.jdbc.time.Period;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

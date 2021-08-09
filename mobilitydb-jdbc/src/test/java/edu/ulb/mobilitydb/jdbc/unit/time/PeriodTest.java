@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
@@ -126,7 +127,7 @@ class PeriodTest {
             "",
             "a,b,c,d"
     })
-    void testSetValueInvalidValue(String value) throws SQLException {
+    void testSetValueInvalidValue(String value) {
         Period period = new Period();
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -141,7 +142,7 @@ class PeriodTest {
             ")2021-09-08 00:00:00+01, 2021-09-08 00:00:00+01)",
             "{2021-09-08 00:00:00+01, 2021-09-08 00:00:00+01]"
     })
-    void testSetValueInvalidLowerBoundFlag(String value) throws SQLException {
+    void testSetValueInvalidLowerBoundFlag(String value) {
         Period period = new Period();
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -156,7 +157,7 @@ class PeriodTest {
             "[2021-09-08 00:00:00+01, 2021-09-08 00:00:00+01[",
             "[2021-09-08 00:00:00+01, 2021-09-08 00:00:00+01{"
     })
-    void testSetValueInvalidUpperBoundFlag(String value) throws SQLException {
+    void testSetValueInvalidUpperBoundFlag(String value) {
         Period period = new Period();
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -171,7 +172,7 @@ class PeriodTest {
             "(-09-08 00:00:00+01, 2021-09-08 00:00:00+01]",
             "(2021-09-08 00:00:00+01, 2021-09-08)"
     })
-    void testSetValueInvalidDateFormat(String value) throws SQLException {
+    void testSetValueInvalidDateFormat(String value) {
         Period period = new Period();
         DateTimeParseException thrown = assertThrows(
                 DateTimeParseException.class,
@@ -228,5 +229,48 @@ class PeriodTest {
         Period periodA = new Period();
         Period periodB = new Period();
         assertEquals(periodA, periodB);
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertEquals(Duration.ofDays(2), period.duration());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        Period expected = new Period("[2021-09-11 00:00:00+01, 2021-09-13 00:00:00+01)");
+        assertEquals(expected, period.shift(Duration.ofDays(3)));
+    }
+
+    @Test
+    void testContains() throws SQLException {
+        OffsetDateTime dateTime = OffsetDateTime.of(2021,9, 9,
+                5, 4, 45, 0, ZoneOffset.of("+01:00"));
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertTrue(period.contains(dateTime));
+    }
+
+    @Test
+    void testNotContains() throws SQLException {
+        OffsetDateTime dateTime = OffsetDateTime.of(2021,9, 7,
+                5, 4, 45, 0, ZoneOffset.of("+01:00"));
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(period.contains(dateTime));
+    }
+
+    @Test
+    void testOverlaps() throws SQLException {
+        Period periodA = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        Period periodB = new Period("[2021-09-09 00:00:00+01, 2021-09-11 00:00:00+01)");
+        assertTrue(periodA.overlap(periodB));
+    }
+
+    @Test
+    void testNotOverlaps() throws SQLException {
+        Period periodA = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        Period periodB = new Period("[2021-09-11 00:00:00+01, 2021-09-13 00:00:00+01)");
+        assertFalse(periodA.overlap(periodB));
     }
 }

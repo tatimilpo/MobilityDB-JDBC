@@ -4,6 +4,7 @@ import edu.ulb.mobilitydb.jdbc.core.DataType;
 import edu.ulb.mobilitydb.jdbc.core.TypeName;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -138,6 +139,24 @@ public class Period extends DataType {
     public int hashCode() {
         String value = getValue();
         return value != null ? value.hashCode() : 0;
+    }
+
+    public Duration duration() {
+        return Duration.between(lower, upper);
+    }
+
+    public Period shift(Duration duration) throws SQLException {
+        return new Period(lower.plus(duration), upper.plus(duration), lowerInclusive, upperInclusive);
+    }
+
+    public boolean contains(OffsetDateTime dateTime) {
+        return (lower.isBefore(dateTime) && upper.isAfter(dateTime)) ||
+                (lowerInclusive && lower.isEqual(dateTime)) ||
+                (upperInclusive && upper.isEqual(dateTime));
+    }
+
+    public boolean overlap(Period period) {
+        return contains(period.lower) || contains(period.upper);
     }
 
     private void validate() throws SQLException {
