@@ -17,7 +17,7 @@ public abstract class BaseIntegrationTest {
     private static final String password = "docker";
     protected static Connection con;
 
-    private static final String[] timeTypes = new String[] { "period", "periodset" };
+    private static final String[] timeTypes = new String[] { "period", "periodset", "timestampset" };
     private static final String[] boxTypes = new String[] { "tbox" };
 
     @BeforeAll

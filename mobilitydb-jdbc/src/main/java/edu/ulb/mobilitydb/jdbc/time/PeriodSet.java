@@ -23,7 +23,6 @@ public class PeriodSet extends DataType {
     public PeriodSet(String value) throws SQLException {
         this();
         setValue(value);
-        validate();
     }
 
     public PeriodSet(Period... periods) throws SQLException {
@@ -52,6 +51,8 @@ public class PeriodSet extends DataType {
         } else {
             throw new SQLException("Could not parse period set value.");
         }
+
+        validate();
     }
 
     public Period[] getPeriods() {
