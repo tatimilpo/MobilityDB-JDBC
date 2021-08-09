@@ -18,7 +18,7 @@ public abstract class BaseIntegrationTest {
     protected static Connection con;
 
     private static final String[] timeTypes = new String[] { "period", "periodset" };
-    private static final String[] boxTypes = new String[] { "tbox" };
+    private static final String[] boxTypes = new String[] { "tbox", "stbox" };
 
     @BeforeAll
     static void connectionSetup() throws SQLException {
