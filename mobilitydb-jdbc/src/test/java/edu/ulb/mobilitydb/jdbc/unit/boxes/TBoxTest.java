@@ -1,7 +1,6 @@
 package edu.ulb.mobilitydb.jdbc.unit.boxes;
 
 import edu.ulb.mobilitydb.jdbc.boxes.TBox;
-import edu.ulb.mobilitydb.jdbc.time.Period;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -24,7 +23,7 @@ class TBoxTest {
         OffsetDateTime expectedTmax = OffsetDateTime.of(2021, 7, 9,
                 11, 2, 0, 0, tz);
         TBox tbox = new TBox(value);
-        TBox other = new TBox(50, expectedTmin, 40, expectedTmax);
+        TBox other = new TBox(50.0, expectedTmin, 40.0, expectedTmax);
 
         assertEquals(expectedTmin, tbox.getTmin());
         assertEquals(expectedTmax, tbox.getTmax());
@@ -35,7 +34,7 @@ class TBoxTest {
     void testConstructorOnlyX() throws SQLException {
         String value = "TBOX((3.0, ), (7.0, ))";
         TBox tbox = new TBox(value);
-        TBox other = new TBox(3, 7);
+        TBox other = new TBox(3.0, 7.0);
 
         assertEquals(other.getXmin(), tbox.getXmin());
         assertEquals(other.getXmax(), tbox.getXmax());
@@ -174,8 +173,8 @@ class TBoxTest {
 
     @Test
     void testEqualsOnlyX() throws SQLException {
-        TBox tBoxA = new TBox(3, 7);
-        TBox tBoxB = new TBox(3, 7);
+        TBox tBoxA = new TBox(3.0, 7.0);
+        TBox tBoxB = new TBox(3.0, 7.0);
 
         assertEquals(tBoxA.getXmin(), tBoxB.getXmin());
         assertEquals(tBoxA.getXmax(), tBoxB.getXmax());
