@@ -75,3 +75,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+.classpath
+.project
+.settings/org.eclipse.buildship.core.prefs
+example/.settings/org.eclipse.buildship.core.prefs

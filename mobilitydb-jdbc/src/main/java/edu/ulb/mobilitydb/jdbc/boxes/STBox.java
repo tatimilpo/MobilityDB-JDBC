@@ -51,8 +51,8 @@ public class STBox  extends DataType {
 
     @Override
     public String getValue() {
-        String sridPrefix = null;
-        if(srid == 0) {
+        String sridPrefix = "";
+        if(srid != 0) {
             sridPrefix = String.format("SRID=%s;", srid);
         }
         if (isGeodetic) {
@@ -118,12 +118,14 @@ public class STBox  extends DataType {
                 .replace(")","");
         String[] values = value.split(",");
         DateTimeFormatter format = DateTimeFormatter.ofPattern(FORMAT);
-
-        if (Arrays.stream(values).filter(x -> !x.isBlank()).count() == 2) {
-            this.tmin = OffsetDateTime.parse(values[1].trim(), format);
-            this.tmax = OffsetDateTime.parse(values[3].trim(), format);
+        int nonEmpty = (int) Arrays.stream(values).filter(x -> !x.isBlank()).count();
+        if (nonEmpty == 2) {
+            String[] removedNull = Arrays.stream(values)
+                    .filter(x -> !x.isBlank())
+                    .toArray(size -> new String[size]);
+            this.tmin = OffsetDateTime.parse(removedNull[0].trim(), format);
+            this.tmax = OffsetDateTime.parse(removedNull[1].trim(), format);
         } else {
-            int nonEmpty = (int) Arrays.stream(values).filter(x -> !x.isBlank()).count();
             if ( nonEmpty >= 4) {
                 this.xmin = Double.parseDouble(values[0]);
                 this.xmax = Double.parseDouble(values[nonEmpty/2]);
@@ -144,7 +146,43 @@ public class STBox  extends DataType {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (obj instanceof STBox) {
+            boolean isEquals = false;
+            STBox fobj = (STBox) obj;
+            boolean tIsEqual = false;
+
+            isEquals = isGeodetic == fobj.isGeodetic();
+
+
+            if (tmin != null && tmax != null) {
+                tIsEqual = tmax.isEqual(fobj.getTmax()) && tmin.isEqual(fobj.getTmin());
+            }
+
+            if (xmin != null) {
+                boolean xIsEqual = xmin == fobj.getXmin() && xmax == fobj.getXmax();
+                boolean yIsEqual = ymin == fobj.getYmin() && ymax == fobj.getYmax();
+                if (zmin != null){
+                    boolean zIsEqual = zmin == fobj.getZmin() && zmax == fobj.getZmax();
+                    if (tmin != null) {
+                        isEquals = xIsEqual && yIsEqual && zIsEqual && tIsEqual && isEquals;
+                    } else {
+                        isEquals = xIsEqual && yIsEqual && zIsEqual && isEquals;
+                    }
+                } else {
+                    if (tmin != null) {
+                        isEquals = xIsEqual && yIsEqual && tIsEqual && isEquals;
+                    } else {
+                        isEquals = xIsEqual && yIsEqual && isEquals;
+                    }
+                }
+            } else {
+                isEquals = tIsEqual && isEquals;
+            }
+
+            return isEquals;
+
+        }
+        return false;
     }
 
     @Override
