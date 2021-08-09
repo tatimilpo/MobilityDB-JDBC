@@ -1,5 +1,6 @@
 package edu.ulb.mobilitydb.jdbc;
 
+import edu.ulb.mobilitydb.jdbc.boxes.STBox;
 import edu.ulb.mobilitydb.jdbc.boxes.TBox;
 import edu.ulb.mobilitydb.jdbc.core.DataType;
 import edu.ulb.mobilitydb.jdbc.core.TypeName;
@@ -18,6 +19,7 @@ public enum DataTypeHandler {
         types = new ArrayList<>();
         types.add(Period.class);
         types.add(TBox.class);
+        types.add(STBox.class);
     }
 
     public void registerTypes(PGConnection connection) throws SQLException {

@@ -1,6 +1,7 @@
 package edu.ulb.mobilitydb.jdbc.unit;
 
 import edu.ulb.mobilitydb.jdbc.DataTypeHandler;
+import edu.ulb.mobilitydb.jdbc.boxes.STBox;
 import edu.ulb.mobilitydb.jdbc.boxes.TBox;
 import edu.ulb.mobilitydb.jdbc.time.Period;
 
@@ -20,6 +21,6 @@ class DataTypeHandlerTest {
         DataTypeHandler.INSTANCE.registerTypes(mockedConnection);
         verify(mockedConnection, atLeastOnce()).addDataType("period", Period.class);
         verify(mockedConnection, atLeastOnce()).addDataType("tbox", TBox.class);
-        verify(mockedConnection, atLeastOnce()).addDataType("stbox", TBox.class);
+        verify(mockedConnection, atLeastOnce()).addDataType("stbox", STBox.class);
     }
 }
