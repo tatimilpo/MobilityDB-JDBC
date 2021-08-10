@@ -1,5 +1,7 @@
 package edu.ulb.mobilitydb.jdbc.unit.time;
 
+import edu.ulb.mobilitydb.jdbc.time.Period;
+import edu.ulb.mobilitydb.jdbc.time.PeriodSet;
 import edu.ulb.mobilitydb.jdbc.time.TimestampSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,5 +94,57 @@ class TimestampSetTest {
                 () -> new TimestampSet(value)
         );
         assertEquals("The timestamps of a timestamp set must be increasing.", thrown.getMessage());
+    }
+
+    @Test
+    void testListConstructor() throws SQLException {
+        OffsetDateTime now = OffsetDateTime.now();
+        TimestampSet set = new TimestampSet(
+                now,
+                now.plusDays(1),
+                now.plusDays(2)
+        );
+        assertEquals(3, set.numTimestamps());
+        assertEquals(now, set.startTimestamp());
+        assertEquals(now.plusDays(1), set.timestampN(1));
+        assertEquals(now.plusDays(2), set.endTimestamp());
+    }
+
+    @Test
+    void testGetTimeSpan() throws SQLException {
+        OffsetDateTime now = OffsetDateTime.now();
+        TimestampSet set = new TimestampSet(
+                now,
+                now.plusDays(1),
+                now.plusDays(2)
+        );
+        assertEquals(Duration.ofDays(2), set.getTimeSpan());
+    }
+
+    @Test
+    void testGetPeriod() throws SQLException {
+        OffsetDateTime now = OffsetDateTime.now();
+        TimestampSet set = new TimestampSet(
+                now,
+                now.plusDays(1),
+                now.plusDays(2)
+        );
+        Period expected = new Period(now, now.plusDays(2), true, true);
+        assertEquals(expected, set.getPeriod());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        OffsetDateTime now = OffsetDateTime.now();
+        TimestampSet set = new TimestampSet(
+                now,
+                now.plusDays(1),
+                now.plusDays(2)
+        ).shift(Duration.ofDays(1));
+
+        assertEquals(3, set.numTimestamps());
+        assertEquals(now.plusDays(1), set.startTimestamp());
+        assertEquals(now.plusDays(2), set.timestampN(1));
+        assertEquals(now.plusDays(3), set.endTimestamp());
     }
 }
