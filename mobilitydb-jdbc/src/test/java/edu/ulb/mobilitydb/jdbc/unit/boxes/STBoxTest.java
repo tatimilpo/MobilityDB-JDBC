@@ -75,14 +75,12 @@ class STBoxTest {
                 10, 17, 21, 0, tz);
         STBox stBox = builder.setXYCoordinates(1.0,2.0,3.0,4.0)
                 .setTime(tmin, tmax)
-                .hasTimeDimension(true)
                 .setSrid(12345)
                 .build();
         assertEquals(1.0, stBox.getXmin());
         assertEquals(3.0, stBox.getXmax());
         assertEquals(2.0, stBox.getYmin());
         assertEquals(4.0, stBox.getYmax());
-        assertTrue(stBox.isDimT());
         assertEquals(tmin, stBox.getTmin());
         assertEquals(tmax, stBox.getTmax());
     }

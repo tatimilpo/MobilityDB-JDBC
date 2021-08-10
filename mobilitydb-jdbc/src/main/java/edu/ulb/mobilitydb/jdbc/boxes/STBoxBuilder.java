@@ -13,7 +13,6 @@ public class STBoxBuilder {
     private OffsetDateTime tmin = null;
     private OffsetDateTime tmax = null;
     private boolean isGeodetic = false;
-    private boolean dimT = false;
     private int srid = 0;
 
     public STBoxBuilder setXYCoordinates(double xmin, double ymin, double xmax, double ymax) {
@@ -50,16 +49,11 @@ public class STBoxBuilder {
         return this;
     }
 
-    public STBoxBuilder hasTimeDimension (boolean dimT) {
-        this.dimT = dimT;
-        return this;
-    }
-
     public STBox build() throws SQLException{
         if (xmin == null && tmin == null){
             throw new SQLException("Could not parse STBox value, invalid number of arguments.");
         }
-        return new STBox(xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax, srid, isGeodetic,dimT);
+        return new STBox(xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax, srid, isGeodetic);
     }
     
 }
