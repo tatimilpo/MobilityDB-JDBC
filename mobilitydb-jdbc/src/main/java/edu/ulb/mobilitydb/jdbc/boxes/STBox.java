@@ -7,20 +7,21 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Objects;
 
 @TypeName(name = "stbox")
 public class STBox  extends DataType {
-    private Double xmin = null;
-    private Double xmax = null;
-    private Double ymin = null;
-    private Double ymax = null;
-    private Double zmin = null;
-    private Double zmax = null;
+    private Double xmin;
+    private Double xmax;
+    private Double ymin;
+    private Double ymax;
+    private Double zmin;
+    private Double zmax;
     private OffsetDateTime tmin;
     private OffsetDateTime tmax;
-    private boolean isGeodetic = false;
-    private boolean dimT = false;
-    private int srid = 0;
+    private boolean isGeodetic;
+
+    private int srid;
     private static final String FORMAT = "yyyy-MM-dd HH:mm:ssX";
 
     public STBox() {
@@ -34,7 +35,7 @@ public class STBox  extends DataType {
 
     public STBox(Double xmin, Double ymin, Double zmin, OffsetDateTime tmin,
                  Double xmax, Double ymax, Double zmax, OffsetDateTime tmax,
-                 int srid, boolean isGeodetic, boolean dimT) {
+                 int srid, boolean isGeodetic) throws SQLException {
         super();
         this.xmin = xmin;
         this.xmax = xmax;
@@ -46,7 +47,7 @@ public class STBox  extends DataType {
         this.tmax = tmax;
         this.srid = srid;
         this.isGeodetic = isGeodetic;
-        this.dimT = dimT;
+        validate();
     }
 
     @Override
@@ -56,39 +57,11 @@ public class STBox  extends DataType {
             sridPrefix = String.format("SRID=%s;", srid);
         }
         if (isGeodetic) {
-            if (tmin != null) {
-                if (xmin != null) {
-                    return String.format("%sGEODSTBOX T((%f, %f, %f, %s), (%f, %f, %f, %s))", sridPrefix,
-                            xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax);
-                } else {
-                    return String.format("%sGEODSTBOX T((, %s), (, %s))", sridPrefix, tmin, tmax);
-                }
-            } else {
-                return String.format("%sGEODSTBOX((%f, %f, %f), (%f, %f, %f))", sridPrefix,
-                        xmin, ymin, zmin, xmax, ymax, zmax);
-            }
+            return getGeodeticValue(sridPrefix);
         } else {
-            if(xmin != null && zmin != null && tmin != null) {
-                return String.format("%sSTBOX ZT((%f, %f, %f, %s), (%f, %f, %f, %s))", sridPrefix,
-                        xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax);
-            } else if (xmin != null && zmin != null && tmin == null) {
-                return String.format("%sSTBOX Z((%f, %f, %s), (%f, %f, %s))", sridPrefix,
-                        xmin, ymin, zmin, xmax, ymax, zmax);
-            } else if (xmin != null && zmin == null && tmin != null) {
-                return String.format("%sSTBOX T((%f, %f, %s), (%f, %f, %s))", sridPrefix,
-                        xmin, ymin, tmin, xmax, ymax, tmax);
-            } else if (xmin != null && zmin == null && tmin == null) {
-                return String.format("%sSTBOX ((%f, %f), (%f, %f))", sridPrefix,
-                        xmin, ymin, xmax, ymax);
-            } else if (xmin == null && zmin == null && tmin != null) {
-                return String.format("%sSTBOX T((, %s), (, %s))", sridPrefix, tmin, tmax);
-            }
-            else {
-                return null;
-            }
+            return getNonGeodeticValue(sridPrefix);
         }
     }
-
 
     @Override
     public void setValue(String value) throws SQLException {
@@ -122,7 +95,7 @@ public class STBox  extends DataType {
         if (nonEmpty == 2) {
             String[] removedNull = Arrays.stream(values)
                     .filter(x -> !x.isBlank())
-                    .toArray(size -> new String[size]);
+                    .toArray(String[]::new);
             this.tmin = OffsetDateTime.parse(removedNull[0].trim(), format);
             this.tmax = OffsetDateTime.parse(removedNull[1].trim(), format);
         } else {
@@ -141,46 +114,26 @@ public class STBox  extends DataType {
                 this.tmax = OffsetDateTime.parse(values[(nonEmpty/2 - 1) + nonEmpty/2].trim(), format);
             }
         }
-
+        validate();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof STBox) {
-            boolean isEquals = false;
             STBox fobj = (STBox) obj;
-            boolean tIsEqual = false;
-
-            isEquals = isGeodetic == fobj.isGeodetic();
-
+            boolean tIsEqual;
 
             if (tmin != null && tmax != null) {
-                tIsEqual = tmax.isEqual(fobj.getTmax()) && tmin.isEqual(fobj.getTmin());
-            }
-
-            if (xmin != null) {
-                boolean xIsEqual = xmin == fobj.getXmin() && xmax == fobj.getXmax();
-                boolean yIsEqual = ymin == fobj.getYmin() && ymax == fobj.getYmax();
-                if (zmin != null){
-                    boolean zIsEqual = zmin == fobj.getZmin() && zmax == fobj.getZmax();
-                    if (tmin != null) {
-                        isEquals = xIsEqual && yIsEqual && zIsEqual && tIsEqual && isEquals;
-                    } else {
-                        isEquals = xIsEqual && yIsEqual && zIsEqual && isEquals;
-                    }
-                } else {
-                    if (tmin != null) {
-                        isEquals = xIsEqual && yIsEqual && tIsEqual && isEquals;
-                    } else {
-                        isEquals = xIsEqual && yIsEqual && isEquals;
-                    }
-                }
+                tIsEqual = tmax.isEqual(fobj.tmax) && tmin.isEqual(fobj.tmin);
             } else {
-                isEquals = tIsEqual && isEquals;
+                tIsEqual = tmax == fobj.tmax && tmin == fobj.tmin;
             }
 
-            return isEquals;
+            boolean xIsEqual = Objects.equals(xmin, fobj.xmin) && Objects.equals(xmax, fobj.xmax);
+            boolean yIsEqual = Objects.equals(ymin, fobj.ymin) && Objects.equals(ymax, fobj.ymax);
+            boolean zIsEqual = Objects.equals(zmin, fobj.zmin) && Objects.equals(zmax, fobj.zmax);
 
+            return xIsEqual && yIsEqual && zIsEqual && tIsEqual && isGeodetic == fobj.isGeodetic();
         }
         return false;
     }
@@ -191,27 +144,27 @@ public class STBox  extends DataType {
         return value != null ? value.hashCode() : 0;
     }
 
-    public double getXmin() {
+    public Double getXmin() {
         return xmin;
     }
 
-    public double getXmax() {
+    public Double getXmax() {
         return xmax;
     }
 
-    public double getYmin() {
+    public Double getYmin() {
         return ymin;
     }
 
-    public double getYmax() {
+    public Double getYmax() {
         return ymax;
     }
 
-    public double getZmin() {
+    public Double getZmin() {
         return zmin;
     }
 
-    public double getZmax() {
+    public Double getZmax() {
         return zmax;
     }
 
@@ -231,7 +184,56 @@ public class STBox  extends DataType {
         return srid;
     }
 
-    public boolean isDimT() {
-        return dimT;
+    private void validate() throws SQLException {
+        if (tmin == null ^ tmax == null) {
+            throw new SQLException("Both tmin and tmax should have a value.");
+        }
+
+        if((xmin == null ^ xmax == null) ^ (ymin == null ^ ymax == null)) {
+            throw new SQLException("Both x and y coordinates should have a value.");
+        }
+
+        if(zmin == null ^ zmax == null) {
+            throw new SQLException("Both zmax and zmin should have a value.");
+        }
+
+        if (xmin == null && tmin == null){
+            throw new SQLException("Could not parse STBox value, invalid number of arguments.");
+        }
+    }
+
+    private String getGeodeticValue(String sridPrefix) {
+        if (tmin != null) {
+            if (xmin != null) {
+                return String.format("%sGEODSTBOX T((%f, %f, %f, %s), (%f, %f, %f, %s))", sridPrefix,
+                        xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax);
+            }
+            return String.format("%sGEODSTBOX T((, %s), (, %s))", sridPrefix, tmin, tmax);
+        }
+        return String.format("%sGEODSTBOX((%f, %f, %f), (%f, %f, %f))", sridPrefix,
+                xmin, ymin, zmin, xmax, ymax, zmax);
+    }
+
+    private String getNonGeodeticValue(String sridPrefix) {
+        if (xmin == null) {
+            if (tmin != null) {
+                return String.format("%sSTBOX T((, %s), (, %s))", sridPrefix, tmin, tmax);
+            }
+        } else if (zmin == null) {
+            if (tmin == null) {
+                return String.format("%sSTBOX ((%f, %f), (%f, %f))", sridPrefix,
+                        xmin, ymin, xmax, ymax);
+            }
+            return String.format("%sSTBOX T((%f, %f, %s), (%f, %f, %s))", sridPrefix,
+                    xmin, ymin, tmin, xmax, ymax, tmax);
+        } else {
+            if (tmin == null) {
+                return String.format("%sSTBOX Z((%f, %f, %s), (%f, %f, %s))", sridPrefix,
+                        xmin, ymin, zmin, xmax, ymax, zmax);
+            }
+            return String.format("%sSTBOX ZT((%f, %f, %f, %s), (%f, %f, %f, %s))", sridPrefix,
+                    xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax);
+        }
+        return null;
     }
 }
