@@ -5,6 +5,7 @@ import edu.ulb.mobilitydb.jdbc.core.DataType;
 import edu.ulb.mobilitydb.jdbc.core.TypeName;
 import edu.ulb.mobilitydb.jdbc.time.Period;
 import edu.ulb.mobilitydb.jdbc.time.PeriodSet;
+import edu.ulb.mobilitydb.jdbc.time.TimestampSet;
 import org.postgresql.PGConnection;
 
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ public enum DataTypeHandler {
         types = new ArrayList<>();
         types.add(Period.class);
         types.add(PeriodSet.class);
+        types.add(TimestampSet.class);
         types.add(TBox.class);
     }
 
