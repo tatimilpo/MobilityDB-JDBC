@@ -29,23 +29,208 @@ class STBoxTest {
         return Stream.of(
             arguments(null, 1.0, null, OffsetDateTime.now(), null, null, null, OffsetDateTime.now(), 0,  false),
             arguments(1.0, 2.0, null, OffsetDateTime.now(), 3.0, null, null, OffsetDateTime.now(), 0,  false),
-            arguments(null, 1.0, null, null, null, null, null, null, 0,  false),
-            arguments(1.0, 2.0, null, null, 3.0, null, null, null, 0,  false)
+            arguments(null, 1.0, null, null, null, null, null, null, 1234,  false),
+            arguments(1.0, 2.0, null, null, 3.0, null, null, null, 3456,  false),
+            arguments(null, 1.0, 8.0, OffsetDateTime.now(), 7.0, 1.0, null, OffsetDateTime.now(), 5643,  true),
+            arguments(1.0, 2.0, null, OffsetDateTime.now(), null, 6.0, 35.0, OffsetDateTime.now(), 2446,  true),
+            arguments(null, 12.0, 27.0, null, 9.2, 13.6, null, null, 8654,  true),
+            arguments(1.0, 2.0, null, null, 3.0, null, 10.0, null, 4566,  true)
+        );
+    }
+
+    static Stream<Arguments> stboxInvalidZCoordinateProvider() {
+        return Stream.of(
+            arguments(5.0, 1.0, 8.0, OffsetDateTime.now(), 7.0, 1.0, null, OffsetDateTime.now(), 0,  false),
+            arguments(1.0, 2.0, null, OffsetDateTime.now(), 3.0, 6.0, 35.0, OffsetDateTime.now(), 0,  false),
+            arguments(9.0, 12.0, 27.0, null, 9.2, 13.6, null, null, 0,  false),
+            arguments(1.0, 2.0, null, null, 3.0, 8.0, 10.0, null, 0,  false)
         );
     }
 
     @Test
-    void testStringConstructor() throws SQLException {
-        String value = "STBOX T(, 2021-01-03 09:09:00+01), (, 2021-01-03 10:10:00+01))";
-        ZoneOffset tz = ZoneOffset.of("+01:00");
-        OffsetDateTime expectedTmin = OffsetDateTime.of(2021,1, 3,
-                9, 9, 0, 0, tz);
-        OffsetDateTime expectedTmax = OffsetDateTime.of(2021, 1, 3,
-                10, 10, 0, 0, tz);
+    void testConstructorTime() throws SQLException {
+        String value = "STBOX T(, 2001-01-03 00:00:00+03), (, 2001-01-03 00:00:00+03))";
+        ZoneOffset tz = ZoneOffset.of("+03:00");
+        OffsetDateTime ttmin = OffsetDateTime.of(2001,1, 3,
+                0, 0, 0, 0, tz);
+        OffsetDateTime ttmax = OffsetDateTime.of(2001, 1, 3,
+                0, 0, 0, 0, tz);
         STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setTime(ttmin,ttmax)
+                .build();
 
-        assertEquals(expectedTmin, stbox.getTmin());
-        assertEquals(expectedTmax, stbox.getTmax());
+        assertAll("Constructor with time dimension",
+                () -> assertEquals(other.getTmin(), stbox.getTmin()),
+                () -> assertEquals(other.getTmax(), stbox.getTmax()),
+                () -> assertEquals(other.isGeodetic(), stbox.isGeodetic()),
+                () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorXYandTime() throws SQLException {
+        String value = "SRID=5676;STBOX T((1.0, 2.0, 2001-01-04 00:00:00+01), (1.0, 2.0, 2001-01-04 00:00:00+01))";
+        ZoneOffset tz = ZoneOffset.of("+01:00");
+        OffsetDateTime ttmin = OffsetDateTime.of(2001,1, 4,
+                0, 0, 0, 0, tz);
+        OffsetDateTime ttmax = OffsetDateTime.of(2001, 1, 4,
+                0, 0, 0, 0, tz);
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYCoordinates(1.0,2.0,1.0,2.0)
+                .setTime(ttmin,ttmax)
+                .setSrid(5676)
+                .build();
+
+        assertAll("Constructor with XY coordinates and time dimension",
+                () -> assertEquals(other.getXmin(), stbox.getXmin()),
+                () -> assertEquals(other.getXmax(), stbox.getXmax()),
+                () -> assertEquals(other.getYmin(), stbox.getYmin()),
+                () -> assertEquals(other.getYmax(), stbox.getYmax()),
+                () -> assertEquals(other.getTmin(), stbox.getTmin()),
+                () -> assertEquals(other.getTmax(), stbox.getTmax()),
+                () -> assertEquals(other.getSrid(), stbox.getSrid()),
+                () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorXY() throws SQLException {
+        String value = "STBOX ((1.0, 2.0), (1.0, 2.0))";
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYCoordinates(1.0,2.0,1.0,2.0)
+                .build();
+
+        assertAll("Constructor with XY coordinates",
+            () -> assertEquals(other.getXmin(), stbox.getXmin()),
+            () -> assertEquals(other.getXmax(), stbox.getXmax()),
+            () -> assertEquals(other.getYmin(), stbox.getYmin()),
+            () -> assertEquals(other.getYmax(), stbox.getYmax()),
+            () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorXYZ() throws SQLException {
+        String value = "STBOX Z((1.0, 2.0, 3.0), (1.0, 2.0, 3.0))";
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYZCoordinates(1.0,2.0,3.0,1.0,2.0,3.0)
+                .build();
+
+        assertAll("Constructor with XYZ coordinates",
+            () -> assertEquals(other.getXmin(), stbox.getXmin()),
+            () -> assertEquals(other.getXmax(), stbox.getXmax()),
+            () -> assertEquals(other.getYmin(), stbox.getYmin()),
+            () -> assertEquals(other.getYmax(), stbox.getYmax()),
+            () -> assertEquals(other.getZmin(), stbox.getZmin()),
+            () -> assertEquals(other.getZmax(), stbox.getZmax()),
+            () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorXYZAndTimeDimension() throws SQLException {
+        String value = "STBOX ZT((1.0, 2.0, 3.0, 2001-01-04 00:00:00+01), (1.0, 2.0, 3.0, 2001-01-04 00:00:00+01))";
+        ZoneOffset tz = ZoneOffset.of("+01:00");
+        OffsetDateTime ttmin = OffsetDateTime.of(2001,1, 4,
+                0, 0, 0, 0, tz);
+        OffsetDateTime ttmax = OffsetDateTime.of(2001, 1, 4,
+                0, 0, 0, 0, tz);
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYZCoordinates(1.0,2.0,3.0,1.0,2.0,3.0)
+                .setTime(ttmin,ttmax)
+                .build();
+
+        assertAll("Constructor with XY coordinates and time dimension",
+            () -> assertEquals(other.getXmin(), stbox.getXmin()),
+            () -> assertEquals(other.getXmax(), stbox.getXmax()),
+            () -> assertEquals(other.getYmin(), stbox.getYmin()),
+            () -> assertEquals(other.getYmax(), stbox.getYmax()),
+            () -> assertEquals(other.getTmin(), stbox.getTmin()),
+            () -> assertEquals(other.getTmax(), stbox.getTmax()),
+            () -> assertEquals(other.getZmin(), stbox.getZmin()),
+            () -> assertEquals(other.getZmax(), stbox.getZmax()),
+            () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorTimeGeodetic() throws SQLException {
+        String value = "GEODSTBOX T((, 2021-01-03 00:00:00+01), (, 2021-01-03 00:00:00+01))";
+        ZoneOffset tz = ZoneOffset.of("+01:00");
+        OffsetDateTime ttmin = OffsetDateTime.of(2021,1, 3,
+                0, 0, 0, 0, tz);
+        OffsetDateTime ttmax = OffsetDateTime.of(2021, 1, 3,
+                0, 0, 0, 0, tz);
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setTime(ttmin,ttmax)
+                .isGeodetic(true)
+                .build();
+
+        assertAll("Constructor with time dimension and geodetic",
+                () -> assertEquals(other.getTmin(), stbox.getTmin()),
+                () -> assertEquals(other.getTmax(), stbox.getTmax()),
+                () -> assertEquals(other.isGeodetic(), stbox.isGeodetic()),
+                () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+    @Test
+    void testConstructorXYZGeodetic() throws SQLException {
+        String value = "SRID=4326;GEODSTBOX((11.0, 12.0, 13.0), (11.0, 12.0, 13.0))";
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYZCoordinates(11.0,12.0,13.0,11.0,12.0,13.0)
+                .isGeodetic(true)
+                .setSrid(4326)
+                .build();
+
+        assertAll("Constructor with XYZ coordinates and geodetic",
+            () -> assertEquals(other.getXmin(), stbox.getXmin()),
+            () -> assertEquals(other.getXmax(), stbox.getXmax()),
+            () -> assertEquals(other.getYmin(), stbox.getYmin()),
+            () -> assertEquals(other.getYmax(), stbox.getYmax()),
+            () -> assertEquals(other.getZmin(), stbox.getZmin()),
+            () -> assertEquals(other.getZmax(), stbox.getZmax()),
+            () -> assertEquals(other.isGeodetic(), stbox.isGeodetic()),
+            () -> assertEquals(other.getSrid(), stbox.getSrid()),
+            () -> assertEquals(other.getValue(), stbox.getValue())
+        );
+    }
+
+
+    @Test
+    void testConstructorXYZAndTimeDimensionGeodetic() throws SQLException {
+        String value = "GEODSTBOX T((1.0, 2.0, 3.0, 2001-01-03 00:00:00+01), (1.0, 2.0, 3.0, 2001-01-04 00:00:00+01))";
+        ZoneOffset tz = ZoneOffset.of("+01:00");
+        OffsetDateTime ttmin = OffsetDateTime.of(2001,1, 3,
+                0, 0, 0, 0, tz);
+        OffsetDateTime ttmax = OffsetDateTime.of(2001, 1, 4,
+                0, 0, 0, 0, tz);
+        STBox stbox = new STBox(value);
+        STBox other = new STBoxBuilder()
+                .setXYZCoordinates(1.0,2.0,3.0,1.0,2.0,3.0)
+                .setTime(ttmin,ttmax)
+                .isGeodetic(true)
+                .build();
+
+        assertAll("Constructor with XY coordinates and time dimension and geodetic",
+                () -> assertEquals(other.getXmin(), stbox.getXmin()),
+                () -> assertEquals(other.getXmax(), stbox.getXmax()),
+                () -> assertEquals(other.getYmin(), stbox.getYmin()),
+                () -> assertEquals(other.getYmax(), stbox.getYmax()),
+                () -> assertEquals(other.getTmin(), stbox.getTmin()),
+                () -> assertEquals(other.getTmax(), stbox.getTmax()),
+                () -> assertEquals(other.getZmin(), stbox.getZmin()),
+                () -> assertEquals(other.getZmax(), stbox.getZmax()),
+                () -> assertEquals(other.isGeodetic(), stbox.isGeodetic()),
+                () -> assertEquals(other.getValue(), stbox.getValue())
+        );
     }
 
     @Test
@@ -144,7 +329,6 @@ class STBoxTest {
         assertTrue(exceptionThrown.getMessage().contains("Could not parse STBox value"));
     }
 
-
     @Test
     void testEmptyEquals() {
         STBox stBoxA = new STBox();
@@ -191,6 +375,26 @@ class STBoxTest {
             new STBox(xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax, srid, isGeodetic);
         });
         assertTrue(exceptionThrown.getMessage().contains("Both x and y coordinates should have a value"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("stboxInvalidZCoordinateProvider")
+    void testInvalidZCoordinate(Double xmin, Double ymin, Double zmin, OffsetDateTime tmin,
+                                  Double xmax, Double ymax, Double zmax, OffsetDateTime tmax,
+                                  int srid, boolean isGeodetic) {
+        Throwable exceptionThrown = assertThrows(SQLException.class, () -> {
+            new STBox(xmin, ymin, zmin, tmin, xmax, ymax, zmax, tmax, srid, isGeodetic);
+        });
+        assertTrue(exceptionThrown.getMessage().contains("Both zmax and zmin should have a value"));
+    }
+
+    @Test
+    void testInvalidArguments() {
+        Throwable exceptionThrown = assertThrows(SQLException.class, () -> {
+            new STBox(null, null, null, null, null, null, null, null,
+                    0,  true);
+        });
+        assertTrue(exceptionThrown.getMessage().contains("Could not parse STBox value, invalid number of arguments"));
     }
 
 }
