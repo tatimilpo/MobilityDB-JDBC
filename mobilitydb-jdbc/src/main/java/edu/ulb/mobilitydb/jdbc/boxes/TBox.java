@@ -9,8 +9,8 @@ import java.time.format.DateTimeFormatter;
 
 @TypeName(name = "tbox")
 public class TBox extends DataType {
-    private float xmin = 0.0f;
-    private float xmax = 0.0f;
+    private double xmin = 0.0f;
+    private double xmax = 0.0f;
     private OffsetDateTime tmin;
     private OffsetDateTime tmax;
 
@@ -25,10 +25,10 @@ public class TBox extends DataType {
         setValue(value);
     }
 
-    public TBox(float xmin, float xmax) {
+    public TBox(Double xmin, Double xmax) {
         super();
-        this.xmin = xmin + 0f;
-        this.xmax = xmax + 0f;
+        this.xmin = xmin;
+        this.xmax = xmax;
     }
 
     public TBox(OffsetDateTime tmin, OffsetDateTime tmax) {
@@ -37,10 +37,10 @@ public class TBox extends DataType {
         this.tmax = tmax;
     }
 
-    public TBox(float xmin, OffsetDateTime tmin, float xmax, OffsetDateTime tmax) {
+    public TBox(Double xmin, OffsetDateTime tmin, Double xmax, OffsetDateTime tmax) {
         super();
-        this.xmin = xmin + 0f;
-        this.xmax = xmax + 0f;
+        this.xmin = xmin;
+        this.xmax = xmax;
         this.tmin = tmin;
         this.tmax = tmax;
     }
@@ -78,8 +78,8 @@ public class TBox extends DataType {
         }
         if(values[0].trim().length() > 0) {
             if (values[2].trim().length() > 0) {
-                this.xmin = Float.parseFloat(values[0]);
-                this.xmax = Float.parseFloat(values[2]);
+                this.xmin = Double.parseDouble(values[0]);
+                this.xmax = Double.parseDouble(values[2]);
             } else {
                 throw new SQLException("Xmax should have a value.");
             }
@@ -128,11 +128,11 @@ public class TBox extends DataType {
         return value != null ? value.hashCode() : 0;
     }
 
-    public float getXmin() {
+    public double getXmin() {
         return xmin;
     }
 
-    public float getXmax() {
+    public double getXmax() {
         return xmax;
     }
 

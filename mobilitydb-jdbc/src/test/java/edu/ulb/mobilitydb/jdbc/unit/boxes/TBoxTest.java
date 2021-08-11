@@ -23,22 +23,26 @@ class TBoxTest {
         OffsetDateTime expectedTmax = OffsetDateTime.of(2021, 7, 9,
                 11, 2, 0, 0, tz);
         TBox tbox = new TBox(value);
-        TBox other = new TBox(50, expectedTmin, 40, expectedTmax);
+        TBox other = new TBox(50.0, expectedTmin, 40.0, expectedTmax);
 
-        assertEquals(expectedTmin, tbox.getTmin());
-        assertEquals(expectedTmax, tbox.getTmax());
-        assertEquals(other.getValue(), tbox.getValue());
+        assertAll("Constructor with all arguments",
+                () -> assertEquals(expectedTmin, tbox.getTmin()),
+                () -> assertEquals(expectedTmax, tbox.getTmax()),
+                () -> assertEquals(other.getValue(), tbox.getValue())
+        );
     }
 
     @Test
     void testConstructorOnlyX() throws SQLException {
         String value = "TBOX((3.0, ), (7.0, ))";
         TBox tbox = new TBox(value);
-        TBox other = new TBox(3, 7);
+        TBox other = new TBox(3.0, 7.0);
 
-        assertEquals(other.getXmin(), tbox.getXmin());
-        assertEquals(other.getXmax(), tbox.getXmax());
-        assertEquals(other.getValue(), tbox.getValue());
+        assertAll("Constructor with only x coordinates",
+                () -> assertEquals(other.getXmin(), tbox.getXmin()),
+                () -> assertEquals(other.getXmax(), tbox.getXmax()),
+                () -> assertEquals(other.getValue(), tbox.getValue())
+        );
     }
 
     @Test
@@ -52,9 +56,11 @@ class TBoxTest {
         TBox tbox = new TBox(value);
         TBox other = new TBox(expectedTmin, expectedTmax);
 
-        assertEquals(expectedTmin, tbox.getTmin());
-        assertEquals(expectedTmax, tbox.getTmax());
-        assertEquals(other.getValue(), tbox.getValue());
+        assertAll("Constructor with only x coordinates",
+                () -> assertEquals(expectedTmin, tbox.getTmin()),
+                () -> assertEquals(expectedTmax, tbox.getTmax()),
+                () -> assertEquals(other.getValue(), tbox.getValue())
+        );
     }
 
     @ParameterizedTest
@@ -173,12 +179,14 @@ class TBoxTest {
 
     @Test
     void testEqualsOnlyX() throws SQLException {
-        TBox tBoxA = new TBox(3, 7);
-        TBox tBoxB = new TBox(3, 7);
+        TBox tBoxA = new TBox(3.0, 7.0);
+        TBox tBoxB = new TBox(3.0, 7.0);
 
-        assertEquals(tBoxA.getXmin(), tBoxB.getXmin());
-        assertEquals(tBoxA.getXmax(), tBoxB.getXmax());
-        assertEquals(tBoxA.getValue(), tBoxB.getValue());
+        assertAll("Equals on x coordinate",
+                () -> assertEquals(tBoxA.getXmin(), tBoxB.getXmin()),
+                () -> assertEquals(tBoxA.getXmax(), tBoxB.getXmax()),
+                () -> assertEquals(tBoxA.getValue(), tBoxB.getValue())
+        );
     }
 
     @Test
@@ -191,10 +199,10 @@ class TBoxTest {
         TBox tBoxA = new TBox(tmin, tmax);
         TBox tBoxB = new TBox(tmin, tmax);
 
-        assertEquals(tBoxA.getXmin(), tBoxB.getXmin());
-        assertEquals(tBoxA.getXmax(), tBoxB.getXmax());
-        assertEquals(tBoxA.getValue(), tBoxB.getValue());
+        assertAll("Equals on time dimension",
+                () -> assertEquals(tBoxA.getXmin(), tBoxB.getXmin()),
+                () -> assertEquals(tBoxA.getXmax(), tBoxB.getXmax()),
+                () -> assertEquals(tBoxA.getValue(), tBoxB.getValue())
+        );
     }
-
-
 }
