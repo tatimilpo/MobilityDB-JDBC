@@ -51,4 +51,71 @@ class TGeogPointInstTest {
         );
         assertTrue(thrown.getMessage().contains("Value cannot be empty."));
     }
+
+    @Test
+    void testGetValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
+        Point p = new Point(0,0);
+        p.setSrid(4326);
+        assertEquals(p , tGeogPointInst.getValue());
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
+        Point p = new Point(0,0);
+        p.setSrid(4326);
+        assertEquals(p, tGeogPointInst.getValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
+        Point p = new Point(0,0);
+        p.setSrid(4326);
+        assertEquals(p, tGeogPointInst.getValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
+        Point p = new Point(0,0);
+        p.setSrid(4326);
+        assertEquals(p, tGeogPointInst.getValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
+        Point p = new Point(0,0);
+        p.setSrid(4326);
+        assertEquals(p, tGeogPointInst.getValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:10:32+02");
+        assertNull(tGeogPointInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(tGeogPointInst.getValue(), tGeogPointInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testGetTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tGeogPointInst.getTimestamp());
+    }
 }

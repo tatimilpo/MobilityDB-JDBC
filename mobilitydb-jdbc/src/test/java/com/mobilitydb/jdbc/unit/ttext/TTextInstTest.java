@@ -88,4 +88,61 @@ class TTextInstTest {
         assertEquals(1, values.size());
         assertEquals("Test", values.get(0));
     }
+
+    @Test
+    void testGetValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("test@2019-09-08 06:04:32+02");
+        assertEquals("test", tTextInst.getValue());
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("test12@2019-09-08 06:04:32+02");
+        assertEquals("test12", tTextInst.getValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("test145@2019-09-08 06:04:32+02");
+        assertEquals("test145", tTextInst.getValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("abcd@2019-09-08 06:04:32+02");
+        assertEquals("abcd", tTextInst.getValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("this is a test@2019-09-08 06:04:32+02");
+        assertEquals("this is a test", tTextInst.getValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("what@2019-09-08 06:10:32+02");
+        assertNull(tTextInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("which@2019-09-08 06:04:32+02");
+        assertEquals(tTextInst.getValue(), tTextInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testGetTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tTextInst.getTimestamp());
+    }
 }
