@@ -45,4 +45,8 @@ public class TFloat extends TemporalDataType<Float> {
         String[] values = value.trim().split("@");
         return new TemporalValue<>(Float.parseFloat(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
+
+    public static int compareValue(Float first, Float second) {
+        return first.compareTo(second);
+    }
 }

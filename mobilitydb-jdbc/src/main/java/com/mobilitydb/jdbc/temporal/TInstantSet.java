@@ -4,29 +4,36 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
 public abstract class TInstantSet<V extends Serializable> extends Temporal<V> {
     protected final ArrayList<TemporalValue<V>> temporalValues = new ArrayList<>();
+    private final CompareValue<V> compareValue;
 
-    protected TInstantSet(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+    protected TInstantSet(String value,
+                          GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                          CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT_SET);
+        this.compareValue = compareValue;
         parseValue(value, getSingleTemporalValue);
         validate();
     }
 
-    protected TInstantSet(String[] values, GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+    protected TInstantSet(String[] values,
+                          GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                          CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT_SET);
+        this.compareValue = compareValue;
         for (String val : values) {
             temporalValues.add(getSingleTemporalValue.run(val.trim()));
         }
         validate();
     }
 
-    protected TInstantSet(TInstant<V>[] values) throws SQLException {
+    protected TInstantSet(TInstant<V>[] values, CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT_SET);
+        this.compareValue = compareValue;
         for (TInstant<V> val : values) {
             temporalValues.add(val.getTemporalValue());
         }
@@ -79,7 +86,7 @@ public abstract class TInstantSet<V extends Serializable> extends Temporal<V> {
     public V minValue() {
         V min = temporalValues.get(0).getValue();
         for (TemporalValue<V> value : temporalValues) {
-            if (value.getValue().compareTo(min) < 0) {
+            if (compareValue.run(value.getValue(), min) < 0) {
                 min = value.getValue();
             }
         }
@@ -90,7 +97,7 @@ public abstract class TInstantSet<V extends Serializable> extends Temporal<V> {
     public V maxValue() {
         V max = temporalValues.get(0).getValue();
         for (TemporalValue<V> value : temporalValues) {
-            if (value.getValue().compareTo(max) > 0) {
+            if (compareValue.run(value.getValue(), max) > 0) {
                 max = value.getValue();
             }
         }

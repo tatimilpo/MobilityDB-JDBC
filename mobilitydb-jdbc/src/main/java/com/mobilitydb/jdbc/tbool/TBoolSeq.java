@@ -9,24 +9,24 @@ import java.sql.SQLException;
  */
 public class TBoolSeq extends TSequence<Boolean> {
     public TBoolSeq(String value) throws SQLException {
-        super(value, TBool::getSingleTemporalValue);
+        super(value, TBool::getSingleTemporalValue, TBool::compareValue);
         stepwise = true;
     }
 
     public TBoolSeq(String[] values) throws SQLException {
-        super(true, values, TBool::getSingleTemporalValue);
+        super(true, values, TBool::getSingleTemporalValue, TBool::compareValue);
     }
 
     public TBoolSeq(String[] values, boolean lowerInclusive, boolean upperInclusive) throws SQLException {
-        super(true, values, lowerInclusive, upperInclusive, TBool::getSingleTemporalValue);
+        super(true, values, lowerInclusive, upperInclusive, TBool::getSingleTemporalValue, TBool::compareValue);
     }
 
     public TBoolSeq(TBoolInst[] values) throws SQLException {
-        super(true, values);
+        super(true, values, TBool::compareValue);
     }
 
     public TBoolSeq(TBoolInst[] values, boolean lowerInclusive, boolean upperInclusive) throws SQLException {
-        super(true, values, lowerInclusive, upperInclusive);
+        super(true, values, lowerInclusive, upperInclusive, TBool::compareValue);
     }
 
     @Override

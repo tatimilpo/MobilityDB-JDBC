@@ -51,4 +51,9 @@ public abstract class TPoint extends TemporalDataType<Point> {
 
         return new TemporalValue<>((Point)geo, DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
+
+    public static int compareValue(Point first, Point second) {
+        // TODO: how to compare points
+        return 0;
+    }
 }

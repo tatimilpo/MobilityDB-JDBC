@@ -15,19 +15,26 @@ import java.util.stream.Collectors;
 public class TPointSeqSet extends TSequenceSet<Point> {
     private int srid;
 
-    protected TPointSeqSet(String value, GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(value, getSingleTemporalValue);
+    protected TPointSeqSet(String value,
+                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
+        super(value, getSingleTemporalValue, TPoint::compareValue);
         applySRID();
     }
 
-    protected TPointSeqSet(int srid, boolean stepwise, String[] values, GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, getSingleTemporalValue);
+    protected TPointSeqSet(int srid,
+                           boolean stepwise,
+                           String[] values,
+                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
+        super(stepwise, values, getSingleTemporalValue, TPoint::compareValue);
         this.srid = srid;
         applySRID();
     }
 
-    protected TPointSeqSet(int srid, boolean stepwise, TSequence<Point>[] values, GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, getSingleTemporalValue);
+    protected TPointSeqSet(int srid,
+                           boolean stepwise,
+                           TSequence<Point>[] values,
+                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
+        super(stepwise, values, getSingleTemporalValue, TPoint::compareValue);
         this.srid = srid;
         applySRID();
     }

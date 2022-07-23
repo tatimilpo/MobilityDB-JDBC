@@ -47,4 +47,8 @@ public class TInt extends TemporalDataType<Integer> {
         String[] values = value.trim().split("@");
         return new TemporalValue<>(Integer.parseInt(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
+
+    public static int compareValue(Integer first, Integer second) {
+        return first.compareTo(second);
+    }
 }

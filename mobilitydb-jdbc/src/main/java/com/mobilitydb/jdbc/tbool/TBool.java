@@ -53,4 +53,8 @@ public class TBool extends TemporalDataType<Boolean> {
         }
         return new TemporalValue<>(b, DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
+
+    public static int compareValue(Boolean first, Boolean second) {
+        return first.compareTo(second);
+    }
 }

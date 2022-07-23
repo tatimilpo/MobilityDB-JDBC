@@ -14,18 +14,18 @@ public abstract class TPointInstSet extends TInstantSet<Point> {
 
     protected TPointInstSet(String value, GetSingleTemporalValueFunction<Point> getSingleTemporalValue)
             throws SQLException {
-        super(value, getSingleTemporalValue);
+        super(value, getSingleTemporalValue, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointInstSet(int srid, String[] values, GetSingleTemporalValueFunction<Point> getSingleTemporalValue)
             throws SQLException {
-        super(values, getSingleTemporalValue);
+        super(values, getSingleTemporalValue, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointInstSet(int srid, TInstant<Point>[] values) throws SQLException {
-        super(values);
+        super(values, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 

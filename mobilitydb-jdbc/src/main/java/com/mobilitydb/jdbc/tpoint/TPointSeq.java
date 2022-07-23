@@ -14,30 +14,30 @@ public class TPointSeq extends TSequence<Point> {
 
     protected TPointSeq(String value, GetSingleTemporalValueFunction<Point> getSingleTemporalValue)
             throws SQLException {
-        super(value, getSingleTemporalValue);
+        super(value, getSingleTemporalValue, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointSeq(int srid, boolean stepwise, String[] values,
                         GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, getSingleTemporalValue);
+        super(stepwise, values, getSingleTemporalValue, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointSeq(int srid, boolean stepwise, String[] values, boolean lowerInclusive, boolean upperInclusive,
                         GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, lowerInclusive, upperInclusive, getSingleTemporalValue);
+        super(stepwise, values, lowerInclusive, upperInclusive, getSingleTemporalValue, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointSeq(int srid, boolean stepwise, TInstant<Point>[] values) throws SQLException {
-        super(stepwise, values);
+        super(stepwise, values, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 
     protected TPointSeq(int srid, boolean stepwise, TInstant<Point>[] values,
                         boolean lowerInclusive, boolean upperInclusive) throws SQLException {
-        super(stepwise, values, lowerInclusive, upperInclusive);
+        super(stepwise, values, lowerInclusive, upperInclusive, TPoint::compareValue);
         this.srid = SRIDParser.applySRID(srid, temporalValues);
     }
 

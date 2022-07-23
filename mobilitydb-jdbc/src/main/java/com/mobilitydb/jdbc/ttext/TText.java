@@ -49,4 +49,8 @@ public class TText extends TemporalDataType<String> {
         }
         return new TemporalValue<>(String.format("%s",values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
+
+    public static int compareValue(String first, String second) {
+        return first.compareTo(second);
+    }
 }

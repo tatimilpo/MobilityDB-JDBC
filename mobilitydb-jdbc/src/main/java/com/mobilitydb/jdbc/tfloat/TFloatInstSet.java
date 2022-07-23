@@ -6,14 +6,14 @@ import java.sql.SQLException;
 
 public class TFloatInstSet extends TInstantSet<Float> {
     public TFloatInstSet(String value) throws SQLException {
-        super(value, TFloat::getSingleTemporalValue);
+        super(value, TFloat::getSingleTemporalValue, TFloat::compareValue);
     }
 
     public TFloatInstSet(String[] values) throws SQLException {
-        super(values, TFloat::getSingleTemporalValue);
+        super(values, TFloat::getSingleTemporalValue, TFloat::compareValue);
     }
 
     public TFloatInstSet(TFloatInst[] values) throws SQLException {
-        super(values);
+        super(values, TFloat::compareValue);
     }
 }

@@ -2,6 +2,7 @@ package com.mobilitydb.jdbc.temporal;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -13,17 +14,23 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     private final List<Boolean> lowerInclusive = new ArrayList<>();
     private final List<Boolean> upperInclusive = new ArrayList<>();
     protected boolean stepwise;
+    private final CompareValue<V> compareValue;
 
-    protected TSequenceSet(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+    protected TSequenceSet(String value,
+                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                           CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
+        this.compareValue = compareValue;
         parseValue(value, getSingleTemporalValue);
         validate();
     }
 
     protected TSequenceSet(boolean stepwise,
                            String[] values,
-                           GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                           CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
+        this.compareValue = compareValue;
         this.stepwise = stepwise;
         for (String val : values) {
             parseSequence(val, getSingleTemporalValue);
@@ -33,8 +40,10 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     protected TSequenceSet(boolean stepwise,
                            TSequence<V>[] values,
-                           GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                           CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
+        this.compareValue = compareValue;
         this.stepwise = stepwise;
         for (TSequence<V> val: values) {
             validateSequence(val);
@@ -149,6 +158,55 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             }
         }
         return values;
+    }
+
+    @Override
+    public V startValue() {
+        return temporalValues.get(0).get(0).getValue();
+    }
+
+    @Override
+    public V endValue() {
+        ArrayList<TemporalValue<V>> last = temporalValues.get(temporalValues.size() - 1);
+        return last.get(last.size() - 1).getValue();
+    }
+
+    @Override
+    public V minValue() {
+        // TODO improve
+        List<V> values = getValues();
+        V min = values.get(0);
+        for (V value : values) {
+            if (compareValue.run(value, min) < 0) {
+                min = value;
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public V maxValue() {
+        // TODO improve
+        List<V> values = getValues();
+        V max = values.get(0);
+        for (V value : values) {
+            if (compareValue.run(value, max) > 0) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    @Override
+    public V valueAtTimestamp(OffsetDateTime timestamp) {
+        for (List<TemporalValue<V>> tempList : temporalValues) {
+            for (TemporalValue<V> temp : tempList) {
+                if (timestamp.isEqual(temp.getTime())) {
+                    return temp.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     @Override

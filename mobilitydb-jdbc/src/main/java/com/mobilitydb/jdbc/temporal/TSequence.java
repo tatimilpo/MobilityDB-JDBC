@@ -2,6 +2,7 @@ package com.mobilitydb.jdbc.temporal;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -11,21 +12,29 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
     protected boolean stepwise;
     private boolean lowerInclusive;
     private boolean upperInclusive;
+    private final CompareValue<V> compareValue;
 
-    protected TSequence(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+    protected TSequence(String value,
+                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                        CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE);
+        this.compareValue = compareValue;
         parseValue(value, getSingleTemporalValue);
         validate();
     }
 
-    protected TSequence(boolean stepwise, String[] values, GetSingleTemporalValueFunction<V> getSingleTemporalValue)
-            throws SQLException {
-        this(stepwise, values, true, false, getSingleTemporalValue);
+    protected TSequence(boolean stepwise,
+                        String[] values,
+                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                        CompareValue<V> compareValue) throws SQLException {
+        this(stepwise, values, true, false, getSingleTemporalValue, compareValue);
     }
 
     protected TSequence(boolean stepwise, String[] values, boolean lowerInclusive, boolean upperInclusive,
-                        GetSingleTemporalValueFunction<V> getSingleTemporalValue) throws SQLException {
+                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
+                        CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE);
+        this.compareValue = compareValue;
         for (String val : values) {
             temporalValues.add(getSingleTemporalValue.run(val.trim()));
         }
@@ -35,13 +44,14 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
         validate();
     }
 
-    protected TSequence(boolean stepwise, TInstant<V>[] values) throws SQLException {
-        this(stepwise, values, true, false);
+    protected TSequence(boolean stepwise, TInstant<V>[] values, CompareValue<V> compareValue) throws SQLException {
+        this(stepwise, values, true, false, compareValue);
     }
 
-    protected TSequence(boolean stepwise, TInstant<V>[] values, boolean lowerInclusive, boolean upperInclusive)
-            throws SQLException {
+    protected TSequence(boolean stepwise, TInstant<V>[] values, boolean lowerInclusive, boolean upperInclusive,
+                        CompareValue<V> compareValue) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE);
+        this.compareValue = compareValue;
         for (TInstant<V> val : values) {
             temporalValues.add(val.getTemporalValue());
         }
@@ -124,6 +134,48 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
             values.add(temp.getValue());
         }
         return values;
+    }
+
+    @Override
+    public V startValue() {
+        return temporalValues.get(0).getValue();
+    }
+
+    @Override
+    public V endValue() {
+        return temporalValues.get(temporalValues.size()-1).getValue();
+    }
+
+    @Override
+    public V minValue() {
+        V min = temporalValues.get(0).getValue();
+        for (TemporalValue<V> value : temporalValues) {
+            if (compareValue.run(value.getValue(), min) < 0) {
+                min = value.getValue();
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public V maxValue() {
+        V max = temporalValues.get(0).getValue();
+        for (TemporalValue<V> value : temporalValues) {
+            if (compareValue.run(value.getValue(), max) > 0) {
+                max = value.getValue();
+            }
+        }
+        return max;
+    }
+
+    @Override
+    public V valueAtTimestamp(OffsetDateTime timestamp) {
+        for (TemporalValue<V> temp : temporalValues) {
+            if (timestamp.isEqual(temp.getTime())) {
+                return temp.getValue();
+            }
+        }
+        return null;
     }
 
     @Override

@@ -32,8 +32,6 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
         return value;
     }
 
-    protected abstract int compare(V first, V second);
-
     /**
      * Throws an SQLException if Temporal data type is not valid
      * @throws SQLException
