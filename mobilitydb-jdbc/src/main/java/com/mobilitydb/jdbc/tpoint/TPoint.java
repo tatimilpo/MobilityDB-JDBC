@@ -53,7 +53,6 @@ public abstract class TPoint extends TemporalDataType<Point> {
     }
 
     public static int compareValue(Point first, Point second) {
-        // TODO: how to compare points
-        return 0;
+        throw new UnsupportedOperationException(String.format("Cannot compare points %s , %s", first, second));
     }
 }

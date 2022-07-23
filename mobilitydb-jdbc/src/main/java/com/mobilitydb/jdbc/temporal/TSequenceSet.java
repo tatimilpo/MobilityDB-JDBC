@@ -162,38 +162,79 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V startValue() {
+        if (temporalValues.isEmpty() || temporalValues.get(0).isEmpty()) {
+            return null;
+        }
+
         return temporalValues.get(0).get(0).getValue();
     }
 
     @Override
     public V endValue() {
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
         ArrayList<TemporalValue<V>> last = temporalValues.get(temporalValues.size() - 1);
+
+        if (last.isEmpty()) {
+            return null;
+        }
+
         return last.get(last.size() - 1).getValue();
     }
 
     @Override
     public V minValue() {
-        // TODO improve
-        List<V> values = getValues();
-        V min = values.get(0);
-        for (V value : values) {
-            if (compareValue.run(value, min) < 0) {
-                min = value;
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
+        V min = null;
+
+        for (List<TemporalValue<V>> tempList : temporalValues) {
+            if (tempList.isEmpty()) {
+                continue;
+            }
+
+            if (min == null) {
+                min = tempList.get(0).getValue();
+            }
+
+            for (TemporalValue<V> temp : tempList) {
+                if (compareValue.run(temp.getValue(), min) < 0) {
+                    min = temp.getValue();
+                }
             }
         }
+
         return min;
     }
 
     @Override
     public V maxValue() {
-        // TODO improve
-        List<V> values = getValues();
-        V max = values.get(0);
-        for (V value : values) {
-            if (compareValue.run(value, max) > 0) {
-                max = value;
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
+        V max = null;
+
+        for (List<TemporalValue<V>> tempList : temporalValues) {
+            if (tempList.isEmpty()) {
+                continue;
+            }
+
+            if (max == null) {
+                max = tempList.get(0).getValue();
+            }
+
+            for (TemporalValue<V> temp : tempList) {
+                if (compareValue.run(temp.getValue(), max) > 0) {
+                    max = temp.getValue();
+                }
             }
         }
+
         return max;
     }
 

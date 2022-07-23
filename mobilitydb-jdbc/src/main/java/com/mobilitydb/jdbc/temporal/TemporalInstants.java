@@ -25,33 +25,57 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public V startValue() {
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
         return temporalValues.get(0).getValue();
     }
 
     @Override
     public V endValue() {
-        return temporalValues.get(temporalValues.size()-1).getValue();
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
+        return temporalValues.get(temporalValues.size() - 1).getValue();
     }
 
     @Override
     public V minValue() {
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
         V min = temporalValues.get(0).getValue();
-        for (TemporalValue<V> value : temporalValues) {
-            if (compareValue.run(value.getValue(), min) < 0) {
-                min = value.getValue();
+
+        for (int i = 1; i < temporalValues.size(); i++) {
+            V value = temporalValues.get(i).getValue();
+
+            if (compareValue.run(value, min) < 0) {
+                min = value;
             }
         }
+
         return min;
     }
 
     @Override
     public V maxValue() {
+        if (temporalValues.isEmpty()) {
+            return null;
+        }
+
         V max = temporalValues.get(0).getValue();
-        for (TemporalValue<V> value : temporalValues) {
-            if (compareValue.run(value.getValue(), max) > 0) {
-                max = value.getValue();
+
+        for (int i = 1; i < temporalValues.size(); i++) {
+            V value = temporalValues.get(i).getValue();
+
+            if (compareValue.run(value, max) > 0) {
+                max = value;
             }
         }
+
         return max;
     }
 
