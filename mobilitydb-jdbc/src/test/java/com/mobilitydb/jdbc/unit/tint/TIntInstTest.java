@@ -86,4 +86,61 @@ class TIntInstTest {
         assertEquals(1, values.size());
         assertEquals(10, values.get(0));
     }
+
+    @Test
+    void testGetValue() throws SQLException {
+        TIntInst tIntInst = new TIntInst("8@2019-09-08 06:04:32+02");
+        assertEquals(8, tIntInst.getValue());
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TIntInst tIntInst = new TIntInst("9@2019-09-08 06:04:32+02");
+        assertEquals(9, tIntInst.getValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TIntInst tIntInst = new TIntInst("7@2019-09-08 06:04:32+02");
+        assertEquals(7, tIntInst.getValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TIntInst tIntInst = new TIntInst("3@2019-09-08 06:04:32+02");
+        assertEquals(3, tIntInst.getValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TIntInst tIntInst = new TIntInst("85@2019-09-08 06:04:32+02");
+        assertEquals(85, tIntInst.getValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TIntInst tIntInst = new TIntInst("78@2019-09-08 06:10:32+02");
+        assertNull(tIntInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TIntInst tIntInst = new TIntInst("63@2019-09-08 06:04:32+02");
+        assertEquals(tIntInst.getValue(), tIntInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testGetTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TIntInst tIntInst = new TIntInst("89@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tIntInst.getTimestamp());
+    }
 }

@@ -48,5 +48,62 @@ class TBoolInstTest {
         );
         assertTrue(thrown.getMessage().contains("Value cannot be empty."));
     }
+
+    @Test
+    void testGetValue() throws SQLException {
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
+        assertEquals(false, tBoolInst.getValue());
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TBoolInst tBoolInst = new TBoolInst("true@2019-09-08 06:04:32+02");
+        assertEquals(true, tBoolInst.getValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
+        assertEquals(false, tBoolInst.getValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TBoolInst tBoolInst = new TBoolInst("true@2019-09-08 06:04:32+02");
+        assertEquals(true, tBoolInst.getValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
+        assertEquals(false, tBoolInst.getValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:10:32+02");
+        assertNull(tBoolInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
+        assertEquals(tBoolInst.getValue(), tBoolInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testGetTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tBoolInst.getTimestamp());
+    }
 }
 

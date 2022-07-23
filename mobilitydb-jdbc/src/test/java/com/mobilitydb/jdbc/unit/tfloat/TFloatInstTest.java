@@ -86,4 +86,61 @@ class TFloatInstTest {
         assertEquals(1, values.size());
         assertEquals(25.74f, values.get(0));
     }
+
+    @Test
+    void testGetValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("36.2@2019-09-08 06:04:32+02");
+        assertEquals(36.2f, tFloatInst.getValue());
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("5.0@2019-09-08 06:04:32+02");
+        assertEquals(5.0f, tFloatInst.getValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("89.6@2019-09-08 06:04:32+02");
+        assertEquals(89.6f, tFloatInst.getValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("2.1@2019-09-08 06:04:32+02");
+        assertEquals(2.1f, tFloatInst.getValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
+        assertEquals(84.12f, tFloatInst.getValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertNull(tFloatInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
+        assertEquals(tFloatInst.getValue(), tFloatInst.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testGetTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tFloatInst.getTimestamp());
+    }
 }
