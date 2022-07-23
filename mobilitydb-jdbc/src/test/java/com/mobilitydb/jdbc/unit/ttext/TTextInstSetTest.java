@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TTextInstSetTest {
     @Test
@@ -81,5 +81,64 @@ class TTextInstSetTest {
         TTextInstSet tIntItTextInstSetstSet = new TTextInstSet(value);
         String newValue = tIntItTextInstSetstSet.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        List<String> list = tTextInstSet.getValues();
+        assertEquals(3 , list.size());
+        assertEquals("pqr" , list.get(0));
+        assertEquals("stu" , list.get(1));
+        assertEquals("vwx" , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        assertEquals("pqr", tTextInstSet.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        assertEquals("vwx", tTextInstSet.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{abc@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        assertEquals("abc", tTextInstSet.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, jkl@2001-01-04 08:00:00+02}");
+        assertEquals("stu", tTextInstSet.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        assertNull(tTextInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        assertEquals("pqr", tTextInstSet.valueAtTimestamp(timestamp));
     }
 }

@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TBoolInstSetTest {
     @Test
@@ -81,5 +81,64 @@ class TBoolInstSetTest {
         TBoolInstSet tBoolInstSet = new TBoolInstSet(value);
         String newValue = tBoolInstSet.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        List<Boolean> list = tBoolInstSet.getValues();
+        assertEquals(3 , list.size());
+        assertEquals(false , list.get(0));
+        assertEquals(true , list.get(1));
+        assertEquals(true , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(false, tBoolInstSet.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(true, tBoolInstSet.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(false, tBoolInstSet.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(true, tBoolInstSet.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertNull(tBoolInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(false, tBoolInstSet.valueAtTimestamp(timestamp));
     }
 }

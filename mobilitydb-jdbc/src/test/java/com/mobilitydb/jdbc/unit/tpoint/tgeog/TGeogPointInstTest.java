@@ -65,7 +65,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
         p.setSrid(4326);
-        assertEquals(p, tGeogPointInst.getValue());
+        assertEquals(p, tGeogPointInst.startValue());
     }
 
     @Test
@@ -73,7 +73,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
         p.setSrid(4326);
-        assertEquals(p, tGeogPointInst.getValue());
+        assertEquals(p, tGeogPointInst.endValue());
     }
 
     @Test
@@ -81,7 +81,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
         p.setSrid(4326);
-        assertEquals(p, tGeogPointInst.getValue());
+        assertEquals(p, tGeogPointInst.minValue());
     }
 
     @Test
@@ -89,7 +89,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
         p.setSrid(4326);
-        assertEquals(p, tGeogPointInst.getValue());
+        assertEquals(p, tGeogPointInst.maxValue());
     }
 
     @Test

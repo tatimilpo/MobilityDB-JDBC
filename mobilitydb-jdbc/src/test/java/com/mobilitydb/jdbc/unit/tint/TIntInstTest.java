@@ -96,25 +96,25 @@ class TIntInstTest {
     @Test
     void testStartValue() throws SQLException {
         TIntInst tIntInst = new TIntInst("9@2019-09-08 06:04:32+02");
-        assertEquals(9, tIntInst.getValue());
+        assertEquals(9, tIntInst.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TIntInst tIntInst = new TIntInst("7@2019-09-08 06:04:32+02");
-        assertEquals(7, tIntInst.getValue());
+        assertEquals(7, tIntInst.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TIntInst tIntInst = new TIntInst("3@2019-09-08 06:04:32+02");
-        assertEquals(3, tIntInst.getValue());
+        assertEquals(3, tIntInst.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TIntInst tIntInst = new TIntInst("85@2019-09-08 06:04:32+02");
-        assertEquals(85, tIntInst.getValue());
+        assertEquals(85, tIntInst.maxValue());
     }
 
     @Test

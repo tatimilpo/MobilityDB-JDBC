@@ -61,28 +61,28 @@ class TGeomPointInstTest {
     void testStartValue() throws SQLException {
         TGeomPointInst tGeomPointInst = new TGeomPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
-        assertEquals(p, tGeomPointInst.getValue());
+        assertEquals(p, tGeomPointInst.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TGeomPointInst tGeomPointInst = new TGeomPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
-        assertEquals(p, tGeomPointInst.getValue());
+        assertEquals(p, tGeomPointInst.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TGeomPointInst tGeomPointInst = new TGeomPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
-        assertEquals(p, tGeomPointInst.getValue());
+        assertEquals(p, tGeomPointInst.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TGeomPointInst tGeomPointInst = new TGeomPointInst("Point(0 0)@2017-01-01 08:00:05+02");
         Point p = new Point(0,0);
-        assertEquals(p, tGeomPointInst.getValue());
+        assertEquals(p, tGeomPointInst.maxValue());
     }
 
     @Test

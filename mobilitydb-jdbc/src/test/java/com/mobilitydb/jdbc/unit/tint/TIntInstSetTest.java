@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TIntInstSetTest {
     @Test
@@ -81,5 +81,64 @@ class TIntInstSetTest {
         TIntInstSet tIntInstSet = new TIntInstSet(value);
         String newValue = tIntInstSet.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        List<Integer> list = tIntInstSet.getValues();
+        assertEquals(3 , list.size());
+        assertEquals(1 , list.get(0));
+        assertEquals(2 , list.get(1));
+        assertEquals(3 , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{8@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        assertEquals(8, tIntInstSet.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        assertEquals(3, tIntInstSet.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{15@2001-01-01 08:00:00+02, 87@2001-01-03 08:00:00+02, 43@2001-01-04 08:00:00+02}");
+        assertEquals(15, tIntInstSet.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{178@2001-01-01 08:00:00+02, 252@2001-01-03 08:00:00+02, 43@2001-01-04 08:00:00+02}");
+        assertEquals(252, tIntInstSet.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        assertNull(tIntInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        assertEquals(18, tIntInstSet.valueAtTimestamp(timestamp));
     }
 }

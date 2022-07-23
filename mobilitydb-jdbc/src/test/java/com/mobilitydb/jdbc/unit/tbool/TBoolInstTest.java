@@ -58,25 +58,25 @@ class TBoolInstTest {
     @Test
     void testStartValue() throws SQLException {
         TBoolInst tBoolInst = new TBoolInst("true@2019-09-08 06:04:32+02");
-        assertEquals(true, tBoolInst.getValue());
+        assertEquals(true, tBoolInst.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
-        assertEquals(false, tBoolInst.getValue());
+        assertEquals(false, tBoolInst.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TBoolInst tBoolInst = new TBoolInst("true@2019-09-08 06:04:32+02");
-        assertEquals(true, tBoolInst.getValue());
+        assertEquals(true, tBoolInst.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
-        assertEquals(false, tBoolInst.getValue());
+        assertEquals(false, tBoolInst.maxValue());
     }
 
     @Test

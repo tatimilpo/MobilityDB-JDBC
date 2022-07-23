@@ -96,25 +96,25 @@ class TFloatInstTest {
     @Test
     void testStartValue() throws SQLException {
         TFloatInst tFloatInst = new TFloatInst("5.0@2019-09-08 06:04:32+02");
-        assertEquals(5.0f, tFloatInst.getValue());
+        assertEquals(5.0f, tFloatInst.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TFloatInst tFloatInst = new TFloatInst("89.6@2019-09-08 06:04:32+02");
-        assertEquals(89.6f, tFloatInst.getValue());
+        assertEquals(89.6f, tFloatInst.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TFloatInst tFloatInst = new TFloatInst("2.1@2019-09-08 06:04:32+02");
-        assertEquals(2.1f, tFloatInst.getValue());
+        assertEquals(2.1f, tFloatInst.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
-        assertEquals(84.12f, tFloatInst.getValue());
+        assertEquals(84.12f, tFloatInst.maxValue());
     }
 
     @Test

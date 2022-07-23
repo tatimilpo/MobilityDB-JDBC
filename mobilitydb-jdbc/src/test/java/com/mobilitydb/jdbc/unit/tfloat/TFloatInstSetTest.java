@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TFloatInstSetTest {
     @Test
@@ -81,5 +81,64 @@ class TFloatInstSetTest {
         TFloatInstSet tFloatInstSet = new TFloatInstSet(value);
         String newValue = tFloatInstSet.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.77@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        List<Float> list = tFloatInstSet.getValues();
+        assertEquals(3 , list.size());
+        assertEquals(1.77f , list.get(0));
+        assertEquals(2.1f , list.get(1));
+        assertEquals(3.78f , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.77@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertEquals(1.77f, tFloatInstSet.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.77@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertEquals(3.78f, tFloatInstSet.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.77@2001-01-01 08:00:00+02, 0.5@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertEquals(0.5f, tFloatInstSet.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{8.9@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertEquals(8.9f, tFloatInstSet.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.77@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertNull(tFloatInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        assertEquals(1.82f, tFloatInstSet.valueAtTimestamp(timestamp));
     }
 }

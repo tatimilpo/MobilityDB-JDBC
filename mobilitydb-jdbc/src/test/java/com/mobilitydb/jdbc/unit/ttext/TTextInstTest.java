@@ -98,25 +98,25 @@ class TTextInstTest {
     @Test
     void testStartValue() throws SQLException {
         TTextInst tTextInst = new TTextInst("test12@2019-09-08 06:04:32+02");
-        assertEquals("test12", tTextInst.getValue());
+        assertEquals("test12", tTextInst.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TTextInst tTextInst = new TTextInst("test145@2019-09-08 06:04:32+02");
-        assertEquals("test145", tTextInst.getValue());
+        assertEquals("test145", tTextInst.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TTextInst tTextInst = new TTextInst("abcd@2019-09-08 06:04:32+02");
-        assertEquals("abcd", tTextInst.getValue());
+        assertEquals("abcd", tTextInst.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TTextInst tTextInst = new TTextInst("this is a test@2019-09-08 06:04:32+02");
-        assertEquals("this is a test", tTextInst.getValue());
+        assertEquals("this is a test", tTextInst.maxValue());
     }
 
     @Test
