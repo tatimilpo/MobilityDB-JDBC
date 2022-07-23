@@ -2,7 +2,9 @@ package com.mobilitydb.jdbc.temporal;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -61,6 +63,48 @@ public abstract class TInstantSet<V extends Serializable> extends Temporal<V> {
             values.add(temp.getValue());
         }
         return values;
+    }
+
+    @Override
+    public V startValue() {
+        return temporalValues.get(0).getValue();
+    }
+
+    @Override
+    public V endValue() {
+        return temporalValues.get(temporalValues.size()-1).getValue();
+    }
+
+    @Override
+    public V minValue() {
+        V min = temporalValues.get(0).getValue();
+        for (TemporalValue<V> value : temporalValues) {
+            if (value.getValue().compareTo(min) < 0) {
+                min = value.getValue();
+            }
+        }
+        return min;
+    }
+
+    @Override
+    public V maxValue() {
+        V max = temporalValues.get(0).getValue();
+        for (TemporalValue<V> value : temporalValues) {
+            if (value.getValue().compareTo(max) > 0) {
+                max = value.getValue();
+            }
+        }
+        return max;
+    }
+
+    @Override
+    public V valueAtTimestamp(OffsetDateTime timestamp) {
+        for (TemporalValue<V> temp : temporalValues) {
+            if (timestamp.isEqual(temp.getTime())) {
+                return temp.getValue();
+            }
+        }
+        return null;
     }
 
     @Override

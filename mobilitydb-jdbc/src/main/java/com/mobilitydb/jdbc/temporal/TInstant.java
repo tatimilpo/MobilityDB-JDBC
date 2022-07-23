@@ -23,7 +23,13 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        // TODO: Implement
+        if (temporalValue == null) {
+            throw new SQLException("Temporal value cannot be null.");
+        }
+
+        if (temporalValue.getTime() == null) {
+            throw new SQLException("Timestamp cannot be null.");
+        }
     }
 
     @Override
@@ -35,11 +41,47 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         return temporalValue;
     }
 
+    public V getValue() {
+        return temporalValue.getValue();
+    }
+
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
         values.add(temporalValue.getValue());
         return values;
+    }
+
+    @Override
+    public V startValue() {
+        return temporalValue.getValue();
+    }
+
+    @Override
+    public V endValue() {
+        return temporalValue.getValue();
+    }
+
+    @Override
+    public V minValue() {
+        return temporalValue.getValue();
+    }
+
+    @Override
+    public V maxValue() {
+        return temporalValue.getValue();
+    }
+
+    @Override
+    public V valueAtTimestamp(OffsetDateTime timestamp) {
+        if (timestamp.isEqual(temporalValue.getTime())) {
+            return temporalValue.getValue();
+        }
+        return null;
+    }
+
+    public OffsetDateTime getTimestamp() {
+        return temporalValue.getTime();
     }
 
     @Override
@@ -60,4 +102,5 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         String value = toString();
         return value != null ? value.hashCode() : 0;
     }
+
 }

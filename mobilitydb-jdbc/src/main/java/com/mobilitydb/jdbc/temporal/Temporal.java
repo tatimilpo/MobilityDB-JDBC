@@ -32,6 +32,8 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
         return value;
     }
 
+    protected abstract int compare(V first, V second);
+
     /**
      * Throws an SQLException if Temporal data type is not valid
      * @throws SQLException
@@ -41,6 +43,16 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
     public abstract String buildValue();
 
     public abstract List<V> getValues();
+
+    public abstract V startValue();
+
+    public abstract V endValue();
+
+    public abstract V minValue();
+
+    public abstract V maxValue();
+
+    public abstract V valueAtTimestamp(OffsetDateTime timestamp);
 
     public TemporalType getTemporalType() {
         return temporalType;
