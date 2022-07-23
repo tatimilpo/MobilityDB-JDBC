@@ -2,23 +2,17 @@ package com.mobilitydb.jdbc.temporal;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringJoiner;
 
-public abstract class TSequence<V extends Serializable> extends Temporal<V> {
-    protected final ArrayList<TemporalValue<V>> temporalValues = new ArrayList<>();
+public abstract class TSequence<V extends Serializable> extends TemporalInstants<V> {
     protected boolean stepwise;
     private boolean lowerInclusive;
     private boolean upperInclusive;
-    private final CompareValue<V> compareValue;
 
     protected TSequence(String value,
                         GetSingleTemporalValueFunction<V> getSingleTemporalValue,
                         CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE);
-        this.compareValue = compareValue;
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
         parseValue(value, getSingleTemporalValue);
         validate();
     }
@@ -33,8 +27,7 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
     protected TSequence(boolean stepwise, String[] values, boolean lowerInclusive, boolean upperInclusive,
                         GetSingleTemporalValueFunction<V> getSingleTemporalValue,
                         CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE);
-        this.compareValue = compareValue;
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
         for (String val : values) {
             temporalValues.add(getSingleTemporalValue.run(val.trim()));
         }
@@ -50,8 +43,7 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
 
     protected TSequence(boolean stepwise, TInstant<V>[] values, boolean lowerInclusive, boolean upperInclusive,
                         CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE);
-        this.compareValue = compareValue;
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
         for (TInstant<V> val : values) {
             temporalValues.add(val.getTemporalValue());
         }
@@ -128,57 +120,6 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
-    public List<V> getValues() {
-        List<V> values = new ArrayList<>();
-        for (TemporalValue<V> temp : temporalValues) {
-            values.add(temp.getValue());
-        }
-        return values;
-    }
-
-    @Override
-    public V startValue() {
-        return temporalValues.get(0).getValue();
-    }
-
-    @Override
-    public V endValue() {
-        return temporalValues.get(temporalValues.size()-1).getValue();
-    }
-
-    @Override
-    public V minValue() {
-        V min = temporalValues.get(0).getValue();
-        for (TemporalValue<V> value : temporalValues) {
-            if (compareValue.run(value.getValue(), min) < 0) {
-                min = value.getValue();
-            }
-        }
-        return min;
-    }
-
-    @Override
-    public V maxValue() {
-        V max = temporalValues.get(0).getValue();
-        for (TemporalValue<V> value : temporalValues) {
-            if (compareValue.run(value.getValue(), max) > 0) {
-                max = value.getValue();
-            }
-        }
-        return max;
-    }
-
-    @Override
-    public V valueAtTimestamp(OffsetDateTime timestamp) {
-        for (TemporalValue<V> temp : temporalValues) {
-            if (timestamp.isEqual(temp.getTime())) {
-                return temp.getValue();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -191,25 +132,15 @@ public abstract class TSequence<V extends Serializable> extends Temporal<V> {
                 return false;
             }
 
-            boolean lowerAreEqual = lowerInclusive == otherTemporal.lowerInclusive;
-            boolean upperAreEqual = upperInclusive == otherTemporal.upperInclusive;
-
-            if (!lowerAreEqual || ! upperAreEqual) {
+            if (lowerInclusive != otherTemporal.lowerInclusive) {
                 return false;
             }
 
-            if (this.temporalValues.size() != otherTemporal.temporalValues.size()) {
+            if (upperInclusive != otherTemporal.upperInclusive) {
                 return false;
             }
 
-            for (int i = 0; i < this.temporalValues.size(); i++) {
-                TemporalValue<V> thisVal = this.temporalValues.get(i);
-                TemporalValue<?> otherVal = otherTemporal.temporalValues.get(i);
-                if (!thisVal.equals(otherVal)) {
-                    return false;
-                }
-            }
-            return true;
+            return super.equals(obj);
         }
         return false;
     }
