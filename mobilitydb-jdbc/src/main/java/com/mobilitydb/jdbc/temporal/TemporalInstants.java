@@ -3,6 +3,7 @@ package com.mobilitydb.jdbc.temporal;
 import com.mobilitydb.jdbc.temporal.delegates.CompareValueFunction;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,31 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
             }
         }
         return null;
+    }
+
+    @Override
+    public int numTimestamps() {
+        return instants.size();
+    }
+
+    @Override
+    public OffsetDateTime[] timestamps() {
+        OffsetDateTime[] result = new OffsetDateTime[instants.size()];
+
+        for (int i = 0; i < instants.size(); i++) {
+            result[i] = instants.get(i).getTimestamp();
+        }
+
+        return result;
+    }
+
+    @Override
+    public OffsetDateTime timestampN(int n) throws SQLException {
+        if (n >= 0 && n < instants.size()) {
+            return instants.get(n).getTimestamp();
+        }
+
+        throw new SQLException("There is no value at this index.");
     }
 
     @Override

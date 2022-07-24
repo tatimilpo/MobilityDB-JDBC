@@ -8,9 +8,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -188,6 +186,32 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             }
         }
         return null;
+    }
+
+    @Override
+    public int numTimestamps() {
+        return timestamps().length;
+    }
+
+    @Override
+    public OffsetDateTime[] timestamps() {
+        LinkedHashSet<OffsetDateTime> timestamps = new LinkedHashSet<>();
+
+        for (TSequence<V> sequence : sequences) {
+            timestamps.addAll(Arrays.asList(sequence.timestamps()));
+        }
+
+        return timestamps.toArray(new OffsetDateTime[0]);
+    }
+
+    @Override
+    public OffsetDateTime timestampN(int n) throws SQLException {
+        OffsetDateTime[] timestamps = timestamps();
+        if (n >= 0 && n < timestamps.length) {
+            return timestamps[n];
+        }
+
+        throw new SQLException("There is no value at this index.");
     }
 
     @Override

@@ -55,6 +55,12 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
 
     public abstract V valueAtTimestamp(OffsetDateTime timestamp);
 
+    public abstract int numTimestamps();
+
+    public abstract OffsetDateTime[] timestamps();
+
+    public abstract OffsetDateTime timestampN(int n) throws SQLException;
+
     public abstract OffsetDateTime startTimestamp();
 
     public abstract OffsetDateTime endTimestamp();

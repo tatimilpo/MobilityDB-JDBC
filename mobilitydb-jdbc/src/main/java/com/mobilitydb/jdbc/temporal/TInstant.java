@@ -91,6 +91,25 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
+    public int numTimestamps() {
+        return 1;
+    }
+
+    @Override
+    public OffsetDateTime[] timestamps() {
+        return new OffsetDateTime[] { temporalValue.getTime() };
+    }
+
+    @Override
+    public OffsetDateTime timestampN(int n) throws SQLException {
+        if (n == 0) {
+            return temporalValue.getTime();
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    @Override
     public OffsetDateTime startTimestamp() {
         return temporalValue.getTime();
     }
