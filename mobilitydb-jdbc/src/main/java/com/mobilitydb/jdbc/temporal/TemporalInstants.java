@@ -128,6 +128,35 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
     }
 
     @Override
+    public int numInstants() {
+        return instants.size();
+    }
+
+    @Override
+    public TInstant<V> startInstant() {
+        return instants.get(0);
+    }
+
+    @Override
+    public TInstant<V> endInstant() {
+        return instants.get(instants.size() - 1);
+    }
+
+    @Override
+    public TInstant<V> instantN(int n) throws SQLException {
+        if (n >= 0 && n < instants.size()) {
+            return instants.get(n);
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    @Override
+    public List<TInstant<V>> getInstants() {
+        return new ArrayList<>(instants);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

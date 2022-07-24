@@ -242,6 +242,41 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
+    public int numInstants() {
+        return getInstants().size();
+    }
+
+    @Override
+    public TInstant<V> startInstant() {
+        return sequences.get(0).startInstant();
+    }
+
+    @Override
+    public TInstant<V> endInstant() {
+        return sequences.get(sequences.size() - 1).endInstant();
+    }
+
+    @Override
+    public TInstant<V> instantN(int n) throws SQLException {
+        List<TInstant<V>> instants = getInstants();
+
+        if (n >= 0 && n < instants.size()) {
+            return instants.get(n);
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    @Override
+    public List<TInstant<V>> getInstants() {
+        ArrayList<TInstant<V>> list = new ArrayList<>();
+        for (TSequence<V> sequence : sequences) {
+            list.addAll(sequence.instants);
+        }
+        return list;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

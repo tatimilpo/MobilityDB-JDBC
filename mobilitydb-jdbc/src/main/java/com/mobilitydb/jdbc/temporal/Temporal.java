@@ -69,6 +69,16 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
 
     public abstract Period period() throws SQLException;
 
+    public abstract int numInstants();
+
+    public abstract TInstant<V> startInstant();
+
+    public abstract TInstant<V> endInstant();
+
+    public abstract TInstant<V> instantN(int n) throws SQLException;
+
+    public abstract List<TInstant<V>> getInstants();
+
     public TemporalType getTemporalType() {
         return temporalType;
     }

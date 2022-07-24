@@ -129,6 +129,37 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         return new PeriodSet(period());
     }
 
+    @Override
+    public int numInstants() {
+        return 1;
+    }
+
+    @Override
+    public TInstant<V> startInstant() {
+        return this;
+    }
+
+    @Override
+    public TInstant<V> endInstant() {
+        return this;
+    }
+
+    @Override
+    public TInstant<V> instantN(int n) throws SQLException {
+        if (n == 0) {
+            return this;
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    @Override
+    public List<TInstant<V>> getInstants() {
+        ArrayList<TInstant<V>> list = new ArrayList<>();
+        list.add(this);
+        return list;
+    }
+
     public OffsetDateTime getTimestamp() {
         return temporalValue.getTime();
     }
