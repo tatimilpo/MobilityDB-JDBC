@@ -7,6 +7,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -274,6 +275,27 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             list.addAll(sequence.instants);
         }
         return list;
+    }
+
+    @Override
+    public Duration duration() {
+        Duration duration = Duration.ZERO;
+        for (TSequence<V> sequence : sequences) {
+            duration = duration.plus(sequence.duration());
+        }
+        return duration;
+    }
+
+    @Override
+    public Duration timespan() {
+        return Duration.between(startTimestamp(), endTimestamp());
+    }
+
+    @Override
+    public void shift(Duration duration) {
+        for (TSequence<V> sequence : sequences) {
+            sequence.shift(duration);
+        }
     }
 
     @Override

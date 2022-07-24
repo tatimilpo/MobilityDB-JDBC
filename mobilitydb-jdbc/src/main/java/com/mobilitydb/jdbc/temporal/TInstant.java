@@ -6,6 +6,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +159,21 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         ArrayList<TInstant<V>> list = new ArrayList<>();
         list.add(this);
         return list;
+    }
+
+    @Override
+    public Duration duration() {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public Duration timespan() {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public void shift(Duration duration) {
+        temporalValue.setTime(temporalValue.getTime().plus(duration));
     }
 
     public OffsetDateTime getTimestamp() {

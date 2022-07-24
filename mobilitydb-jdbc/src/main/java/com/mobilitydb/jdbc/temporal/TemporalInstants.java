@@ -4,6 +4,7 @@ import com.mobilitydb.jdbc.temporal.delegates.CompareValueFunction;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +155,13 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
     @Override
     public List<TInstant<V>> getInstants() {
         return new ArrayList<>(instants);
+    }
+
+    @Override
+    public void shift(Duration duration) {
+        for (TInstant<V> instant : instants) {
+            instant.shift(duration);
+        }
     }
 
     @Override

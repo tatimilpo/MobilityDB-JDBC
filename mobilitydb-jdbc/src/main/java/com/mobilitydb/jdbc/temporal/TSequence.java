@@ -7,6 +7,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -134,6 +135,24 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     @Override
     public PeriodSet getTime() throws SQLException {
         return new PeriodSet(period());
+    }
+
+    @Override
+    public Duration duration() {
+        try {
+            return period().duration();
+        } catch (SQLException ex) {
+            return Duration.ZERO;
+        }
+    }
+
+    @Override
+    public Duration timespan() {
+        try {
+            return period().duration();
+        } catch (SQLException ex) {
+            return Duration.ZERO;
+        }
     }
 
     @Override

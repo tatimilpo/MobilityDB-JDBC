@@ -5,6 +5,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -78,6 +79,12 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
     public abstract TInstant<V> instantN(int n) throws SQLException;
 
     public abstract List<TInstant<V>> getInstants();
+
+    public abstract Duration duration();
+
+    public abstract Duration timespan();
+
+    public abstract void shift(Duration duration);
 
     public TemporalType getTemporalType() {
         return temporalType;

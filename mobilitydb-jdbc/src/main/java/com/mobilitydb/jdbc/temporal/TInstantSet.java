@@ -7,6 +7,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringJoiner;
@@ -55,6 +56,16 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
             periods.add(instant.period());
         }
         return new PeriodSet(periods.toArray(new Period[0]));
+    }
+
+    @Override
+    public Duration duration() {
+        return Duration.ZERO;
+    }
+
+    @Override
+    public Duration timespan() {
+        return Duration.between(startTimestamp(), endTimestamp());
     }
 
     @Override
