@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TIntSeqTest {
     @Test
@@ -76,5 +76,64 @@ class TIntSeqTest {
         TIntSeq temporal = new TIntSeq(value);
         String newValue = temporal.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TIntSeq tIntSeq = new TIntSeq(
+                "[1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        List<Integer> list = tIntSeq.getValues();
+        assertEquals(3 , list.size());
+        assertEquals(1 , list.get(0));
+        assertEquals(2 , list.get(1));
+        assertEquals(3 , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TIntSeq tIntSeq = new TIntSeq(
+                "[1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertEquals(1, tIntSeq.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TIntSeq tIntSeq = new TIntSeq(
+                "[1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertEquals(3, tIntSeq.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TIntSeq tIntSeq = new TIntSeq(
+                "[14@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertEquals(2, tIntSeq.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TIntSeq tIntSeq = new TIntSeq(
+                "[15@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertEquals(15, tIntSeq.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TIntSeq tIntSeq = new TIntSeq(
+                "[1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertNull(tIntSeq.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TIntSeq tIntSeq = new TIntSeq(
+                "[89@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02)");
+        assertEquals(89, tIntSeq.valueAtTimestamp(timestamp));
     }
 }

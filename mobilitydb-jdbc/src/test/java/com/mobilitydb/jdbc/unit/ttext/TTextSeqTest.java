@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TTextSeqTest {
     @Test
@@ -76,5 +76,64 @@ class TTextSeqTest {
         TTextSeq temporal = new TTextSeq(value);
         String newValue = temporal.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        List<String> list = tTextSeq.getValues();
+        assertEquals(3 , list.size());
+        assertEquals("ABCD" , list.get(0));
+        assertEquals("LMNO" , list.get(1));
+        assertEquals("qwer" , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertEquals("ABCD", tTextSeq.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertEquals("qwer", tTextSeq.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertEquals("ABCD", tTextSeq.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertEquals("qwer", tTextSeq.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TTextSeq tTextSeq = new TTextSeq(
+                "[ABCD@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertNull(tTextSeq.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TTextSeq tTextSeq = new TTextSeq(
+                "[This is me@2001-01-01 08:00:00+02, LMNO@2001-01-03 08:00:00+02, qwer@2001-01-04 08:00:00+02)");
+        assertEquals("This is me", tTextSeq.valueAtTimestamp(timestamp));
     }
 }

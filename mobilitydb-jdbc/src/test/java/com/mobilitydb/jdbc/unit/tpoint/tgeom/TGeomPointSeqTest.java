@@ -9,9 +9,9 @@ import org.postgis.Point;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TGeomPointSeqTest {
     @Test
@@ -79,5 +79,66 @@ class TGeomPointSeqTest {
         TGeomPointSeq temporal = new TGeomPointSeq(value);
         String newValue = temporal.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TGeomPointSeq tGeomPointSeq = new TGeomPointSeq(
+                "[Point(0 0)@2001-01-01 08:00:00+02, " +
+                        "Point(1 1)@2001-01-03 08:00:00+02, " +
+                        "Point(2 2)@2001-01-04 08:00:00+02)");
+        List<Point> list = tGeomPointSeq.getValues();
+        Point firstPoint = new Point(0,0);
+        Point secondPoint = new Point(1,1);
+        Point thirdPoint = new Point(2,2);
+        assertEquals(3 , list.size());
+        assertEquals(firstPoint , list.get(0));
+        assertEquals(secondPoint , list.get(1));
+        assertEquals(thirdPoint , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TGeomPointSeq tGeomPointSeq = new TGeomPointSeq(
+                "[Point(0 0)@2001-01-01 08:00:00+02, " +
+                        "Point(1 1)@2001-01-03 08:00:00+02, " +
+                        "Point(2 2)@2001-01-04 08:00:00+02)");
+        Point point = new Point(0,0);
+        assertEquals(point, tGeomPointSeq.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TGeomPointSeq tGeomPointSeq = new TGeomPointSeq(
+                "[Point(0 0)@2001-01-01 08:00:00+02, " +
+                        "Point(1 1)@2001-01-03 08:00:00+02, " +
+                        "Point(2 2)@2001-01-04 08:00:00+02)");
+        Point point = new Point(2,2);
+        assertEquals(point, tGeomPointSeq.endValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TGeomPointSeq tGeomPointSeq = new TGeomPointSeq(
+                "[Point(0 0)@2001-01-01 08:00:00+02, " +
+                        "Point(1 1)@2001-01-03 08:00:00+02, " +
+                        "Point(2 2)@2001-01-04 08:00:00+02)");
+        assertNull(tGeomPointSeq.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TGeomPointSeq tGeomPointSeq = new TGeomPointSeq(
+                "[Point(0 0)@2001-01-01 08:00:00+02, " +
+                        "Point(1 1)@2001-01-03 08:00:00+02, " +
+                        "Point(2 2)@2001-01-04 08:00:00+02)");
+        Point point = new Point(0,0);
+        assertEquals(point, tGeomPointSeq.valueAtTimestamp(timestamp));
     }
 }

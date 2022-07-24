@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TFloatSeqTest {
     @Test
@@ -109,5 +109,64 @@ class TFloatSeqTest {
         TFloatSeq temporal = new TFloatSeq(value);
         String newValue = temporal.buildValue();
         assertEquals(value, newValue);
+    }
+
+    @Test
+    void testGetValues() throws SQLException {
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[1.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        List<Float> list = tFloatSeq.getValues();
+        assertEquals(3 , list.size());
+        assertEquals(1.23f , list.get(0));
+        assertEquals(2.69f , list.get(1));
+        assertEquals(3.54f , list.get(2));
+    }
+
+    @Test
+    void testStartValue() throws SQLException {
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[1.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        assertEquals(1.23f, tFloatSeq.startValue());
+    }
+
+    @Test
+    void testEndValue() throws SQLException {
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[1.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        assertEquals(3.54f, tFloatSeq.endValue());
+    }
+
+    @Test
+    void testMinValue() throws SQLException {
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[8.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        assertEquals(2.69f, tFloatSeq.minValue());
+    }
+
+    @Test
+    void testMaxValue() throws SQLException {
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[1.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 98.5@2001-01-04 08:00:00+02)");
+        assertEquals(98.5f, tFloatSeq.maxValue());
+    }
+
+    @Test
+    void testValueAtTimestampNull() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
+                6, 4, 32, 0, tz);
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[1.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        assertNull(tFloatSeq.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testValueAtTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TFloatSeq tFloatSeq = new TFloatSeq(
+                "[11.23@2001-01-01 08:00:00+02, 2.69@2001-01-03 08:00:00+02, 3.54@2001-01-04 08:00:00+02)");
+        assertEquals(11.23f, tFloatSeq.valueAtTimestamp(timestamp));
     }
 }
