@@ -6,11 +6,11 @@ import java.sql.SQLException;
 
 public class TBoolInstSet extends TInstantSet<Boolean> {
     public TBoolInstSet(String value) throws SQLException {
-        super(value, TBool::getSingleTemporalValue, TBool::compareValue);
+        super(value, TBoolInst::new, TBool::compareValue);
     }
 
     public TBoolInstSet(String[] values) throws SQLException {
-        super(values, TBool::getSingleTemporalValue, TBool::compareValue);
+        super(values, TBoolInst::new, TBool::compareValue);
     }
 
     public TBoolInstSet(TBoolInst[] values) throws SQLException {

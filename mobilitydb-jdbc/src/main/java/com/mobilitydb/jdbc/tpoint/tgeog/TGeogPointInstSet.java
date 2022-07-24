@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 public class TGeogPointInstSet extends TPointInstSet {
     public TGeogPointInstSet(String value) throws SQLException {
-        super(value, TGeogPoint::getSingleTemporalValue);
+        super(value, TGeogPointInst::new);
     }
 
     public TGeogPointInstSet(String[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, values, TGeogPointInst::new);
     }
 
     public TGeogPointInstSet(int srid, String[] values) throws SQLException {
-        super(srid, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, values, TGeogPointInst::new);
     }
 
     public TGeogPointInstSet(TGeogPointInst[] values) throws SQLException {

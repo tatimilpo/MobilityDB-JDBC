@@ -7,38 +7,38 @@ import java.sql.SQLException;
 
 public class TGeogPointSeqSet extends TPointSeqSet {
     public TGeogPointSeqSet(String value) throws SQLException {
-        super(value, TGeogPoint::getSingleTemporalValue);
+        super(value, TGeogPointSeq::new);
     }
 
     public TGeogPointSeqSet(String[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, false, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, false, values, TGeogPointSeq::new);
     }
 
     public TGeogPointSeqSet(boolean stepwise, String[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, stepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, stepwise, values, TGeogPointSeq::new);
     }
 
     public TGeogPointSeqSet(TGeogPointSeq[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, false, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, false, values);
     }
 
     public TGeogPointSeqSet(boolean stepwise, TGeogPointSeq[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, stepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, stepwise, values);
     }
 
     public TGeogPointSeqSet(int srid, String[] values) throws SQLException {
-        super(srid, false, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, false, values, TGeogPointSeq::new);
     }
 
     public TGeogPointSeqSet(int srid, boolean stepwise, String[] values) throws SQLException {
-        super(srid, stepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, stepwise, values, TGeogPointSeq::new);
     }
 
     public TGeogPointSeqSet(int srid, TGeogPointSeq[] values) throws SQLException {
-        super(srid, false, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, false, values);
     }
 
     public TGeogPointSeqSet(int srid, boolean stepwise, TGeogPointSeq[] values) throws SQLException {
-        super(srid, stepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, stepwise, values);
     }
 }

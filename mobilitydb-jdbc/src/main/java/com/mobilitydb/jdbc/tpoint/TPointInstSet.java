@@ -1,8 +1,8 @@
 package com.mobilitydb.jdbc.tpoint;
 
-import com.mobilitydb.jdbc.temporal.GetSingleTemporalValueFunction;
 import com.mobilitydb.jdbc.temporal.TInstant;
 import com.mobilitydb.jdbc.temporal.TInstantSet;
+import com.mobilitydb.jdbc.temporal.delegates.GetTemporalInstantFunction;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParseResponse;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParser;
 import org.postgis.Point;
@@ -12,21 +12,21 @@ import java.sql.SQLException;
 public abstract class TPointInstSet extends TInstantSet<Point> {
     private int srid;
 
-    protected TPointInstSet(String value, GetSingleTemporalValueFunction<Point> getSingleTemporalValue)
+    protected TPointInstSet(String value, GetTemporalInstantFunction<Point> getTemporalInstantFunction)
             throws SQLException {
-        super(value, getSingleTemporalValue, TPoint::compareValue);
-        this.srid = SRIDParser.applySRID(srid, temporalValues);
+        super(value, getTemporalInstantFunction, TPoint::compareValue);
+        this.srid = SRIDParser.applySRID(srid, getValues());
     }
 
-    protected TPointInstSet(int srid, String[] values, GetSingleTemporalValueFunction<Point> getSingleTemporalValue)
+    protected TPointInstSet(int srid, String[] values, GetTemporalInstantFunction<Point> getTemporalInstantFunction)
             throws SQLException {
-        super(values, getSingleTemporalValue, TPoint::compareValue);
-        this.srid = SRIDParser.applySRID(srid, temporalValues);
+        super(values, getTemporalInstantFunction, TPoint::compareValue);
+        this.srid = SRIDParser.applySRID(srid, getValues());
     }
 
     protected TPointInstSet(int srid, TInstant<Point>[] values) throws SQLException {
         super(values, TPoint::compareValue);
-        this.srid = SRIDParser.applySRID(srid, temporalValues);
+        this.srid = SRIDParser.applySRID(srid, getValues());
     }
 
     @Override

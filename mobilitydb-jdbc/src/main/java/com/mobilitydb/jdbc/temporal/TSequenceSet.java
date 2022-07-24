@@ -1,5 +1,10 @@
 package com.mobilitydb.jdbc.temporal;
 
+import com.mobilitydb.jdbc.temporal.delegates.CompareValueFunction;
+import com.mobilitydb.jdbc.temporal.delegates.GetTemporalSequenceFunction;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -10,44 +15,43 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
-    protected ArrayList<ArrayList<TemporalValue<V>>> temporalValues = new ArrayList<>();
-    private final List<Boolean> lowerInclusive = new ArrayList<>();
-    private final List<Boolean> upperInclusive = new ArrayList<>();
+    protected ArrayList<TSequence<V>> sequences = new ArrayList<>();
     protected boolean stepwise;
-    private final CompareValue<V> compareValue;
+    private final CompareValueFunction<V> compareValueFunction;
 
     protected TSequenceSet(String value,
-                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                           CompareValue<V> compareValue) throws SQLException {
+                           GetTemporalSequenceFunction<V> getTemporalSequenceFunction,
+                           CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
-        this.compareValue = compareValue;
-        parseValue(value, getSingleTemporalValue);
+        this.compareValueFunction = compareValueFunction;
+        parseValue(value, getTemporalSequenceFunction);
         validate();
     }
 
     protected TSequenceSet(boolean stepwise,
                            String[] values,
-                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                           CompareValue<V> compareValue) throws SQLException {
+                           GetTemporalSequenceFunction<V> getTemporalSequenceFunction,
+                           CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
-        this.compareValue = compareValue;
+        this.compareValueFunction = compareValueFunction;
         this.stepwise = stepwise;
         for (String val : values) {
-            parseSequence(val, getSingleTemporalValue);
+            TSequence<V> sequence = getTemporalSequenceFunction.run(val);
+            validateSequence(sequence);
+            sequences.add(sequence);
         }
         validate();
     }
 
     protected TSequenceSet(boolean stepwise,
                            TSequence<V>[] values,
-                           GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                           CompareValue<V> compareValue) throws SQLException {
+                           CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
-        this.compareValue = compareValue;
+        this.compareValueFunction = compareValueFunction;
         this.stepwise = stepwise;
-        for (TSequence<V> val: values) {
-            validateSequence(val);
-            parseSequence(val.buildValue(true), getSingleTemporalValue);
+        for (TSequence<V> sequence: values) {
+            validateSequence(sequence);
+            sequences.add(sequence);
         }
         validate();
     }
@@ -60,27 +64,17 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     @Override
     public String buildValue() {
         StringJoiner sj = new StringJoiner(", ");
-        for (int i = 0; i < temporalValues.size(); i++) {
-            List<TemporalValue<V>> tempList = temporalValues.get(i);
-            StringJoiner sjt = new StringJoiner(", ");
-            for (TemporalValue<V> temp : tempList) {
-                sjt.add(String.format("%s", temp.toString()));
-            }
-            sj.add(String.format("%s%s%s",
-                    Boolean.TRUE.equals(lowerInclusive.get(i))
-                            ? TemporalConstants.LOWER_INCLUSIVE
-                            : TemporalConstants.LOWER_EXCLUSIVE,
-                    sjt.toString(),
-                    Boolean.TRUE.equals(upperInclusive.get(i))
-                            ? TemporalConstants.UPPER_INCLUSIVE
-                            : TemporalConstants.UPPER_EXCLUSIVE));
+
+        for (TSequence<V> sequence : sequences) {
+            sj.add(sequence.buildValue(true));
         }
+
         return String.format("%s{%s}",
                 stepwise && explicitInterpolation() ? TemporalConstants.STEPWISE: "",
                 sj.toString());
     }
 
-    private void parseValue(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue)
+    private void parseValue(String value, GetTemporalSequenceFunction<V> getTemporalSequenceFunction)
             throws SQLException {
         String newValue = preprocessValue(value);
 
@@ -98,7 +92,10 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             seqValues.add(m.group());
         }
         for (String seq : seqValues) {
-            parseSequence(seq, getSingleTemporalValue);
+            if (stepwise && !seq.startsWith(TemporalConstants.STEPWISE)) {
+                seq = TemporalConstants.STEPWISE + seq;
+            }
+            sequences.add(getTemporalSequenceFunction.run(seq));
         }
     }
 
@@ -112,39 +109,6 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         }
     }
 
-    private void parseSequence(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue)
-            throws SQLException {
-        String[] values = value.split(",");
-
-        if (values[0].startsWith(TemporalConstants.LOWER_INCLUSIVE)) {
-            this.lowerInclusive.add(true);
-        } else if (values[0].startsWith(TemporalConstants.LOWER_EXCLUSIVE)) {
-            this.lowerInclusive.add(false);
-        } else {
-            throw new SQLException("Lower bound flag must be either '[' or '('.");
-        }
-
-        if (values[values.length - 1].endsWith(TemporalConstants.UPPER_INCLUSIVE)) {
-            this.upperInclusive.add(true);
-        } else if (values[values.length - 1].endsWith(TemporalConstants.UPPER_EXCLUSIVE)) {
-            this.upperInclusive.add(false);
-        } else {
-            throw new SQLException("Upper bound flag must be either ']' or ')'.");
-        }
-        ArrayList<TemporalValue<V>> temp = new ArrayList<>();
-        for (int i = 0; i < values.length; i++) {
-            String val = values[i];
-            if (i == 0) {
-                val = val.substring(1);
-            }
-            if (i == values.length - 1) {
-                val = val.substring(0, val.length() - 1);
-            }
-            temp.add(getSingleTemporalValue.run(val.trim()));
-        }
-        temporalValues.add(temp);
-    }
-
     protected boolean explicitInterpolation() {
         return true;
     }
@@ -152,59 +116,43 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
-        for (List<TemporalValue<V>> tempList : temporalValues) {
-            for (TemporalValue<V> temp : tempList) {
-                values.add(temp.getValue());
-            }
+        for (TSequence<V> sequence : sequences) {
+            values.addAll(sequence.getValues());
         }
         return values;
     }
 
     @Override
     public V startValue() {
-        if (temporalValues.isEmpty() || temporalValues.get(0).isEmpty()) {
+        if (sequences.isEmpty()) {
             return null;
         }
 
-        return temporalValues.get(0).get(0).getValue();
+        return sequences.get(0).startValue();
     }
 
     @Override
     public V endValue() {
-        if (temporalValues.isEmpty()) {
+        if (sequences.isEmpty()) {
             return null;
         }
 
-        ArrayList<TemporalValue<V>> last = temporalValues.get(temporalValues.size() - 1);
-
-        if (last.isEmpty()) {
-            return null;
-        }
-
-        return last.get(last.size() - 1).getValue();
+        return sequences.get(sequences.size() - 1).endValue();
     }
 
     @Override
     public V minValue() {
-        if (temporalValues.isEmpty()) {
+        if (sequences.isEmpty()) {
             return null;
         }
 
         V min = null;
 
-        for (List<TemporalValue<V>> tempList : temporalValues) {
-            if (tempList.isEmpty()) {
-                continue;
-            }
+        for (TSequence<V> sequence : sequences) {
+            V value = sequence.minValue();
 
-            if (min == null) {
-                min = tempList.get(0).getValue();
-            }
-
-            for (TemporalValue<V> temp : tempList) {
-                if (compareValue.run(temp.getValue(), min) < 0) {
-                    min = temp.getValue();
-                }
+            if (min == null || compareValueFunction.run(value, min) < 0) {
+                min = value;
             }
         }
 
@@ -213,25 +161,17 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V maxValue() {
-        if (temporalValues.isEmpty()) {
+        if (sequences.isEmpty()) {
             return null;
         }
 
         V max = null;
 
-        for (List<TemporalValue<V>> tempList : temporalValues) {
-            if (tempList.isEmpty()) {
-                continue;
-            }
+        for (TSequence<V> sequence : sequences) {
+            V value = sequence.maxValue();
 
-            if (max == null) {
-                max = tempList.get(0).getValue();
-            }
-
-            for (TemporalValue<V> temp : tempList) {
-                if (compareValue.run(temp.getValue(), max) > 0) {
-                    max = temp.getValue();
-                }
+            if (max == null || compareValueFunction.run(value, max) > 0) {
+                max = value;
             }
         }
 
@@ -240,14 +180,41 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V valueAtTimestamp(OffsetDateTime timestamp) {
-        for (List<TemporalValue<V>> tempList : temporalValues) {
-            for (TemporalValue<V> temp : tempList) {
-                if (timestamp.isEqual(temp.getTime())) {
-                    return temp.getValue();
-                }
+        for (TSequence<V> sequence : sequences) {
+            V value = sequence.valueAtTimestamp(timestamp);
+
+            if (value != null) {
+                return value;
             }
         }
         return null;
+    }
+
+    @Override
+    public OffsetDateTime startTimestamp() {
+        return sequences.get(0).startTimestamp();
+    }
+
+    @Override
+    public OffsetDateTime endTimestamp() {
+        return sequences.get(sequences.size() - 1).endTimestamp();
+    }
+
+    @Override
+    public Period period() throws SQLException {
+        TSequence<V> first = sequences.get(0);
+        TSequence<V> last = sequences.get(sequences.size() - 1);
+        return new Period(first.startTimestamp(), last.endTimestamp(),
+                first.isLowerInclusive(), last.isUpperInclusive());
+    }
+
+    @Override
+    public PeriodSet getTime() throws SQLException {
+        ArrayList<Period> periods = new ArrayList<>();
+        for (TSequence<V> sequence : sequences) {
+            periods.add(sequence.period());
+        }
+        return new PeriodSet(periods.toArray(new Period[0]));
     }
 
     @Override
@@ -266,27 +233,19 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             return false;
         }
 
-        if (this.temporalValues.size() != otherTemporal.temporalValues.size()) {
+        if (this.sequences.size() != otherTemporal.sequences.size()) {
             return false;
         }
 
-        for (int i = 0; i < this.temporalValues.size(); i++) {
-            boolean areEqual = lowerInclusive.get(i) == otherTemporal.lowerInclusive.get(i);
-            areEqual = areEqual && upperInclusive.get(i) == otherTemporal.upperInclusive.get(i);
-            areEqual = areEqual && temporalValues.get(i).size() == otherTemporal.temporalValues.get(i).size();
+        for (int i = 0; i < this.sequences.size(); i++) {
+            TSequence<V> thisVal = sequences.get(i);
+            TSequence<?> otherVal = otherTemporal.sequences.get(i);
 
-            if (!areEqual) {
+            if (!thisVal.equals(otherVal)) {
                 return false;
             }
-
-            for (int j = 0; j < temporalValues.get(i).size(); j++) {
-                TemporalValue<V> thisVal = temporalValues.get(i).get(j);
-                TemporalValue<?> otherVal = otherTemporal.temporalValues.get(i).get(j);
-                if (!thisVal.equals(otherVal)) {
-                    return false;
-                }
-            }
         }
+
         return true;
     }
 

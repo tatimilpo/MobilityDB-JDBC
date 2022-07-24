@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 public class TGeomPointSeq extends TPointSeq {
     public TGeomPointSeq(String value) throws SQLException {
-        super(value, TGeomPoint::getSingleTemporalValue);
+        super(value, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(String[] values) throws SQLException {
-        super(TPointConstants.EMPTY_SRID, false, values, TGeomPoint::getSingleTemporalValue);
+        super(TPointConstants.EMPTY_SRID, false, values, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(boolean isStepwise, String[] values) throws SQLException {
-        super(TPointConstants.EMPTY_SRID, isStepwise, values, TGeomPoint::getSingleTemporalValue);
+        super(TPointConstants.EMPTY_SRID, isStepwise, values, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(String[] values, boolean lowerInclusive, boolean upperInclusive)
@@ -25,7 +25,7 @@ public class TGeomPointSeq extends TPointSeq {
                 values,
                 lowerInclusive,
                 upperInclusive,
-                TGeomPoint::getSingleTemporalValue);
+                TGeomPointInst::new);
     }
 
     public TGeomPointSeq(boolean isStepwise, String[] values, boolean lowerInclusive, boolean upperInclusive)
@@ -35,7 +35,7 @@ public class TGeomPointSeq extends TPointSeq {
                 values,
                 lowerInclusive,
                 upperInclusive,
-                TGeomPoint::getSingleTemporalValue);
+                TGeomPointInst::new);
     }
 
     public TGeomPointSeq(TGeomPointInst[] values) throws SQLException {
@@ -57,21 +57,21 @@ public class TGeomPointSeq extends TPointSeq {
     }
 
     public TGeomPointSeq(int srid, String[] values) throws SQLException {
-        super(srid, false, values, TGeomPoint::getSingleTemporalValue);
+        super(srid, false, values, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(int srid, boolean isStepwise, String[] values) throws SQLException {
-        super(srid, isStepwise, values, TGeomPoint::getSingleTemporalValue);
+        super(srid, isStepwise, values, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(int srid, String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(srid, false, values, lowerInclusive, upperInclusive, TGeomPoint::getSingleTemporalValue);
+        super(srid, false, values, lowerInclusive, upperInclusive, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(int srid, boolean isStepwise, String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(srid, isStepwise, values, lowerInclusive, upperInclusive, TGeomPoint::getSingleTemporalValue);
+        super(srid, isStepwise, values, lowerInclusive, upperInclusive, TGeomPointInst::new);
     }
 
     public TGeomPointSeq(int srid, TGeomPointInst[] values) throws SQLException {

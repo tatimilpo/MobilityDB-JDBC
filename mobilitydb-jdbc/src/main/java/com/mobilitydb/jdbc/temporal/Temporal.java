@@ -1,5 +1,8 @@
 package com.mobilitydb.jdbc.temporal;
 
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -51,6 +54,14 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
     public abstract V maxValue();
 
     public abstract V valueAtTimestamp(OffsetDateTime timestamp);
+
+    public abstract OffsetDateTime startTimestamp();
+
+    public abstract OffsetDateTime endTimestamp();
+
+    public abstract PeriodSet getTime() throws SQLException;
+
+    public abstract Period period() throws SQLException;
 
     public TemporalType getTemporalType() {
         return temporalType;

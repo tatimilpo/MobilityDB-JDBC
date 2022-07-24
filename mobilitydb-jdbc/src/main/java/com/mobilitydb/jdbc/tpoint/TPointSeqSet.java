@@ -1,40 +1,36 @@
 package com.mobilitydb.jdbc.tpoint;
 
-import com.mobilitydb.jdbc.temporal.GetSingleTemporalValueFunction;
 import com.mobilitydb.jdbc.temporal.TSequence;
 import com.mobilitydb.jdbc.temporal.TSequenceSet;
-import com.mobilitydb.jdbc.temporal.TemporalValue;
+import com.mobilitydb.jdbc.temporal.delegates.GetTemporalSequenceFunction;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParseResponse;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParser;
 import org.postgis.Point;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TPointSeqSet extends TSequenceSet<Point> {
     private int srid;
 
     protected TPointSeqSet(String value,
-                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(value, getSingleTemporalValue, TPoint::compareValue);
+                           GetTemporalSequenceFunction<Point> getTemporalSequenceFunction) throws SQLException {
+        super(value, getTemporalSequenceFunction, TPoint::compareValue);
         applySRID();
     }
 
     protected TPointSeqSet(int srid,
                            boolean stepwise,
                            String[] values,
-                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, getSingleTemporalValue, TPoint::compareValue);
+                           GetTemporalSequenceFunction<Point> getTemporalSequenceFunction) throws SQLException {
+        super(stepwise, values, getTemporalSequenceFunction, TPoint::compareValue);
         this.srid = srid;
         applySRID();
     }
 
     protected TPointSeqSet(int srid,
                            boolean stepwise,
-                           TSequence<Point>[] values,
-                           GetSingleTemporalValueFunction<Point> getSingleTemporalValue) throws SQLException {
-        super(stepwise, values, getSingleTemporalValue, TPoint::compareValue);
+                           TSequence<Point>[] values) throws SQLException {
+        super(stepwise, values, TPoint::compareValue);
         this.srid = srid;
         applySRID();
     }
@@ -48,11 +44,7 @@ public class TPointSeqSet extends TSequenceSet<Point> {
     }
 
     public void applySRID() throws SQLException {
-        // TODO: Or maybe overload the applySRID in SRIDParser to support array of arrays?
-        List<TemporalValue<Point>> flatValues = temporalValues.stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
-        srid = SRIDParser.applySRID(srid, flatValues);
+        srid = SRIDParser.applySRID(srid, getValues());
     }
 
     @Override

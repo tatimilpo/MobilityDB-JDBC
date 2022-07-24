@@ -1,5 +1,9 @@
 package com.mobilitydb.jdbc.temporal;
 
+import com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -18,6 +22,12 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
     protected TInstant(V value, OffsetDateTime time) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT);
         temporalValue = buildTemporalValue(value, time);
+        validate();
+    }
+
+    protected TInstant(TemporalValue<V> value) throws SQLException {
+        super(TemporalType.TEMPORAL_INSTANT);
+        temporalValue = value;
         validate();
     }
 
@@ -78,6 +88,26 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
             return temporalValue.getValue();
         }
         return null;
+    }
+
+    @Override
+    public OffsetDateTime startTimestamp() {
+        return temporalValue.getTime();
+    }
+
+    @Override
+    public OffsetDateTime endTimestamp() {
+        return temporalValue.getTime();
+    }
+
+    @Override
+    public Period period() throws SQLException  {
+        return new Period(temporalValue.getTime(), temporalValue.getTime(), true, true);
+    }
+
+    @Override
+    public PeriodSet getTime() throws SQLException {
+        return new PeriodSet(period());
     }
 
     public OffsetDateTime getTimestamp() {

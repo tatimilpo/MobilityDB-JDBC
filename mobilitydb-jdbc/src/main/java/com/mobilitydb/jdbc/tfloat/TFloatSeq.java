@@ -6,25 +6,25 @@ import java.sql.SQLException;
 
 public class TFloatSeq extends TSequence<Float> {
     public TFloatSeq(String value) throws SQLException {
-        super(value, TFloat::getSingleTemporalValue, TFloat::compareValue);
+        super(value, TFloatInst::new, TFloat::compareValue);
     }
 
     public TFloatSeq(String[] values) throws SQLException {
-        super(false, values, TFloat::getSingleTemporalValue, TFloat::compareValue);
+        super(false, values, TFloatInst::new, TFloat::compareValue);
     }
 
     public TFloatSeq(boolean isStepwise, String[] values) throws SQLException {
-        super(isStepwise, values, TFloat::getSingleTemporalValue, TFloat::compareValue);
+        super(isStepwise, values, TFloatInst::new, TFloat::compareValue);
     }
 
     public TFloatSeq(String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(false, values, lowerInclusive, upperInclusive, TFloat::getSingleTemporalValue, TFloat::compareValue);
+        super(false, values, lowerInclusive, upperInclusive, TFloatInst::new, TFloat::compareValue);
     }
 
     public TFloatSeq(boolean isStepwise, String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(isStepwise, values, lowerInclusive, upperInclusive, TFloat::getSingleTemporalValue, TFloat::compareValue);
+        super(isStepwise, values, lowerInclusive, upperInclusive, TFloatInst::new, TFloat::compareValue);
     }
 
     public TFloatSeq(TFloatInst[] values) throws SQLException {

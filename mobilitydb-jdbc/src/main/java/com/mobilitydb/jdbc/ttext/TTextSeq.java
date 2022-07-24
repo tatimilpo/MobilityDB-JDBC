@@ -9,16 +9,16 @@ import java.sql.SQLException;
  */
 public class TTextSeq extends TSequence<String> {
     public TTextSeq(String value) throws SQLException {
-        super(value, TText::getSingleTemporalValue, TText::compareValue);
+        super(value, TTextInst::new, TText::compareValue);
         stepwise = true;
     }
 
     public TTextSeq(String[] values) throws SQLException {
-        super(true, values, TText::getSingleTemporalValue, TText::compareValue);
+        super(true, values, TTextInst::new, TText::compareValue);
     }
 
     public TTextSeq(String[] values, boolean lowerInclusive, boolean upperInclusive) throws SQLException {
-        super(true, values, lowerInclusive, upperInclusive, TText::getSingleTemporalValue, TText::compareValue);
+        super(true, values, lowerInclusive, upperInclusive, TTextInst::new, TText::compareValue);
     }
 
     public TTextSeq(TTextInst[] values) throws SQLException {

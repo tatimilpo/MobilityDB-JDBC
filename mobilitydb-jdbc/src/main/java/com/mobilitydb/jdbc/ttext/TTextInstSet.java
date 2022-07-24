@@ -6,11 +6,11 @@ import java.sql.SQLException;
 
 public class TTextInstSet extends TInstantSet<String> {
     public TTextInstSet(String value) throws SQLException {
-        super(value, TText::getSingleTemporalValue, TText::compareValue);
+        super(value, TTextInst::new, TText::compareValue);
     }
 
     public TTextInstSet(String[] values) throws SQLException {
-        super(values, TText::getSingleTemporalValue, TText::compareValue);
+        super(values, TTextInst::new, TText::compareValue);
     }
 
     public TTextInstSet(TTextInst[] values) throws SQLException {

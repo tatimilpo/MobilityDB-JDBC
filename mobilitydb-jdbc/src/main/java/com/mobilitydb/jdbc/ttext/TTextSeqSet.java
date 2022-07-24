@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 public class TTextSeqSet extends TSequenceSet<String> {
     public TTextSeqSet(String value) throws SQLException {
-        super(value, TText::getSingleTemporalValue, TText::compareValue);
+        super(value, TTextSeq::new, TText::compareValue);
         stepwise = true;
     }
 
     public TTextSeqSet(String[] values) throws SQLException {
-        super(true, values, TText::getSingleTemporalValue, TText::compareValue);
+        super(true, values, TTextSeq::new, TText::compareValue);
     }
 
     public TTextSeqSet(TTextSeq[] values) throws SQLException {
-        super(true, values, TText::getSingleTemporalValue, TText::compareValue);
+        super(true, values, TText::compareValue);
     }
 
     @Override

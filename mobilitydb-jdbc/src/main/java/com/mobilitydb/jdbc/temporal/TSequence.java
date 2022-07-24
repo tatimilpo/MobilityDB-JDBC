@@ -1,7 +1,13 @@
 package com.mobilitydb.jdbc.temporal;
 
+import com.mobilitydb.jdbc.temporal.delegates.CompareValueFunction;
+import com.mobilitydb.jdbc.temporal.delegates.GetTemporalInstantFunction;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
+
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.StringJoiner;
 
 public abstract class TSequence<V extends Serializable> extends TemporalInstants<V> {
@@ -10,26 +16,26 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     private boolean upperInclusive;
 
     protected TSequence(String value,
-                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                        CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
-        parseValue(value, getSingleTemporalValue);
+                        GetTemporalInstantFunction<V> getTemporalInstantFunction,
+                        CompareValueFunction<V> compareValueFunction) throws SQLException {
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
+        parseValue(value, getTemporalInstantFunction);
         validate();
     }
 
     protected TSequence(boolean stepwise,
                         String[] values,
-                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                        CompareValue<V> compareValue) throws SQLException {
-        this(stepwise, values, true, false, getSingleTemporalValue, compareValue);
+                        GetTemporalInstantFunction<V> getTemporalInstantFunction,
+                        CompareValueFunction<V> compareValueFunction) throws SQLException {
+        this(stepwise, values, true, false, getTemporalInstantFunction, compareValueFunction);
     }
 
     protected TSequence(boolean stepwise, String[] values, boolean lowerInclusive, boolean upperInclusive,
-                        GetSingleTemporalValueFunction<V> getSingleTemporalValue,
-                        CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
+                        GetTemporalInstantFunction<V> getTemporalInstantFunction,
+                        CompareValueFunction<V> compareValueFunction) throws SQLException {
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
         for (String val : values) {
-            temporalValues.add(getSingleTemporalValue.run(val.trim()));
+            instants.add(getTemporalInstantFunction.run(val.trim()));
         }
         this.lowerInclusive = lowerInclusive;
         this.upperInclusive = upperInclusive;
@@ -37,23 +43,22 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
         validate();
     }
 
-    protected TSequence(boolean stepwise, TInstant<V>[] values, CompareValue<V> compareValue) throws SQLException {
-        this(stepwise, values, true, false, compareValue);
+    protected TSequence(boolean stepwise, TInstant<V>[] values, CompareValueFunction<V> compareValueFunction)
+            throws SQLException {
+        this(stepwise, values, true, false, compareValueFunction);
     }
 
     protected TSequence(boolean stepwise, TInstant<V>[] values, boolean lowerInclusive, boolean upperInclusive,
-                        CompareValue<V> compareValue) throws SQLException {
-        super(TemporalType.TEMPORAL_SEQUENCE, compareValue);
-        for (TInstant<V> val : values) {
-            temporalValues.add(val.getTemporalValue());
-        }
+                        CompareValueFunction<V> compareValueFunction) throws SQLException {
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
+        instants.addAll(Arrays.asList(values));
         this.lowerInclusive = lowerInclusive;
         this.upperInclusive = upperInclusive;
         this.stepwise = stepwise;
         validate();
     }
 
-    private void parseValue(String value, GetSingleTemporalValueFunction<V> getSingleTemporalValue)
+    private void parseValue(String value, GetTemporalInstantFunction<V> getTemporalInstantFunction)
             throws SQLException {
         String[] values = preprocessValue(value).split(",");
 
@@ -87,7 +92,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
             if (i == values.length - 1 ) {
                 val = val.substring(0, val.length() - 1);
             }
-            temporalValues.add(getSingleTemporalValue.run(val.trim()));
+            instants.add(getTemporalInstantFunction.run(val.trim()));
         }
     }
 
@@ -108,7 +113,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     String buildValue(boolean skipInterpolation) {
         StringJoiner sj = new StringJoiner(", ");
 
-        for (TemporalValue<V> temp : temporalValues) {
+        for (TInstant<V> temp : instants) {
             sj.add(temp.toString());
         }
 
@@ -117,6 +122,18 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
                 lowerInclusive ? TemporalConstants.LOWER_INCLUSIVE : TemporalConstants.LOWER_EXCLUSIVE,
                 sj.toString(),
                 upperInclusive ? TemporalConstants.UPPER_INCLUSIVE : TemporalConstants.UPPER_EXCLUSIVE);
+    }
+
+    @Override
+    public Period period() throws SQLException  {
+        return new Period(instants.get(0).getTimestamp(),
+                instants.get(instants.size() - 1).getTimestamp(),
+                lowerInclusive, upperInclusive);
+    }
+
+    @Override
+    public PeriodSet getTime() throws SQLException {
+        return new PeriodSet(period());
     }
 
     @Override
@@ -153,5 +170,13 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
 
     public boolean isStepwise() {
         return stepwise;
+    }
+
+    public boolean isLowerInclusive() {
+        return lowerInclusive;
+    }
+
+    public boolean isUpperInclusive() {
+        return upperInclusive;
     }
 }

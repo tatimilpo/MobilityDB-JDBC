@@ -1,6 +1,5 @@
 package com.mobilitydb.jdbc.tpoint.tgeog;
 
-import com.mobilitydb.jdbc.tpoint.TPoint;
 import com.mobilitydb.jdbc.tpoint.helpers.TPointConstants;
 import com.mobilitydb.jdbc.tpoint.TPointSeq;
 
@@ -8,15 +7,15 @@ import java.sql.SQLException;
 
 public class TGeogPointSeq extends TPointSeq {
     public TGeogPointSeq(String value) throws SQLException {
-        super(value, TGeogPoint::getSingleTemporalValue);
+        super(value, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(String[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, false, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, false, values, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(boolean isStepwise, String[] values) throws SQLException {
-        super(TPointConstants.DEFAULT_SRID, isStepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(TPointConstants.DEFAULT_SRID, isStepwise, values, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(String[] values, boolean lowerInclusive, boolean upperInclusive)
@@ -26,7 +25,7 @@ public class TGeogPointSeq extends TPointSeq {
                 values,
                 lowerInclusive,
                 upperInclusive,
-                TPoint::getSingleTemporalValue);
+                TGeogPointInst::new);
     }
 
     public TGeogPointSeq(boolean isStepwise, String[] values, boolean lowerInclusive, boolean upperInclusive)
@@ -36,7 +35,7 @@ public class TGeogPointSeq extends TPointSeq {
                 values,
                 lowerInclusive,
                 upperInclusive,
-                TPoint::getSingleTemporalValue);
+                TGeogPointInst::new);
     }
 
     public TGeogPointSeq(TGeogPointInst[] values) throws SQLException {
@@ -58,21 +57,21 @@ public class TGeogPointSeq extends TPointSeq {
     }
 
     public TGeogPointSeq(int srid, String[] values) throws SQLException {
-        super(srid, false, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, false, values, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(int srid, boolean isStepwise, String[] values) throws SQLException {
-        super(srid, isStepwise, values, TGeogPoint::getSingleTemporalValue);
+        super(srid, isStepwise, values, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(int srid, String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(srid, false, values, lowerInclusive, upperInclusive, TPoint::getSingleTemporalValue);
+        super(srid, false, values, lowerInclusive, upperInclusive, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(int srid, boolean isStepwise, String[] values, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
-        super(srid, isStepwise, values, lowerInclusive, upperInclusive, TPoint::getSingleTemporalValue);
+        super(srid, isStepwise, values, lowerInclusive, upperInclusive, TGeogPointInst::new);
     }
 
     public TGeogPointSeq(int srid, TGeogPointInst[] values) throws SQLException {

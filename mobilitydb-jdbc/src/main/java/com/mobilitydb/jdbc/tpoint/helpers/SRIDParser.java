@@ -1,6 +1,5 @@
 package com.mobilitydb.jdbc.tpoint.helpers;
 
-import com.mobilitydb.jdbc.temporal.TemporalValue;
 import org.postgis.Point;
 
 import java.sql.SQLException;
@@ -51,7 +50,7 @@ public class SRIDParser {
      * @returns the modified SRID
      * @throws SQLException - If any value has a different SRID defined
      */
-    public static int applySRID(int srid, List<TemporalValue<Point>> temporalValues) throws SQLException {
+    public static int applySRID(int srid, List<Point> temporalValues) throws SQLException {
         if (srid == TPointConstants.EMPTY_SRID) {
             srid = getFirstSRID(temporalValues);
 
@@ -60,12 +59,12 @@ public class SRIDParser {
             }
         }
 
-        for (TemporalValue<Point> temporalValue : temporalValues) {
-            int currentSRID = temporalValue.getValue().getSrid();
+        for (Point temporalValue : temporalValues) {
+            int currentSRID = temporalValue.getSrid();
 
             if (currentSRID == TPointConstants.EMPTY_SRID) {
                 currentSRID = srid;
-                temporalValue.getValue().setSrid(currentSRID);
+                temporalValue.setSrid(currentSRID);
             }
 
             if (currentSRID != srid) {
@@ -78,9 +77,9 @@ public class SRIDParser {
         return srid;
     }
 
-    private static int getFirstSRID(List<TemporalValue<Point>> temporalValues) {
-        for (TemporalValue<Point> temporalValue : temporalValues) {
-            int currentSRID = temporalValue.getValue().getSrid();
+    private static int getFirstSRID(List<Point> temporalValues) {
+        for (Point temporalValue : temporalValues) {
+            int currentSRID = temporalValue.getSrid();
 
             if (currentSRID != TPointConstants.EMPTY_SRID) {
                 return currentSRID;
