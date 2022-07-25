@@ -1,14 +1,18 @@
 package com.mobilitydb.jdbc.unit.ttext;
 
 import com.mobilitydb.jdbc.temporal.TemporalType;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
 import com.mobilitydb.jdbc.ttext.TTextInst;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -145,4 +149,146 @@ class TTextInstTest {
         TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
         assertEquals(expectedDate, tTextInst.getTimestamp());
     }
+
+    @Test
+    void testNumTimestamps() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(1, tTextInst.numTimestamps());
+    }
+
+    @Test
+    void testTimestamps() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(1, tTextInst.timestamps().length);
+        assertEquals(expectedDate, tTextInst.timestamps()[0]);
+    }
+
+    @Test
+    void testTimestampN() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tTextInst.timestampN(0));
+    }
+
+    @Test
+    void testTimestampNNoValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tTextInst.timestampN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testStartTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tTextInst.startTimestamp());
+    }
+
+    @Test
+    void testEndTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tTextInst.startTimestamp());
+    }
+
+    @Test
+    void testPeriod() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        assertEquals(period, tTextInst.period());
+    }
+
+    @Test
+    void testGetTime() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        PeriodSet periodSet = new PeriodSet(period);
+        assertEquals(periodSet, tTextInst.getTime());
+    }
+
+    @Test
+    void testNumInstants() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(1, tTextInst.numInstants());
+    }
+
+    @Test
+    void testStartInstant() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(tTextInst, tTextInst.startInstant());
+    }
+
+    @Test
+    void testEndInstant() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(tTextInst, tTextInst.endInstant());
+    }
+
+    @Test
+    void testInstantN() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(tTextInst, tTextInst.instantN(0));
+    }
+
+    @Test
+    void testInstantNNoValue() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tTextInst.instantN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testGetInstants() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        ArrayList<TTextInst> list = new ArrayList<>();
+        list.add(tTextInst);
+        assertEquals(1, list.size());
+        assertEquals(list, tTextInst.getInstants());
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(Duration.ZERO, tTextInst.duration());
+    }
+
+    @Test
+    void testTimespan() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertEquals(Duration.ZERO, tTextInst.timespan());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        TTextInst otherTTextInst = new TTextInst("who@2019-09-10 06:04:32+02");
+        tTextInst.shift(Duration.ofDays(2));
+        assertEquals(otherTTextInst, tTextInst);
+    }
+
 }

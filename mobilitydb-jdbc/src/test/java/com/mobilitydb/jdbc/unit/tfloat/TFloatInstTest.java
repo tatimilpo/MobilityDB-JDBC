@@ -2,13 +2,17 @@ package com.mobilitydb.jdbc.unit.tfloat;
 
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.tfloat.TFloatInst;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -142,5 +146,146 @@ class TFloatInstTest {
                 6, 4, 32, 0, tz);
         TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
         assertEquals(expectedDate, tFloatInst.getTimestamp());
+    }
+
+    @Test
+    void testNumTimestamps() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(1, tFloatInst.numTimestamps());
+    }
+
+    @Test
+    void testTimestamps() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(1, tFloatInst.timestamps().length);
+        assertEquals(expectedDate, tFloatInst.timestamps()[0]);
+    }
+
+    @Test
+    void testTimestampN() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(expectedDate, tFloatInst.timestampN(0));
+    }
+
+    @Test
+    void testTimestampNNoValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tFloatInst.timestampN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testStartTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(expectedDate, tFloatInst.startTimestamp());
+    }
+
+    @Test
+    void testEndTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(expectedDate, tFloatInst.startTimestamp());
+    }
+
+    @Test
+    void testPeriod() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        assertEquals(period, tFloatInst.period());
+    }
+
+    @Test
+    void testGetTime() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 10, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        PeriodSet periodSet = new PeriodSet(period);
+        assertEquals(periodSet, tFloatInst.getTime());
+    }
+
+    @Test
+    void testNumInstants() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(1, tFloatInst.numInstants());
+    }
+
+    @Test
+    void testStartInstant() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(tFloatInst, tFloatInst.startInstant());
+    }
+
+    @Test
+    void testEndInstant() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(tFloatInst, tFloatInst.endInstant());
+    }
+
+    @Test
+    void testInstantN() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(tFloatInst, tFloatInst.instantN(0));
+    }
+
+    @Test
+    void testInstantNNoValue() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tFloatInst.instantN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testGetInstants() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        ArrayList<TFloatInst> list = new ArrayList<>();
+        list.add(tFloatInst);
+        assertEquals(1, list.size());
+        assertEquals(list, tFloatInst.getInstants());
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(Duration.ZERO, tFloatInst.duration());
+    }
+
+    @Test
+    void testTimespan() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertEquals(Duration.ZERO, tFloatInst.timespan());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        TFloatInst otherTFloatInst = new TFloatInst("84.12@2019-09-10 06:10:32+02");
+        tFloatInst.shift(Duration.ofDays(2));
+        assertEquals(otherTFloatInst, tFloatInst);
     }
 }

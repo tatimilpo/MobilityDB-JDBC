@@ -1,6 +1,8 @@
 package com.mobilitydb.jdbc.unit.tpoint.tgeog;
 
 import com.mobilitydb.jdbc.temporal.TemporalType;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInst;
 
 import org.junit.jupiter.api.Test;
@@ -9,8 +11,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.postgis.Point;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,5 +121,146 @@ class TGeogPointInstTest {
                 6, 4, 32, 0, tz);
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
         assertEquals(expectedDate, tGeogPointInst.getTimestamp());
+    }
+
+    @Test
+    void testNumTimestamps() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(1, tGeogPointInst.numTimestamps());
+    }
+
+    @Test
+    void testTimestamps() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(1, tGeogPointInst.timestamps().length);
+        assertEquals(expectedDate, tGeogPointInst.timestamps()[0]);
+    }
+
+    @Test
+    void testTimestampN() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tGeogPointInst.timestampN(0));
+    }
+
+    @Test
+    void testTimestampNNoValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tGeogPointInst.timestampN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testStartTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tGeogPointInst.startTimestamp());
+    }
+
+    @Test
+    void testEndTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(expectedDate, tGeogPointInst.startTimestamp());
+    }
+
+    @Test
+    void testPeriod() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        assertEquals(period, tGeogPointInst.period());
+    }
+
+    @Test
+    void testGetTime() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        Period period = new Period(date,date,true,true);
+        PeriodSet periodSet = new PeriodSet(period);
+        assertEquals(periodSet, tGeogPointInst.getTime());
+    }
+
+    @Test
+    void testNumInstants() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(1, tGeogPointInst.numInstants());
+    }
+
+    @Test
+    void testStartInstant() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(tGeogPointInst, tGeogPointInst.startInstant());
+    }
+
+    @Test
+    void testEndInstant() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(tGeogPointInst, tGeogPointInst.endInstant());
+    }
+
+    @Test
+    void testInstantN() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(tGeogPointInst, tGeogPointInst.instantN(0));
+    }
+
+    @Test
+    void testInstantNNoValue() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tGeogPointInst.instantN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testGetInstants() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        ArrayList<TGeogPointInst> list = new ArrayList<>();
+        list.add(tGeogPointInst);
+        assertEquals(1, list.size());
+        assertEquals(list, tGeogPointInst.getInstants());
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(Duration.ZERO, tGeogPointInst.duration());
+    }
+
+    @Test
+    void testTimespan() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
+        assertEquals(Duration.ZERO, tGeogPointInst.timespan());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 08:00:05+02");
+        TGeogPointInst otherTGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-10 08:00:05+02");
+        tGeogPointInst.shift(Duration.ofDays(2));
+        assertEquals(otherTGeogPointInst, tGeogPointInst);
     }
 }
