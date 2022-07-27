@@ -3,11 +3,15 @@ package com.mobilitydb.jdbc.unit.tbool;
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.tbool.TBoolInst;
 import com.mobilitydb.jdbc.tbool.TBoolInstSet;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -140,5 +144,194 @@ class TBoolInstSetTest {
         TBoolInstSet tBoolInstSet = new TBoolInstSet(
                 "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
         assertEquals(false, tBoolInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testNumTimestamps() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(3, tBoolInstSet.numTimestamps());
+    }
+
+    @Test
+    void testTimestamps() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime firstExpectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime secondExpectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        OffsetDateTime thirdExpectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(3, tBoolInstSet.timestamps().length);
+        assertEquals(firstExpectedDate, tBoolInstSet.timestamps()[0]);
+        assertEquals(secondExpectedDate, tBoolInstSet.timestamps()[1]);
+        assertEquals(thirdExpectedDate, tBoolInstSet.timestamps()[2]);
+    }
+
+    @Test
+    void testTimestampN() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tBoolInstSet.timestampN(1));
+    }
+
+    @Test
+    void testTimestampNNoValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tBoolInstSet.timestampN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testStartTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tBoolInstSet.startTimestamp());
+    }
+
+    @Test
+    void testEndTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tBoolInstSet.endTimestamp());
+    }
+
+    @Test
+    void testPeriod() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime endDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        Period period = new Period(initialDate, endDate,true,true);
+        assertEquals(period, tBoolInstSet.period());
+    }
+
+    @Test
+    void testGetTime() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime firstExpectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime secondExpectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        OffsetDateTime thirdExpectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+
+        Period firstPeriod = new Period(firstExpectedDate, firstExpectedDate, true, true);
+        Period secondPeriod = new Period(secondExpectedDate, secondExpectedDate, true, true);
+        Period thirdPeriod = new Period(thirdExpectedDate, thirdExpectedDate, true, true);
+
+        PeriodSet periodSet = new PeriodSet(firstPeriod,secondPeriod,thirdPeriod);
+        assertEquals(periodSet, tBoolInstSet.getTime());
+    }
+
+    @Test
+    void testNumInstants() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(3, tBoolInstSet.numInstants());
+    }
+
+    @Test
+    void testStartInstant() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        TBoolInst tBoolInst = new TBoolInst("false@2001-01-01 08:00:00+02");
+        assertEquals(tBoolInst, tBoolInstSet.startInstant());
+    }
+
+    @Test
+    void testEndInstant() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        TBoolInst tBoolInst = new TBoolInst("true@2001-01-04 08:00:00+02");
+        assertEquals(tBoolInst, tBoolInstSet.endInstant());
+    }
+
+    @Test
+    void testInstantN() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        TBoolInst tBoolInst = new TBoolInst("true@2001-01-03 08:00:00+02");
+        assertEquals(tBoolInst, tBoolInstSet.instantN(1));
+    }
+
+    @Test
+    void testInstantNNoValue() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tBoolInstSet.instantN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testGetInstants() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ArrayList<TBoolInst> list = new ArrayList<>();
+        TBoolInst firstTBoolInst = new TBoolInst("false@2001-01-01 08:00:00+02");
+        TBoolInst secondTBoolInst = new TBoolInst("true@2001-01-03 08:00:00+02");
+        TBoolInst thirdTBoolInst = new TBoolInst("true@2001-01-04 08:00:00+02");
+        list.add(firstTBoolInst);
+        list.add(secondTBoolInst);
+        list.add(thirdTBoolInst);
+        assertEquals(3, list.size());
+        assertEquals(list, tBoolInstSet.getInstants());
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        assertEquals(Duration.ZERO, tBoolInstSet.duration());
+    }
+
+    @Test
+    void testTimespan() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime endDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        Duration expectedDuration = Duration.between(initialDate, endDate);
+        assertEquals(expectedDuration, tBoolInstSet.timespan());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        TBoolInstSet otherTBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-03 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02}");
+        tBoolInstSet.shift(Duration.ofDays(2));
+        assertEquals(otherTBoolInstSet, tBoolInstSet);
     }
 }

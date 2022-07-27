@@ -1,14 +1,18 @@
 package com.mobilitydb.jdbc.unit.tpoint.tgeog;
 
 import com.mobilitydb.jdbc.temporal.TemporalType;
+import com.mobilitydb.jdbc.time.Period;
+import com.mobilitydb.jdbc.time.PeriodSet;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInst;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInstSet;
 import org.junit.jupiter.api.Test;
 import org.postgis.Point;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -151,5 +155,230 @@ class TGeogPointInstSetTest {
         Point point = new Point(1,0);
         point.setSrid(4326);
         assertEquals(point, tGeogPointInstSet.valueAtTimestamp(timestamp));
+    }
+
+    @Test
+    void testNumTimestamps() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(3, tGeogPointInstSet.numTimestamps());
+    }
+
+    @Test
+    void testTimestamps() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime firstExpectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime secondExpectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        OffsetDateTime thirdExpectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(3, tGeogPointInstSet.timestamps().length);
+        assertEquals(firstExpectedDate, tGeogPointInstSet.timestamps()[0]);
+        assertEquals(secondExpectedDate, tGeogPointInstSet.timestamps()[1]);
+        assertEquals(thirdExpectedDate, tGeogPointInstSet.timestamps()[2]);
+    }
+
+    @Test
+    void testTimestampN() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tGeogPointInstSet.timestampN(1));
+    }
+
+    @Test
+    void testTimestampNNoValue() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tGeogPointInstSet.timestampN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testStartTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tGeogPointInstSet.startTimestamp());
+    }
+
+    @Test
+    void testEndTimestamp() throws SQLException {
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(expectedDate, tGeogPointInstSet.endTimestamp());
+    }
+
+    @Test
+    void testPeriod() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime endDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        Period period = new Period(initialDate, endDate,true,true);
+        assertEquals(period, tGeogPointInstSet.period());
+    }
+
+    @Test
+    void testGetTime() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime firstExpectedDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime secondExpectedDate = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        OffsetDateTime thirdExpectedDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+
+        Period firstPeriod = new Period(firstExpectedDate, firstExpectedDate, true, true);
+        Period secondPeriod = new Period(secondExpectedDate, secondExpectedDate, true, true);
+        Period thirdPeriod = new Period(thirdExpectedDate, thirdExpectedDate, true, true);
+
+        PeriodSet periodSet = new PeriodSet(firstPeriod,secondPeriod,thirdPeriod);
+        assertEquals(periodSet, tGeogPointInstSet.getTime());
+    }
+
+    @Test
+    void testNumInstants() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(3, tGeogPointInstSet.numInstants());
+    }
+
+    @Test
+    void testStartInstant() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(1 0)@2001-01-01 08:00:00+02");
+        assertEquals(tGeogPointInst, tGeogPointInstSet.startInstant());
+    }
+
+    @Test
+    void testEndInstant() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(3 0)@2001-01-04 08:00:00+02");
+        assertEquals(tGeogPointInst, tGeogPointInstSet.endInstant());
+    }
+
+    @Test
+    void testInstantN() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 2)@2001-01-03 08:00:00+02");
+        assertEquals(tGeogPointInst, tGeogPointInstSet.instantN(1));
+    }
+
+    @Test
+    void testInstantNNoValue() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    tGeogPointInstSet.instantN(4);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+    }
+
+    @Test
+    void testGetInstants() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ArrayList<TGeogPointInst> list = new ArrayList<>();
+        TGeogPointInst firstTGeogPointInst = new TGeogPointInst("Point(1 0)@2001-01-01 08:00:00+02");
+        TGeogPointInst secondTGeogPointInst = new TGeogPointInst("Point(0 2)@2001-01-03 08:00:00+02");
+        TGeogPointInst thirdTGeogPointInst = new TGeogPointInst("Point(3 0)@2001-01-04 08:00:00+02");
+        list.add(firstTGeogPointInst);
+        list.add(secondTGeogPointInst);
+        list.add(thirdTGeogPointInst);
+        assertEquals(3, list.size());
+        assertEquals(list, tGeogPointInstSet.getInstants());
+    }
+
+    @Test
+    void testDuration() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        assertEquals(Duration.ZERO, tGeogPointInstSet.duration());
+    }
+
+    @Test
+    void testTimespan() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime endDate = OffsetDateTime.of(2001,1, 4,
+                8, 0, 0, 0, tz);
+        Duration expectedDuration = Duration.between(initialDate, endDate);
+        assertEquals(expectedDuration, tGeogPointInstSet.timespan());
+    }
+
+    @Test
+    void testShift() throws SQLException {
+        TGeogPointInstSet tGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        TGeogPointInstSet otherTGeogPointInstSet = new TGeogPointInstSet(
+                "{Point(1 0)@2001-01-03 08:00:00+02, " +
+                        "Point(0 2)@2001-01-05 08:00:00+02, " +
+                        "Point(3 0)@2001-01-06 08:00:00+02}");
+        tGeogPointInstSet.shift(Duration.ofDays(2));
+        assertEquals(otherTGeogPointInstSet, tGeogPointInstSet);
     }
 }
