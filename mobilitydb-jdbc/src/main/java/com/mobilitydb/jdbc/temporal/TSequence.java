@@ -8,6 +8,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -152,6 +153,24 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
             return period().duration();
         } catch (SQLException ex) {
             return Duration.ZERO;
+        }
+    }
+
+    @Override
+    public boolean intersectsTimestamp(OffsetDateTime dateTime) {
+        try {
+            return period().contains(dateTime);
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean intersectsPeriod(Period period) {
+        try {
+            return period().overlap(period);
+        } catch (SQLException ex) {
+            return false;
         }
     }
 

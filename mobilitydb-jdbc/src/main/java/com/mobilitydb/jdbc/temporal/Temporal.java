@@ -86,6 +86,10 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
 
     public abstract void shift(Duration duration);
 
+    public abstract boolean intersectsTimestamp(OffsetDateTime dateTime);
+
+    public abstract boolean intersectsPeriod(Period period);
+
     public TemporalType getTemporalType() {
         return temporalType;
     }

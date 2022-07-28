@@ -8,6 +8,7 @@ import com.mobilitydb.jdbc.time.PeriodSet;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringJoiner;
@@ -66,6 +67,26 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
     @Override
     public Duration timespan() {
         return Duration.between(startTimestamp(), endTimestamp());
+    }
+
+    @Override
+    public boolean intersectsTimestamp(OffsetDateTime dateTime) {
+        for (TInstant<V> instant : instants) {
+            if (instant.intersectsTimestamp(dateTime)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean intersectsPeriod(Period period) {
+        for (TInstant<V> instant : instants) {
+            if (instant.intersectsPeriod(period)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

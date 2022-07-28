@@ -176,6 +176,20 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         temporalValue.setTime(temporalValue.getTime().plus(duration));
     }
 
+    @Override
+    public boolean intersectsTimestamp(OffsetDateTime dateTime) {
+        return temporalValue.getTime().isEqual(dateTime);
+    }
+
+    @Override
+    public boolean intersectsPeriod(Period period) {
+        if (period == null) {
+            return false;
+        }
+
+        return period.contains(temporalValue.getTime());
+    }
+
     public OffsetDateTime getTimestamp() {
         return temporalValue.getTime();
     }

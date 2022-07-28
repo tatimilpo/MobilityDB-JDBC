@@ -299,6 +299,26 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
+    public boolean intersectsTimestamp(OffsetDateTime dateTime) {
+        for (TSequence<V> sequence : sequences) {
+            if (sequence.intersectsTimestamp(dateTime)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean intersectsPeriod(Period period) {
+        for (TSequence<V> sequence : sequences) {
+            if (sequence.intersectsPeriod(period)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
