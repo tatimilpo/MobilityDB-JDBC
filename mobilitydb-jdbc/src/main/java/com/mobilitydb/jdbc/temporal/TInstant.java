@@ -107,7 +107,7 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
             return temporalValue.getTime();
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no timestamp at this index.");
     }
 
     @Override
@@ -151,7 +151,7 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
             return this;
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no instant at this index.");
     }
 
     @Override

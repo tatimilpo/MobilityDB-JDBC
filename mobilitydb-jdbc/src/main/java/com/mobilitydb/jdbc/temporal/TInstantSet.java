@@ -40,7 +40,25 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        // TODO: Implement
+        for (int i = 0; i < instantList.size(); i++) {
+            TInstant<V> x = instantList.get(i);
+            validateInstant(x);
+
+            if (i + 1 < instantList.size()) {
+                TInstant<V>  y = instantList.get(i + 1);
+                validateInstant(y);
+
+                if (x.getTimestamp().isAfter(y.getTimestamp()) || x.getTimestamp().isEqual(y.getTimestamp())) {
+                    throw new SQLException("The timestamps of a temporal instant set must be increasing.");
+                }
+            }
+        }
+    }
+
+    private void validateInstant(TInstant<V> instant) throws SQLException {
+        if (instant == null) {
+            throw new SQLException("All instants should have a value.");
+        }
     }
 
     @Override

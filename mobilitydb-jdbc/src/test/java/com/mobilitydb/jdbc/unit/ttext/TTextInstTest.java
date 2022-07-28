@@ -184,7 +184,7 @@ class TTextInstTest {
                     tTextInst.timestampN(4);
                 }
         );
-        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+        assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
 
     @Test
@@ -259,7 +259,7 @@ class TTextInstTest {
                     tTextInst.instantN(4);
                 }
         );
-        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+        assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
 
     @Test

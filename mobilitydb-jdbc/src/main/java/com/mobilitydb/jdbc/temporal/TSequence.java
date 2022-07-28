@@ -237,7 +237,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
             return this;
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no sequence at this index.");
     }
 
     public List<TSequence<V>> sequences() {

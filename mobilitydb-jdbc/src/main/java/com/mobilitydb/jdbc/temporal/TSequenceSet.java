@@ -212,7 +212,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             return timestamps[n];
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no timestamp at this index.");
     }
 
     @Override
@@ -265,7 +265,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             return instants.get(n);
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no instant at this index.");
     }
 
     @Override
@@ -381,7 +381,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             return sequenceList.get(n);
         }
 
-        throw new SQLException("There is no value at this index.");
+        throw new SQLException("There is no sequence at this index.");
     }
 
     public List<TSequence<V>> sequences() {

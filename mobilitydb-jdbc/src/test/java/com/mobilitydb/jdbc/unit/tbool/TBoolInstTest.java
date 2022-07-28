@@ -144,7 +144,7 @@ class TBoolInstTest {
                     tBoolInst.timestampN(4);
                 }
         );
-        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+        assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
 
     @Test
@@ -219,7 +219,7 @@ class TBoolInstTest {
                     tBoolInst.instantN(4);
                 }
         );
-        assertTrue(thrown.getMessage().contains("There is no value at this index."));
+        assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
 
     @Test
