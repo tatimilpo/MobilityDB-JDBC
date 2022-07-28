@@ -1,5 +1,6 @@
 package com.mobilitydb.jdbc.unit.ttext;
 
+import com.mobilitydb.jdbc.tbool.TBoolInstSet;
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.time.Period;
 import com.mobilitydb.jdbc.time.PeriodSet;
@@ -186,9 +187,7 @@ class TTextInstSetTest {
                 "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tTextInstSet.timestampN(4);
-                }
+                () -> tTextInstSet.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -283,9 +282,7 @@ class TTextInstSetTest {
                 "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tTextInstSet.instantN(4);
-                }
+                () -> tTextInstSet.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -333,5 +330,41 @@ class TTextInstSetTest {
                 "{pqr@2001-01-03 08:00:00+02, stu@2001-01-05 08:00:00+02, vwx@2001-01-06 08:00:00+02}");
         tTextInstSet.shift(Duration.ofDays(2));
         assertEquals(otherTTextInstSet, tTextInstSet);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        assertTrue(tTextInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tTextInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tTextInstSet.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TTextInstSet tTextInstSet = new TTextInstSet(
+                "{pqr@2001-01-01 08:00:00+02, stu@2001-01-03 08:00:00+02, vwx@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tTextInstSet.intersectsPeriod(period));
     }
 }

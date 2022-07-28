@@ -186,9 +186,7 @@ class TIntInstSetTest {
                 "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tIntInstSet.timestampN(4);
-                }
+                () -> tIntInstSet.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -283,9 +281,7 @@ class TIntInstSetTest {
                 "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tIntInstSet.instantN(4);
-                }
+                () -> tIntInstSet.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -335,4 +331,39 @@ class TIntInstSetTest {
         assertEquals(otherTIntInstSet, tIntInstSet);
     }
 
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        assertTrue(tIntInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tIntInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tIntInstSet.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TIntInstSet tIntInstSet = new TIntInstSet(
+                "{18@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02, 3@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tIntInstSet.intersectsPeriod(period));
+    }
 }

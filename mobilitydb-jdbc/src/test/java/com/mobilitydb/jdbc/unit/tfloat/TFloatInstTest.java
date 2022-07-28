@@ -178,9 +178,7 @@ class TFloatInstTest {
         TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tFloatInst.timestampN(4);
-                }
+                () -> tFloatInst.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -253,9 +251,7 @@ class TFloatInstTest {
         TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tFloatInst.instantN(4);
-                }
+                () -> tFloatInst.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -287,5 +283,43 @@ class TFloatInstTest {
         TFloatInst otherTFloatInst = new TFloatInst("84.12@2019-09-10 06:10:32+02");
         tFloatInst.shift(Duration.ofDays(2));
         assertEquals(otherTFloatInst, tFloatInst);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        assertTrue(tFloatInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tFloatInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2001-01-08 06:10:32+02");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tFloatInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tFloatInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testIntersectsPeriodNull() throws SQLException {
+        TFloatInst tFloatInst = new TFloatInst("84.12@2019-09-08 06:10:32+02");
+        assertFalse(tFloatInst.intersectsPeriod(null));
     }
 }

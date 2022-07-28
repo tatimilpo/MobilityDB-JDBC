@@ -180,9 +180,7 @@ class TTextInstTest {
         TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tTextInst.timestampN(4);
-                }
+                () -> tTextInst.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -255,9 +253,7 @@ class TTextInstTest {
         TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tTextInst.instantN(4);
-                }
+                () -> tTextInst.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -289,6 +285,44 @@ class TTextInstTest {
         TTextInst otherTTextInst = new TTextInst("who@2019-09-10 06:04:32+02");
         tTextInst.shift(Duration.ofDays(2));
         assertEquals(otherTTextInst, tTextInst);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                6, 4, 32, 0, tz);
+        assertTrue(tTextInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tTextInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2001-01-08 06:04:32+02");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tTextInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tTextInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testIntersectsPeriodNull() throws SQLException {
+        TTextInst tTextInst = new TTextInst("who@2019-09-08 06:04:32+02");
+        assertFalse(tTextInst.intersectsPeriod(null));
     }
 
 }

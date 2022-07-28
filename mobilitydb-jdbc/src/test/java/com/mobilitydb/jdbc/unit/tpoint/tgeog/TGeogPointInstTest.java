@@ -153,9 +153,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tGeogPointInst.timestampN(4);
-                }
+                () -> tGeogPointInst.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -228,9 +226,7 @@ class TGeogPointInstTest {
         TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 06:04:32+02");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tGeogPointInst.instantN(4);
-                }
+                () -> tGeogPointInst.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -262,5 +258,43 @@ class TGeogPointInstTest {
         TGeogPointInst otherTGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-10 08:00:05+02");
         tGeogPointInst.shift(Duration.ofDays(2));
         assertEquals(otherTGeogPointInst, tGeogPointInst);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 08:00:05+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2019,9, 8,
+                8, 0, 5, 0, tz);
+        assertTrue(tGeogPointInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 08:00:05+02");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tGeogPointInst.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2001-01-08 08:00:05+02");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tGeogPointInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 08:00:05+02");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tGeogPointInst.intersectsPeriod(period));
+    }
+
+    @Test
+    void testIntersectsPeriodNull() throws SQLException {
+        TGeogPointInst tGeogPointInst = new TGeogPointInst("Point(0 0)@2019-09-08 08:00:05+02");
+        assertFalse(tGeogPointInst.intersectsPeriod(null));
     }
 }

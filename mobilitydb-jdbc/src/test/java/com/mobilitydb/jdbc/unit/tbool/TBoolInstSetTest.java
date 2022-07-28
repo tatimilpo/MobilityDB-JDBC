@@ -186,9 +186,7 @@ class TBoolInstSetTest {
                 "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tBoolInstSet.timestampN(4);
-                }
+                () -> tBoolInstSet.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -283,9 +281,7 @@ class TBoolInstSetTest {
                 "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tBoolInstSet.instantN(4);
-                }
+                () -> tBoolInstSet.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -333,5 +329,41 @@ class TBoolInstSetTest {
                 "{false@2001-01-03 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02}");
         tBoolInstSet.shift(Duration.ofDays(2));
         assertEquals(otherTBoolInstSet, tBoolInstSet);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        assertTrue(tBoolInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tBoolInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tBoolInstSet.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TBoolInstSet tBoolInstSet = new TBoolInstSet(
+                "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tBoolInstSet.intersectsPeriod(period));
     }
 }

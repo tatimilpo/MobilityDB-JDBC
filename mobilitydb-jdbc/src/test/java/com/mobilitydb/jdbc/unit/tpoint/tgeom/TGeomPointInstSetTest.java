@@ -199,9 +199,7 @@ class TGeomPointInstSetTest {
                         "Point(3 0)@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tGeomPointInstSet.timestampN(4);
-                }
+                () -> tGeomPointInstSet.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -314,9 +312,7 @@ class TGeomPointInstSetTest {
                         "Point(3 0)@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tGeomPointInstSet.instantN(4);
-                }
+                () -> tGeomPointInstSet.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -374,5 +370,49 @@ class TGeomPointInstSetTest {
                         "Point(3 0)@2001-01-06 08:00:00+02}");
         tGeomPointInstSet.shift(Duration.ofDays(2));
         assertEquals(otherTGeomPointInstSet, tGeomPointInstSet);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TGeomPointInstSet tGeomPointInstSet = new TGeomPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        assertTrue(tGeomPointInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TGeomPointInstSet tGeomPointInstSet = new TGeomPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tGeomPointInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TGeomPointInstSet tGeomPointInstSet = new TGeomPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tGeomPointInstSet.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TGeomPointInstSet tGeomPointInstSet = new TGeomPointInstSet(
+                "{Point(1 0)@2001-01-01 08:00:00+02, " +
+                        "Point(0 2)@2001-01-03 08:00:00+02, " +
+                        "Point(3 0)@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tGeomPointInstSet.intersectsPeriod(period));
     }
 }

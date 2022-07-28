@@ -186,9 +186,7 @@ class TFloatInstSetTest {
                 "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tFloatInstSet.timestampN(4);
-                }
+                () -> tFloatInstSet.timestampN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no timestamp at this index."));
     }
@@ -283,9 +281,7 @@ class TFloatInstSetTest {
                 "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
         SQLException thrown = assertThrows(
                 SQLException.class,
-                () -> {
-                    tFloatInstSet.instantN(4);
-                }
+                () -> tFloatInstSet.instantN(4)
         );
         assertTrue(thrown.getMessage().contains("There is no instant at this index."));
     }
@@ -333,5 +329,41 @@ class TFloatInstSetTest {
                 "{1.82@2001-01-03 08:00:00+02, 2.1@2001-01-05 08:00:00+02, 3.78@2001-01-06 08:00:00+02}");
         tFloatInstSet.shift(Duration.ofDays(2));
         assertEquals(otherTFloatInstSet, tFloatInstSet);
+    }
+
+    @Test
+    void testIntersectsTimestamp() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        assertTrue(tFloatInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testNoIntersectsTimestamp() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
+                8, 0, 0, 0, tz);
+        assertFalse(tFloatInstSet.intersectsTimestamp(date));
+    }
+
+    @Test
+    void testIntersectsPeriod() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
+        assertTrue(tFloatInstSet.intersectsPeriod(period));
+    }
+
+    @Test
+    void testNoIntersectsPeriod() throws SQLException {
+        TFloatInstSet tFloatInstSet = new TFloatInstSet(
+                "{1.82@2001-01-01 08:00:00+02, 2.1@2001-01-03 08:00:00+02, 3.78@2001-01-04 08:00:00+02}");
+        Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
+        assertFalse(tFloatInstSet.intersectsPeriod(period));
     }
 }
