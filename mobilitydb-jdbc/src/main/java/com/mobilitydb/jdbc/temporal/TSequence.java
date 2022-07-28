@@ -9,7 +9,9 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
 
 public abstract class TSequence<V extends Serializable> extends TemporalInstants<V> {
@@ -37,7 +39,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
                         CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
         for (String val : values) {
-            instants.add(getTemporalInstantFunction.run(val.trim()));
+            instantList.add(getTemporalInstantFunction.run(val.trim()));
         }
         this.lowerInclusive = lowerInclusive;
         this.upperInclusive = upperInclusive;
@@ -53,7 +55,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     protected TSequence(boolean stepwise, TInstant<V>[] values, boolean lowerInclusive, boolean upperInclusive,
                         CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
-        instants.addAll(Arrays.asList(values));
+        instantList.addAll(Arrays.asList(values));
         this.lowerInclusive = lowerInclusive;
         this.upperInclusive = upperInclusive;
         this.stepwise = stepwise;
@@ -94,7 +96,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
             if (i == values.length - 1 ) {
                 val = val.substring(0, val.length() - 1);
             }
-            instants.add(getTemporalInstantFunction.run(val.trim()));
+            instantList.add(getTemporalInstantFunction.run(val.trim()));
         }
     }
 
@@ -115,7 +117,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     String buildValue(boolean skipInterpolation) {
         StringJoiner sj = new StringJoiner(", ");
 
-        for (TInstant<V> temp : instants) {
+        for (TInstant<V> temp : instantList) {
             sj.add(temp.toString());
         }
 
@@ -128,8 +130,8 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
 
     @Override
     public Period period() throws SQLException  {
-        return new Period(instants.get(0).getTimestamp(),
-                instants.get(instants.size() - 1).getTimestamp(),
+        return new Period(instantList.get(0).getTimestamp(),
+                instantList.get(instantList.size() - 1).getTimestamp(),
                 lowerInclusive, upperInclusive);
     }
 
@@ -216,5 +218,31 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
 
     public boolean isUpperInclusive() {
         return upperInclusive;
+    }
+
+    public int numSequences() {
+        return 1;
+    }
+
+    public TSequence<V> startSequence() {
+        return this;
+    }
+
+    public TSequence<V> endSequence() {
+        return this;
+    }
+
+    public TSequence<V> sequenceN(int n) throws SQLException {
+        if (n == 0) {
+            return this;
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    public List<TSequence<V>> sequences() {
+        ArrayList<TSequence<V>> list = new ArrayList<>();
+        list.add(this);
+        return list;
     }
 }

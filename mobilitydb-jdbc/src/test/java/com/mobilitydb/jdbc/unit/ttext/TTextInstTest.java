@@ -268,7 +268,7 @@ class TTextInstTest {
         ArrayList<TTextInst> list = new ArrayList<>();
         list.add(tTextInst);
         assertEquals(1, list.size());
-        assertEquals(list, tTextInst.getInstants());
+        assertEquals(list, tTextInst.instants());
     }
 
     @Test

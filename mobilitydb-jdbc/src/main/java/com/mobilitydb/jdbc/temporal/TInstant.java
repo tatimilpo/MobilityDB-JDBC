@@ -155,7 +155,7 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
-    public List<TInstant<V>> getInstants() {
+    public List<TInstant<V>> instants() {
         ArrayList<TInstant<V>> list = new ArrayList<>();
         list.add(this);
         return list;

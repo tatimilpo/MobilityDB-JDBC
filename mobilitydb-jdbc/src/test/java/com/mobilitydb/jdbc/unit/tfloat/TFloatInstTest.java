@@ -266,7 +266,7 @@ class TFloatInstTest {
         ArrayList<TFloatInst> list = new ArrayList<>();
         list.add(tFloatInst);
         assertEquals(1, list.size());
-        assertEquals(list, tFloatInst.getInstants());
+        assertEquals(list, tFloatInst.instants());
     }
 
     @Test

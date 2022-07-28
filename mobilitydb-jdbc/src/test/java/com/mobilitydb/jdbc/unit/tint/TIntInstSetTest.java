@@ -302,7 +302,7 @@ class TIntInstSetTest {
         list.add(secondTIntInst);
         list.add(thirdTIntInst);
         assertEquals(3, list.size());
-        assertEquals(list, tIntInstSet.getInstants());
+        assertEquals(list, tIntInstSet.instants());
     }
 
     @Test

@@ -302,7 +302,7 @@ class TBoolInstSetTest {
         list.add(secondTBoolInst);
         list.add(thirdTBoolInst);
         assertEquals(3, list.size());
-        assertEquals(list, tBoolInstSet.getInstants());
+        assertEquals(list, tBoolInstSet.instants());
     }
 
     @Test

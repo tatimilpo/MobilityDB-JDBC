@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
-    protected ArrayList<TSequence<V>> sequences = new ArrayList<>();
+    protected ArrayList<TSequence<V>> sequenceList = new ArrayList<>();
     protected boolean stepwise;
     private final CompareValueFunction<V> compareValueFunction;
 
@@ -37,7 +37,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         for (String val : values) {
             TSequence<V> sequence = getTemporalSequenceFunction.run(val);
             validateSequence(sequence);
-            sequences.add(sequence);
+            sequenceList.add(sequence);
         }
         validate();
     }
@@ -50,7 +50,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         this.stepwise = stepwise;
         for (TSequence<V> sequence: values) {
             validateSequence(sequence);
-            sequences.add(sequence);
+            sequenceList.add(sequence);
         }
         validate();
     }
@@ -64,7 +64,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     public String buildValue() {
         StringJoiner sj = new StringJoiner(", ");
 
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             sj.add(sequence.buildValue(true));
         }
 
@@ -94,7 +94,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             if (stepwise && !seq.startsWith(TemporalConstants.STEPWISE)) {
                 seq = TemporalConstants.STEPWISE + seq;
             }
-            sequences.add(getTemporalSequenceFunction.run(seq));
+            sequenceList.add(getTemporalSequenceFunction.run(seq));
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             values.addAll(sequence.getValues());
         }
         return values;
@@ -123,31 +123,31 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V startValue() {
-        if (sequences.isEmpty()) {
+        if (sequenceList.isEmpty()) {
             return null;
         }
 
-        return sequences.get(0).startValue();
+        return sequenceList.get(0).startValue();
     }
 
     @Override
     public V endValue() {
-        if (sequences.isEmpty()) {
+        if (sequenceList.isEmpty()) {
             return null;
         }
 
-        return sequences.get(sequences.size() - 1).endValue();
+        return sequenceList.get(sequenceList.size() - 1).endValue();
     }
 
     @Override
     public V minValue() {
-        if (sequences.isEmpty()) {
+        if (sequenceList.isEmpty()) {
             return null;
         }
 
         V min = null;
 
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             V value = sequence.minValue();
 
             if (min == null || compareValueFunction.run(value, min) < 0) {
@@ -160,13 +160,13 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V maxValue() {
-        if (sequences.isEmpty()) {
+        if (sequenceList.isEmpty()) {
             return null;
         }
 
         V max = null;
 
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             V value = sequence.maxValue();
 
             if (max == null || compareValueFunction.run(value, max) > 0) {
@@ -179,7 +179,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public V valueAtTimestamp(OffsetDateTime timestamp) {
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             V value = sequence.valueAtTimestamp(timestamp);
 
             if (value != null) {
@@ -198,7 +198,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     public OffsetDateTime[] timestamps() {
         LinkedHashSet<OffsetDateTime> timestamps = new LinkedHashSet<>();
 
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             timestamps.addAll(Arrays.asList(sequence.timestamps()));
         }
 
@@ -217,18 +217,18 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public OffsetDateTime startTimestamp() {
-        return sequences.get(0).startTimestamp();
+        return sequenceList.get(0).startTimestamp();
     }
 
     @Override
     public OffsetDateTime endTimestamp() {
-        return sequences.get(sequences.size() - 1).endTimestamp();
+        return sequenceList.get(sequenceList.size() - 1).endTimestamp();
     }
 
     @Override
     public Period period() throws SQLException {
-        TSequence<V> first = sequences.get(0);
-        TSequence<V> last = sequences.get(sequences.size() - 1);
+        TSequence<V> first = sequenceList.get(0);
+        TSequence<V> last = sequenceList.get(sequenceList.size() - 1);
         return new Period(first.startTimestamp(), last.endTimestamp(),
                 first.isLowerInclusive(), last.isUpperInclusive());
     }
@@ -236,7 +236,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     @Override
     public PeriodSet getTime() throws SQLException {
         ArrayList<Period> periods = new ArrayList<>();
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             periods.add(sequence.period());
         }
         return new PeriodSet(periods.toArray(new Period[0]));
@@ -244,22 +244,22 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public int numInstants() {
-        return getInstants().size();
+        return instants().size();
     }
 
     @Override
     public TInstant<V> startInstant() {
-        return sequences.get(0).startInstant();
+        return sequenceList.get(0).startInstant();
     }
 
     @Override
     public TInstant<V> endInstant() {
-        return sequences.get(sequences.size() - 1).endInstant();
+        return sequenceList.get(sequenceList.size() - 1).endInstant();
     }
 
     @Override
     public TInstant<V> instantN(int n) throws SQLException {
-        List<TInstant<V>> instants = getInstants();
+        List<TInstant<V>> instants = instants();
 
         if (n >= 0 && n < instants.size()) {
             return instants.get(n);
@@ -269,10 +269,10 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     }
 
     @Override
-    public List<TInstant<V>> getInstants() {
+    public List<TInstant<V>> instants() {
         ArrayList<TInstant<V>> list = new ArrayList<>();
-        for (TSequence<V> sequence : sequences) {
-            list.addAll(sequence.instants);
+        for (TSequence<V> sequence : sequenceList) {
+            list.addAll(sequence.instantList);
         }
         return list;
     }
@@ -280,7 +280,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     @Override
     public Duration duration() {
         Duration duration = Duration.ZERO;
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             duration = duration.plus(sequence.duration());
         }
         return duration;
@@ -293,14 +293,14 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public void shift(Duration duration) {
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             sequence.shift(duration);
         }
     }
 
     @Override
     public boolean intersectsTimestamp(OffsetDateTime dateTime) {
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             if (sequence.intersectsTimestamp(dateTime)) {
                 return true;
             }
@@ -310,7 +310,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
 
     @Override
     public boolean intersectsPeriod(Period period) {
-        for (TSequence<V> sequence : sequences) {
+        for (TSequence<V> sequence : sequenceList) {
             if (sequence.intersectsPeriod(period)) {
                 return true;
             }
@@ -334,13 +334,13 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
             return false;
         }
 
-        if (this.sequences.size() != otherTemporal.sequences.size()) {
+        if (this.sequenceList.size() != otherTemporal.sequenceList.size()) {
             return false;
         }
 
-        for (int i = 0; i < this.sequences.size(); i++) {
-            TSequence<V> thisVal = sequences.get(i);
-            TSequence<?> otherVal = otherTemporal.sequences.get(i);
+        for (int i = 0; i < this.sequenceList.size(); i++) {
+            TSequence<V> thisVal = sequenceList.get(i);
+            TSequence<?> otherVal = otherTemporal.sequenceList.get(i);
 
             if (!thisVal.equals(otherVal)) {
                 return false;
@@ -354,5 +354,37 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     public int hashCode() {
         String value = toString();
         return value != null ? value.hashCode() : 0;
+    }
+
+    public int numSequences() {
+        return sequenceList.size();
+    }
+
+    public TSequence<V> startSequence() {
+        if (sequenceList.isEmpty()) {
+            return null;
+        }
+
+        return sequenceList.get(0);
+    }
+
+    public TSequence<V> endSequence() {
+        if (sequenceList.isEmpty()) {
+            return null;
+        }
+
+        return sequenceList.get(sequenceList.size() - 1);
+    }
+
+    public TSequence<V> sequenceN(int n) throws SQLException {
+        if (n >= 0 && n < sequenceList.size()) {
+            return sequenceList.get(n);
+        }
+
+        throw new SQLException("There is no value at this index.");
+    }
+
+    public List<TSequence<V>> sequences() {
+        return new ArrayList<>(sequenceList);
     }
 }

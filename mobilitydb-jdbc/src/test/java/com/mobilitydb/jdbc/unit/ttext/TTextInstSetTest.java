@@ -302,7 +302,7 @@ class TTextInstSetTest {
         list.add(secondTTextInst);
         list.add(thirdTTextInst);
         assertEquals(3, list.size());
-        assertEquals(list, tTextInstSet.getInstants());
+        assertEquals(list, tTextInstSet.instants());
     }
 
     @Test

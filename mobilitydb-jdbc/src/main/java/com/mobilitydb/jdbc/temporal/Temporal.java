@@ -78,7 +78,7 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
 
     public abstract TInstant<V> instantN(int n) throws SQLException;
 
-    public abstract List<TInstant<V>> getInstants();
+    public abstract List<TInstant<V>> instants();
 
     public abstract Duration duration();
 

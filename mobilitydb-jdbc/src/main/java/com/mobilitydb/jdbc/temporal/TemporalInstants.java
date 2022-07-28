@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TemporalInstants<V extends Serializable> extends Temporal<V> {
-    protected final ArrayList<TInstant<V>> instants = new ArrayList<>();
+    protected final ArrayList<TInstant<V>> instantList = new ArrayList<>();
     private final CompareValueFunction<V> compareValueFunction;
 
     protected TemporalInstants(TemporalType temporalType, CompareValueFunction<V> compareValueFunction) {
@@ -21,7 +21,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
-        for (TInstant<V> temp : instants) {
+        for (TInstant<V> temp : instantList) {
             values.add(temp.getValue());
         }
         return values;
@@ -29,32 +29,32 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public V startValue() {
-        if (instants.isEmpty()) {
+        if (instantList.isEmpty()) {
             return null;
         }
 
-        return instants.get(0).getValue();
+        return instantList.get(0).getValue();
     }
 
     @Override
     public V endValue() {
-        if (instants.isEmpty()) {
+        if (instantList.isEmpty()) {
             return null;
         }
 
-        return instants.get(instants.size() - 1).getValue();
+        return instantList.get(instantList.size() - 1).getValue();
     }
 
     @Override
     public V minValue() {
-        if (instants.isEmpty()) {
+        if (instantList.isEmpty()) {
             return null;
         }
 
-        V min = instants.get(0).getValue();
+        V min = instantList.get(0).getValue();
 
-        for (int i = 1; i < instants.size(); i++) {
-            V value = instants.get(i).getValue();
+        for (int i = 1; i < instantList.size(); i++) {
+            V value = instantList.get(i).getValue();
 
             if (compareValueFunction.run(value, min) < 0) {
                 min = value;
@@ -66,14 +66,14 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public V maxValue() {
-        if (instants.isEmpty()) {
+        if (instantList.isEmpty()) {
             return null;
         }
 
-        V max = instants.get(0).getValue();
+        V max = instantList.get(0).getValue();
 
-        for (int i = 1; i < instants.size(); i++) {
-            V value = instants.get(i).getValue();
+        for (int i = 1; i < instantList.size(); i++) {
+            V value = instantList.get(i).getValue();
 
             if (compareValueFunction.run(value, max) > 0) {
                 max = value;
@@ -85,7 +85,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public V valueAtTimestamp(OffsetDateTime timestamp) {
-        for (TInstant<V> temp : instants) {
+        for (TInstant<V> temp : instantList) {
             if (timestamp.isEqual(temp.getTimestamp())) {
                 return temp.getValue();
             }
@@ -95,15 +95,15 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public int numTimestamps() {
-        return instants.size();
+        return instantList.size();
     }
 
     @Override
     public OffsetDateTime[] timestamps() {
-        OffsetDateTime[] result = new OffsetDateTime[instants.size()];
+        OffsetDateTime[] result = new OffsetDateTime[instantList.size()];
 
-        for (int i = 0; i < instants.size(); i++) {
-            result[i] = instants.get(i).getTimestamp();
+        for (int i = 0; i < instantList.size(); i++) {
+            result[i] = instantList.get(i).getTimestamp();
         }
 
         return result;
@@ -111,8 +111,8 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public OffsetDateTime timestampN(int n) throws SQLException {
-        if (n >= 0 && n < instants.size()) {
-            return instants.get(n).getTimestamp();
+        if (n >= 0 && n < instantList.size()) {
+            return instantList.get(n).getTimestamp();
         }
 
         throw new SQLException("There is no value at this index.");
@@ -120,46 +120,46 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
     @Override
     public OffsetDateTime startTimestamp() {
-        return instants.get(0).getTimestamp();
+        return instantList.get(0).getTimestamp();
     }
 
     @Override
     public OffsetDateTime endTimestamp() {
-        return instants.get(instants.size() - 1).getTimestamp();
+        return instantList.get(instantList.size() - 1).getTimestamp();
     }
 
     @Override
     public int numInstants() {
-        return instants.size();
+        return instantList.size();
     }
 
     @Override
     public TInstant<V> startInstant() {
-        return instants.get(0);
+        return instantList.get(0);
     }
 
     @Override
     public TInstant<V> endInstant() {
-        return instants.get(instants.size() - 1);
+        return instantList.get(instantList.size() - 1);
     }
 
     @Override
     public TInstant<V> instantN(int n) throws SQLException {
-        if (n >= 0 && n < instants.size()) {
-            return instants.get(n);
+        if (n >= 0 && n < instantList.size()) {
+            return instantList.get(n);
         }
 
         throw new SQLException("There is no value at this index.");
     }
 
     @Override
-    public List<TInstant<V>> getInstants() {
-        return new ArrayList<>(instants);
+    public List<TInstant<V>> instants() {
+        return new ArrayList<>(instantList);
     }
 
     @Override
     public void shift(Duration duration) {
-        for (TInstant<V> instant : instants) {
+        for (TInstant<V> instant : instantList) {
             instant.shift(duration);
         }
     }
@@ -172,12 +172,12 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
 
         if (getClass() == obj.getClass()) {
             TemporalInstants<?> otherTemporal = (TemporalInstants<?>) obj;
-            if (this.instants.size() != otherTemporal.instants.size()) {
+            if (this.instantList.size() != otherTemporal.instantList.size()) {
                 return false;
             }
-            for (int i = 0; i < this.instants.size(); i++) {
-                TInstant<V> thisVal = this.instants.get(i);
-                TInstant<?> otherVal = otherTemporal.instants.get(i);
+            for (int i = 0; i < this.instantList.size(); i++) {
+                TInstant<V> thisVal = this.instantList.get(i);
+                TInstant<?> otherVal = otherTemporal.instantList.get(i);
                 if (!thisVal.equals(otherVal)) {
                     return false;
                 }

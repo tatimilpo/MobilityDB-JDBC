@@ -228,7 +228,7 @@ class TBoolInstTest {
         ArrayList<TBoolInst> list = new ArrayList<>();
         list.add(tBoolInst);
         assertEquals(1, list.size());
-        assertEquals(list, tBoolInst.getInstants());
+        assertEquals(list, tBoolInst.instants());
     }
 
     @Test

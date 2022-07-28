@@ -27,14 +27,14 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
                           CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT_SET, compareValueFunction);
         for (String val : values) {
-            instants.add(getTemporalInstantFunction.run(val.trim()));
+            instantList.add(getTemporalInstantFunction.run(val.trim()));
         }
         validate();
     }
 
     protected TInstantSet(TInstant<V>[] values, CompareValueFunction<V> compareValueFunction) throws SQLException {
         super(TemporalType.TEMPORAL_INSTANT_SET, compareValueFunction);
-        instants.addAll(Arrays.asList(values));
+        instantList.addAll(Arrays.asList(values));
         validate();
     }
 
@@ -45,15 +45,15 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
 
     @Override
     public Period period() throws SQLException  {
-        return new Period(instants.get(0).getTimestamp(),
-                instants.get(instants.size() - 1).getTimestamp(),
+        return new Period(instantList.get(0).getTimestamp(),
+                instantList.get(instantList.size() - 1).getTimestamp(),
                 true, true);
     }
 
     @Override
     public PeriodSet getTime() throws SQLException {
         ArrayList<Period> periods = new ArrayList<>();
-        for (TInstant<V> instant : instants) {
+        for (TInstant<V> instant : instantList) {
             periods.add(instant.period());
         }
         return new PeriodSet(periods.toArray(new Period[0]));
@@ -71,7 +71,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
 
     @Override
     public boolean intersectsTimestamp(OffsetDateTime dateTime) {
-        for (TInstant<V> instant : instants) {
+        for (TInstant<V> instant : instantList) {
             if (instant.intersectsTimestamp(dateTime)) {
                 return true;
             }
@@ -81,7 +81,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
 
     @Override
     public boolean intersectsPeriod(Period period) {
-        for (TInstant<V> instant : instants) {
+        for (TInstant<V> instant : instantList) {
             if (instant.intersectsPeriod(period)) {
                 return true;
             }
@@ -92,7 +92,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
     @Override
     public String buildValue() {
         StringJoiner sj = new StringJoiner(", ");
-        for (TInstant<V> temp : instants) {
+        for (TInstant<V> temp : instantList) {
             sj.add(temp.toString());
         }
         return String.format("{%s}", sj.toString());
@@ -103,7 +103,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
         newValue = newValue.replace("{", "").replace("}", "");
         String[] values = newValue.split(",", -1);
         for (String val : values) {
-            instants.add(getTemporalFunction.run(val.trim()));
+            instantList.add(getTemporalFunction.run(val.trim()));
         }
     }
 }

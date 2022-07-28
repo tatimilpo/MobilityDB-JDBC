@@ -302,7 +302,7 @@ class TFloatInstSetTest {
         list.add(secondTFloatInst);
         list.add(thirdTFloatInst);
         assertEquals(3, list.size());
-        assertEquals(list, tFloatInstSet.getInstants());
+        assertEquals(list, tFloatInstSet.instants());
     }
 
     @Test

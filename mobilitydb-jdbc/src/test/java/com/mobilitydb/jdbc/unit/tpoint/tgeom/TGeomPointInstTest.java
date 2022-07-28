@@ -234,7 +234,7 @@ class TGeomPointInstTest {
         ArrayList<TGeomPointInst> list = new ArrayList<>();
         list.add(tGeomPointInst);
         assertEquals(1, list.size());
-        assertEquals(list, tGeomPointInst.getInstants());
+        assertEquals(list, tGeomPointInst.instants());
     }
 
     @Test

@@ -341,7 +341,7 @@ class TGeogPointInstSetTest {
         list.add(secondTGeogPointInst);
         list.add(thirdTGeogPointInst);
         assertEquals(3, list.size());
-        assertEquals(list, tGeogPointInstSet.getInstants());
+        assertEquals(list, tGeogPointInstSet.instants());
     }
 
     @Test

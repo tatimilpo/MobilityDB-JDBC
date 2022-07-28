@@ -266,7 +266,7 @@ class TIntInstTest {
         ArrayList<TIntInst> list = new ArrayList<>();
         list.add(tIntInst);
         assertEquals(1, list.size());
-        assertEquals(list, tIntInst.getInstants());
+        assertEquals(list, tIntInst.instants());
     }
 
     @Test

@@ -241,7 +241,7 @@ class TGeogPointInstTest {
         ArrayList<TGeogPointInst> list = new ArrayList<>();
         list.add(tGeogPointInst);
         assertEquals(1, list.size());
-        assertEquals(list, tGeogPointInst.getInstants());
+        assertEquals(list, tGeogPointInst.instants());
     }
 
     @Test
