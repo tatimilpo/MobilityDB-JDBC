@@ -43,16 +43,16 @@ class TFloatSeqSetTest {
 
     @Test
     void testStepwiseConstructors() throws SQLException {
-        String value = "Interp=Stepwise;{[1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02), " +
+        String value = "Interp=Stepwise;{(1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02], " +
                 "[2.3@2001-01-04 08:00:00+02, 3.4@2001-01-05 08:00:00+02, 3.5@2001-01-06 08:00:00+02]}";
 
         TFloatSeq[] sequences = new TFloatSeq[]{
-                new TFloatSeq("Interp=Stepwise;[1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02)"),
+                new TFloatSeq("Interp=Stepwise;(1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02]"),
                 new TFloatSeq("Interp=Stepwise;[2.3@2001-01-04 08:00:00+02, 3.4@2001-01-05 08:00:00+02, " +
                         "3.5@2001-01-06 08:00:00+02]")
         };
         String[] stringSequences = new String[]{
-                "Interp=Stepwise;[1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02)",
+                "Interp=Stepwise;(1.8@2001-01-01 08:00:00+02, 1.9@2001-01-03 08:00:00+02]",
                 "Interp=Stepwise;[2.3@2001-01-04 08:00:00+02, 3.4@2001-01-05 08:00:00+02, 3.5@2001-01-06 08:00:00+02]"
         };
 

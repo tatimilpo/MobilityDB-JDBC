@@ -28,6 +28,16 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
     }
 
     protected TSequence(boolean stepwise,
+                        String value,
+                        GetTemporalInstantFunction<V> getTemporalInstantFunction,
+                        CompareValueFunction<V> compareValueFunction) throws SQLException {
+        super(TemporalType.TEMPORAL_SEQUENCE, compareValueFunction);
+        parseValue(value, getTemporalInstantFunction);
+        this.stepwise = stepwise;
+        validate();
+    }
+
+    protected TSequence(boolean stepwise,
                         String[] values,
                         GetTemporalInstantFunction<V> getTemporalInstantFunction,
                         CompareValueFunction<V> compareValueFunction) throws SQLException {
@@ -102,7 +112,16 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        // TODO: Implement
+        validate("Temporal sequence");
+
+        if (instantList.size() == 1 && (!lowerInclusive || !upperInclusive)) {
+            throw new SQLException("The lower and upper bounds must be inclusive for an instant temporal sequence.");
+        }
+
+        if (stepwise && instantList.size() > 1 && !upperInclusive &&
+            !instantList.get(instantList.size() - 1).getValue().equals(instantList.get(instantList.size() - 2).getValue())) {
+            throw new SQLException("The last two values of a temporal sequence with exclusive upper bound and stepwise interpolation must be equal.");
+        }
     }
 
     protected boolean explicitInterpolation() {

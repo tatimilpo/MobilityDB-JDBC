@@ -32,7 +32,7 @@ class TBoolTest {
 
     @Test
     void testConstructor_tBoolSeq() throws SQLException {
-        String value = "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02)";
+        String value = "(true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02]";
         TBool tBool = new TBool(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tBool.getTemporalType());
         assertTrue(tBool.getTemporal() instanceof TBoolSeq);

@@ -49,7 +49,7 @@ class TFloatSeqTest {
 
     @Test
     void testStepwiseConstructors() throws SQLException {
-        String value = "Interp=Stepwise;[2.5@2001-01-01 08:00:00+02, 3.6@2001-01-03 08:00:00+02)";
+        String value = "Interp=Stepwise;[2.5@2001-01-01 08:00:00+02, 2.5@2001-01-03 08:00:00+02)";
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime dateOne = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -57,11 +57,11 @@ class TFloatSeqTest {
                 8, 0, 0, 0, tz);
         TFloatInst[] instants = new TFloatInst[]{
                 new TFloatInst(2.5f, dateOne),
-                new TFloatInst(3.6f, dateTwo)
+                new TFloatInst(2.5f, dateTwo)
         };
         String[] stringInstants = new String[]{
                 "2.5@2001-01-01 08:00:00+02",
-                "3.6@2001-01-03 08:00:00+02"
+                "2.5@2001-01-03 08:00:00+02"
         };
 
         TFloatSeq firstTemporal = new TFloatSeq(value);

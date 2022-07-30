@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class TTextSeqSetTest {
     @Test
     void testConstructors() throws SQLException {
-        String value = "{[A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02), " +
+        String value = "{(A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02], " +
                 "[C@2001-01-04 08:00:00+02, D@2001-01-05 08:00:00+02, E@2001-01-06 08:00:00+02]}";
 
         TTextSeq[] sequences = new TTextSeq[]{
-                new TTextSeq("[A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02)"),
+                new TTextSeq("(A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02]"),
                 new TTextSeq("[C@2001-01-04 08:00:00+02, D@2001-01-05 08:00:00+02, E@2001-01-06 08:00:00+02]")
         };
         String[] stringSequences = new String[]{
-                "[A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02)",
+                "(A@2001-01-01 08:00:00+02, B@2001-01-03 08:00:00+02]",
                 "[C@2001-01-04 08:00:00+02, D@2001-01-05 08:00:00+02, E@2001-01-06 08:00:00+02]"
         };
 
@@ -43,10 +43,10 @@ class TTextSeqSetTest {
 
     @Test
     void testNotEquals() throws SQLException {
-        String firstValue = "{[aaa@2001-01-01 08:00:00+02, bbb@2001-01-03 08:00:00+02), " +
+        String firstValue = "{(aaa@2001-01-01 08:00:00+02, bbb@2001-01-03 08:00:00+02], " +
                 "[ccc@2001-01-04 08:00:00+02, ddd@2001-01-05 08:00:00+02, eee@2001-01-06 08:00:00+02]}";
-        String secondValue = "{[aaa@2001-01-01 08:00:00+02, bbb@2001-01-03 08:00:00+02)}";
-        String thirdValue = "{[aaa@2001-01-01 08:00:00+02, bbb@2001-01-03 08:00:00+02), " +
+        String secondValue = "{[aaa@2001-01-01 08:00:00+02, aaa@2001-01-03 08:00:00+02)}";
+        String thirdValue = "{[aaa@2001-01-01 08:00:00+02, aaa@2001-01-03 08:00:00+02), " +
                 "[ccc@2001-01-04 08:00:00+02, ddd@2001-01-05 08:00:00+02]}";
 
         TTextSeqSet firstTemporal = new TTextSeqSet(firstValue);
@@ -61,7 +61,7 @@ class TTextSeqSetTest {
 
     @Test
     void testSeqSetType() throws SQLException {
-        String value = "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+        String value = "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                 "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}";
         TTextSeqSet temporal = new TTextSeqSet(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE_SET, temporal.getTemporalType());
@@ -71,7 +71,7 @@ class TTextSeqSetTest {
     void testBuildValue() throws SQLException {
         ZoneOffset tz = OffsetDateTime.now().getOffset();
         String value = String.format(
-                "{[abc@2001-01-01 08:00:00%1$s, def@2001-01-03 08:00:00%1$s), " +
+                "{(abc@2001-01-01 08:00:00%1$s, def@2001-01-03 08:00:00%1$s], " +
                         "[ghi@2001-01-04 08:00:00%1$s, jkl@2001-01-05 08:00:00%1$s, mno@2001-01-06 08:00:00%1$s]}",
                 tz.toString().substring(0, 3)
         );
@@ -83,7 +83,7 @@ class TTextSeqSetTest {
     @Test
     void testGetValues() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         List<String> list = tTextSeqSet.getValues();
         assertEquals(5 , list.size());
@@ -97,7 +97,7 @@ class TTextSeqSetTest {
     @Test
     void testStartValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals("abc", tTextSeqSet.startValue());
     }
@@ -105,7 +105,7 @@ class TTextSeqSetTest {
     @Test
     void testEndValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals("mno", tTextSeqSet.endValue());
     }
@@ -113,7 +113,7 @@ class TTextSeqSetTest {
     @Test
     void testMinValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, aaa@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals("aaa", tTextSeqSet.minValue());
     }
@@ -121,7 +121,7 @@ class TTextSeqSetTest {
     @Test
     void testMaxValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, zzz@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, zzz@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals("zzz", tTextSeqSet.maxValue());
     }
@@ -132,7 +132,7 @@ class TTextSeqSetTest {
         OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
                 6, 4, 32, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertNull(tTextSeqSet.valueAtTimestamp(timestamp));
     }
@@ -143,7 +143,7 @@ class TTextSeqSetTest {
         OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 4,
                 8, 0, 0, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals("ghi", tTextSeqSet.valueAtTimestamp(timestamp));
     }
@@ -151,7 +151,7 @@ class TTextSeqSetTest {
     @Test
     void testNumTimestamps() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(5, tTextSeqSet.numTimestamps());
     }
@@ -170,7 +170,7 @@ class TTextSeqSetTest {
         OffsetDateTime fifthExpectedDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(5, tTextSeqSet.timestamps().length);
         assertEquals(firstExpectedDate, tTextSeqSet.timestamps()[0]);
@@ -186,7 +186,7 @@ class TTextSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 3,
                 8, 0, 0, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tTextSeqSet.timestampN(1));
     }
@@ -194,7 +194,7 @@ class TTextSeqSetTest {
     @Test
     void testTimestampNNoValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -209,7 +209,7 @@ class TTextSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tTextSeqSet.startTimestamp());
     }
@@ -220,7 +220,7 @@ class TTextSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tTextSeqSet.endTimestamp());
     }
@@ -228,28 +228,28 @@ class TTextSeqSetTest {
     @Test
     void testPeriod() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         OffsetDateTime endDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
-        Period period = new Period(initialDate, endDate,true,true);
+        Period period = new Period(initialDate, endDate,false,true);
         assertEquals(period, tTextSeqSet.period());
     }
 
     @Test
     void testGetTime() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialExpectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         OffsetDateTime endExpectedDate = OffsetDateTime.of(2001,1, 3,
                 8, 0, 0, 0, tz);
-        Period firstPeriod = new Period(initialExpectedDate,endExpectedDate,true,false);
+        Period firstPeriod = new Period(initialExpectedDate,endExpectedDate,false,true);
         initialExpectedDate = OffsetDateTime.of(2001,1, 4,
                 8, 0, 0, 0, tz);
         endExpectedDate = OffsetDateTime.of(2001,1, 6,
@@ -262,7 +262,7 @@ class TTextSeqSetTest {
     @Test
     void testNumInstants() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(5, tTextSeqSet.numInstants());
     }
@@ -270,7 +270,7 @@ class TTextSeqSetTest {
     @Test
     void testStartInstant() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextInst tTextInst = new TTextInst("abc@2001-01-01 08:00:00+02");
         assertEquals(tTextInst, tTextSeqSet.startInstant());
@@ -279,7 +279,7 @@ class TTextSeqSetTest {
     @Test
     void testEndInstant() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextInst tTextInst = new TTextInst("mno@2001-01-06 08:00:00+02");
         assertEquals(tTextInst, tTextSeqSet.endInstant());
@@ -288,7 +288,7 @@ class TTextSeqSetTest {
     @Test
     void testInstantN() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextInst tTextInst = new TTextInst(("jkl@2001-01-05 08:00:00+02"));
         assertEquals(tTextInst, tTextSeqSet.instantN(3));
@@ -297,7 +297,7 @@ class TTextSeqSetTest {
     @Test
     void testInstantNNoValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -309,7 +309,7 @@ class TTextSeqSetTest {
     @Test
     void testGetInstants() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ArrayList<TTextInst> list = new ArrayList<>();
         TTextInst firstInst = new TTextInst("abc@2001-01-01 08:00:00+02");
@@ -329,7 +329,7 @@ class TTextSeqSetTest {
     @Test
     void testDuration() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
@@ -348,7 +348,7 @@ class TTextSeqSetTest {
     @Test
     void testTimespan() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
@@ -362,10 +362,10 @@ class TTextSeqSetTest {
     @Test
     void testShift() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextSeqSet otherTTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-03 08:00:00+02, def@2001-01-05 08:00:00+02), " +
+                "{(abc@2001-01-03 08:00:00+02, def@2001-01-05 08:00:00+02], " +
                         "[ghi@2001-01-06 08:00:00+02, jkl@2001-01-07 08:00:00+02, mno@2001-01-08 08:00:00+02]}");
         tTextSeqSet.shift(Duration.ofDays(2));
         assertEquals(otherTTextSeqSet, tTextSeqSet);
@@ -374,7 +374,7 @@ class TTextSeqSetTest {
     @Test
     void testIntersectsTimestamp() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{[abc@2001-01-01 08:00:00+02, abc@2001-01-03 08:00:00+02), " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2001,1, 1,
@@ -385,7 +385,7 @@ class TTextSeqSetTest {
     @Test
     void testNoIntersectsTimestamp() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
@@ -396,7 +396,7 @@ class TTextSeqSetTest {
     @Test
     void testIntersectsPeriod() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
         assertTrue(tTextSeqSet.intersectsPeriod(period));
@@ -405,7 +405,7 @@ class TTextSeqSetTest {
     @Test
     void testNoIntersectsPeriod() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
         assertFalse(tTextSeqSet.intersectsPeriod(period));
@@ -414,7 +414,7 @@ class TTextSeqSetTest {
     @Test
     void testNumSequences() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         assertEquals(2, tTextSeqSet.numSequences());
     }
@@ -422,16 +422,16 @@ class TTextSeqSetTest {
     @Test
     void testStartSequence() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
-        TTextSeq tTextSeq = new TTextSeq("[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02)");
+        TTextSeq tTextSeq = new TTextSeq("(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02]");
         assertEquals(tTextSeq, tTextSeqSet.startSequence());
     }
 
     @Test
     void testEndSequence() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextSeq tTextSeq = new TTextSeq(
                 "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]");
@@ -441,7 +441,7 @@ class TTextSeqSetTest {
     @Test
     void testSequenceN() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         TTextSeq tTextSeq = new TTextSeq(
                 "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]");
@@ -451,7 +451,7 @@ class TTextSeqSetTest {
     @Test
     void testSequenceNNoValue() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -463,11 +463,11 @@ class TTextSeqSetTest {
     @Test
     void testSequences() throws SQLException {
         TTextSeqSet tTextSeqSet = new TTextSeqSet(
-                "{[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02), " +
+                "{(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02], " +
                         "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]}");
         ArrayList<TTextSeq> list = new ArrayList<>();
         list.add(new TTextSeq(
-                "[abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02)"));
+                "(abc@2001-01-01 08:00:00+02, def@2001-01-03 08:00:00+02]"));
         list.add(new TTextSeq(
                 "[ghi@2001-01-04 08:00:00+02, jkl@2001-01-05 08:00:00+02, mno@2001-01-06 08:00:00+02]"));
         assertEquals(list, tTextSeqSet.sequences());

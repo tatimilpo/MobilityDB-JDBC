@@ -32,7 +32,7 @@ class TIntTest {
 
     @Test
     void testConstructor_tIntSeq() throws SQLException {
-        String value = "[1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02)";
+        String value = "(1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02]";
         TInt tInt = new TInt(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tInt.getTemporalType());
         assertTrue(tInt.getTemporal() instanceof TIntSeq);

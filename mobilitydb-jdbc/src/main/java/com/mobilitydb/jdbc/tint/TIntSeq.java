@@ -9,8 +9,7 @@ import java.sql.SQLException;
  */
 public class TIntSeq extends TSequence<Integer> {
     public TIntSeq(String value) throws SQLException {
-        super(value, TIntInst::new, TInt::compareValue);
-        stepwise = true;
+        super(true, value, TIntInst::new, TInt::compareValue);
     }
 
     public TIntSeq(String[] values) throws SQLException {

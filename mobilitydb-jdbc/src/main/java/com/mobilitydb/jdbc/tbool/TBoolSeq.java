@@ -9,8 +9,7 @@ import java.sql.SQLException;
  */
 public class TBoolSeq extends TSequence<Boolean> {
     public TBoolSeq(String value) throws SQLException {
-        super(value, TBoolInst::new, TBool::compareValue);
-        stepwise = true;
+        super(true, value, TBoolInst::new, TBool::compareValue);
     }
 
     public TBoolSeq(String[] values) throws SQLException {

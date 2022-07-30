@@ -20,15 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class TBoolSeqSetTest {
     @Test
     void testConstructors() throws SQLException {
-        String value = "{[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02), " +
+        String value = "{(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02], " +
                 "[false@2001-01-04 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02]}";
 
         TBoolSeq[] sequences = new TBoolSeq[]{
-            new TBoolSeq("[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)"),
+            new TBoolSeq("(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02]"),
             new TBoolSeq("[false@2001-01-04 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02]")
         };
         String[] stringSequences = new String[]{
-            "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)",
+            "(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02]",
             "[false@2001-01-04 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02]"
         };
 
@@ -43,11 +43,11 @@ class TBoolSeqSetTest {
 
     @Test
     void testNotEquals() throws SQLException {
-        String firstValue = "{[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02), " +
+        String firstValue = "{(true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02], " +
                 "[true@2001-01-04 08:00:00+02, true@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02]}";
         String secondValue = "{[false@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02)}";
         String thirdValue = "{[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02), " +
-                "[true@2001-01-04 08:00:00+02, false@2001-01-05 08:00:00+02]}";
+                "(true@2001-01-04 08:00:00+02, false@2001-01-05 08:00:00+02]}";
 
         TBoolSeqSet firstTemporal = new TBoolSeqSet(firstValue);
         TBoolSeqSet secondTemporal = new TBoolSeqSet(secondValue);
@@ -61,7 +61,7 @@ class TBoolSeqSetTest {
 
     @Test
     void testBoolSeqSetType() throws SQLException {
-        String value = "{[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02), " +
+        String value = "{(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02], " +
                 "[true@2001-01-04 08:00:00+02, false@2001-01-05 08:00:00+02, true@2001-01-06 08:00:00+02]}";
         TBoolSeqSet temporal = new TBoolSeqSet(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE_SET, temporal.getTemporalType());

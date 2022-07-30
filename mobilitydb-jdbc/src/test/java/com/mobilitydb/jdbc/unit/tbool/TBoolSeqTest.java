@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TBoolSeqTest {
     @Test
     void testConstructors() throws SQLException {
-        String value = "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02)";
+        String value = "[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)";
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime dateOne = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -27,17 +27,17 @@ class TBoolSeqTest {
                 8, 0, 0, 0, tz);
         TBoolInst[] instants = new TBoolInst[]{
                 new TBoolInst(true, dateOne),
-                new TBoolInst(false, dateTwo)
+                new TBoolInst(true, dateTwo)
         };
         String[] stringInstants = new String[]{
                 "true@2001-01-01 08:00:00+02",
-                "false@2001-01-03 08:00:00+02"
+                "true@2001-01-03 08:00:00+02"
         };
 
         TBoolSeq firstTemporal = new TBoolSeq(value);
         TBoolSeq secondTemporal = new TBoolSeq(instants);
         TBoolSeq thirdTemporal = new TBoolSeq(stringInstants);
-        TBoolSeq fourthTemporal = new TBoolSeq(stringInstants, true, false);
+        TBoolSeq fourthTemporal = new TBoolSeq(instants, true, false);
         TBoolSeq fifthTemporal = new TBoolSeq(stringInstants, true, false);
 
         assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
@@ -51,7 +51,7 @@ class TBoolSeqTest {
     void testNotEquals() throws SQLException {
         String firstValue = "[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)";
         String secondValue = "(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02]";
-        String thirdValue = "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)";
+        String thirdValue = "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)";
 
         TBoolSeq firstTemporal = new TBoolSeq(firstValue);
         TBoolSeq secondTemporal = new TBoolSeq(secondValue);
@@ -65,7 +65,7 @@ class TBoolSeqTest {
 
     @Test
     void testBoolSeqType() throws SQLException {
-        String value = "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02)";
+        String value = "[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)";
         TBoolSeq temporal = new TBoolSeq(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, temporal.getTemporalType());
     }
@@ -74,7 +74,7 @@ class TBoolSeqTest {
     void testBuildValue() throws SQLException {
         ZoneOffset tz = OffsetDateTime.now().getOffset();
         String value = String.format(
-                "[true@2001-01-01 08:00:00%1$s, false@2001-01-03 08:00:00%1$s)",
+                "(true@2001-01-01 08:00:00%1$s, false@2001-01-03 08:00:00%1$s]",
                 tz.toString().substring(0, 3)
         );
         TBoolSeq temporal = new TBoolSeq(value);
@@ -85,39 +85,39 @@ class TBoolSeqTest {
     @Test
     void testGetValues() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         List<Boolean> list = tBoolSeq.getValues();
         assertEquals(3 , list.size());
-        assertEquals(false , list.get(0));
-        assertEquals(true , list.get(1));
+        assertEquals(true , list.get(0));
+        assertEquals(false , list.get(1));
         assertEquals(false , list.get(2));
     }
 
     @Test
     void testStartValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
-        assertEquals(false, tBoolSeq.startValue());
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+        assertEquals(true, tBoolSeq.startValue());
     }
 
     @Test
     void testEndValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(false, tBoolSeq.endValue());
     }
 
     @Test
     void testMinValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(false, tBoolSeq.minValue());
     }
 
     @Test
     void testMaxValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(true, tBoolSeq.maxValue());
     }
 
@@ -127,7 +127,7 @@ class TBoolSeqTest {
         OffsetDateTime timestamp = OffsetDateTime.of(2001,9, 8,
                 6, 4, 32, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertNull(tBoolSeq.valueAtTimestamp(timestamp));
     }
 
@@ -137,14 +137,14 @@ class TBoolSeqTest {
         OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
-        assertEquals(false, tBoolSeq.valueAtTimestamp(timestamp));
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+        assertEquals(true, tBoolSeq.valueAtTimestamp(timestamp));
     }
 
     @Test
     void testNumTimestamps() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(3, tBoolSeq.numTimestamps());
     }
 
@@ -158,7 +158,7 @@ class TBoolSeqTest {
         OffsetDateTime thirdExpectedDate = OffsetDateTime.of(2001,1, 4,
                 8, 0, 0, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(3, tBoolSeq.timestamps().length);
         assertEquals(firstExpectedDate, tBoolSeq.timestamps()[0]);
         assertEquals(secondExpectedDate, tBoolSeq.timestamps()[1]);
@@ -171,14 +171,14 @@ class TBoolSeqTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 3,
                 8, 0, 0, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(expectedDate, tBoolSeq.timestampN(1));
     }
 
     @Test
     void testTimestampNNoValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         SQLException thrown = assertThrows(
                 SQLException.class,
                 () -> tBoolSeq.timestampN(4)
@@ -192,7 +192,7 @@ class TBoolSeqTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(expectedDate, tBoolSeq.startTimestamp());
     }
 
@@ -202,14 +202,14 @@ class TBoolSeqTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 4,
                 8, 0, 0, 0, tz);
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(expectedDate, tBoolSeq.endTimestamp());
     }
 
     @Test
     void testPeriod() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -222,7 +222,7 @@ class TBoolSeqTest {
     @Test
     void testGetTime() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialExpectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -237,22 +237,22 @@ class TBoolSeqTest {
     @Test
     void testNumInstants() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(3, tBoolSeq.numInstants());
     }
 
     @Test
     void testStartInstant() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
-        TBoolInst tBoolInst = new TBoolInst("false@2001-01-01 08:00:00+02");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+        TBoolInst tBoolInst = new TBoolInst("true@2001-01-01 08:00:00+02");
         assertEquals(tBoolInst, tBoolSeq.startInstant());
     }
 
     @Test
     void testEndInstant() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         TBoolInst tBoolInst = new TBoolInst("false@2001-01-04 08:00:00+02");
         assertEquals(tBoolInst, tBoolSeq.endInstant());
     }
@@ -260,15 +260,15 @@ class TBoolSeqTest {
     @Test
     void testInstantN() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
-        TBoolInst tBoolInst = new TBoolInst("true@2001-01-03 08:00:00+02");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+        TBoolInst tBoolInst = new TBoolInst("false@2001-01-03 08:00:00+02");
         assertEquals(tBoolInst, tBoolSeq.instantN(1));
     }
 
     @Test
     void testInstantNNoValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         SQLException thrown = assertThrows(
                 SQLException.class,
                 () -> tBoolSeq.instantN(4)
@@ -279,10 +279,10 @@ class TBoolSeqTest {
     @Test
     void testGetInstants() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ArrayList<TBoolInst> list = new ArrayList<>();
-        TBoolInst firstTBoolInst = new TBoolInst("false@2001-01-01 08:00:00+02");
-        TBoolInst secondTBoolInst = new TBoolInst("true@2001-01-03 08:00:00+02");
+        TBoolInst firstTBoolInst = new TBoolInst("true@2001-01-01 08:00:00+02");
+        TBoolInst secondTBoolInst = new TBoolInst("false@2001-01-03 08:00:00+02");
         TBoolInst thirdTBoolInst = new TBoolInst("false@2001-01-04 08:00:00+02");
         list.add(firstTBoolInst);
         list.add(secondTBoolInst);
@@ -294,7 +294,7 @@ class TBoolSeqTest {
     @Test
     void testDuration() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -307,7 +307,7 @@ class TBoolSeqTest {
     @Test
     void testTimespan() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -320,9 +320,9 @@ class TBoolSeqTest {
     @Test
     void testShift() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         TBoolSeq otherTBoolSeq = new TBoolSeq(
-                "[false@2001-01-03 08:00:00+02, true@2001-01-05 08:00:00+02, false@2001-01-06 08:00:00+02)");
+                "[true@2001-01-03 08:00:00+02, false@2001-01-05 08:00:00+02, false@2001-01-06 08:00:00+02)");
         tBoolSeq.shift(Duration.ofDays(2));
         assertEquals(otherTBoolSeq, tBoolSeq);
     }
@@ -330,7 +330,7 @@ class TBoolSeqTest {
     @Test
     void testIntersectsTimestamp() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
@@ -340,7 +340,7 @@ class TBoolSeqTest {
     @Test
     void testNoIntersectsTimestamp() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
                 8, 0, 0, 0, tz);
@@ -350,7 +350,7 @@ class TBoolSeqTest {
     @Test
     void testIntersectsPeriod() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
         assertTrue(tBoolSeq.intersectsPeriod(period));
     }
@@ -358,7 +358,7 @@ class TBoolSeqTest {
     @Test
     void testNoIntersectsPeriod() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
         assertFalse(tBoolSeq.intersectsPeriod(period));
     }
@@ -366,35 +366,35 @@ class TBoolSeqTest {
     @Test
     void testNumSequences() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(1, tBoolSeq.numSequences());
     }
 
     @Test
     void testStartSequence() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(tBoolSeq, tBoolSeq.startSequence());
     }
 
     @Test
     void testEndSequence() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(tBoolSeq, tBoolSeq.endSequence());
     }
 
     @Test
     void testSequenceN() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         assertEquals(tBoolSeq, tBoolSeq.sequenceN(0));
     }
 
     @Test
     void testSequenceNNoValue() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         SQLException thrown = assertThrows(
                 SQLException.class,
                 () -> tBoolSeq.sequenceN(4)
@@ -405,7 +405,7 @@ class TBoolSeqTest {
     @Test
     void testSequences() throws SQLException {
         TBoolSeq tBoolSeq = new TBoolSeq(
-                "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
+                "[true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02, false@2001-01-04 08:00:00+02)");
         ArrayList<TBoolSeq> list = new ArrayList<>();
         list.add(tBoolSeq);
         assertEquals(list, tBoolSeq.sequences());

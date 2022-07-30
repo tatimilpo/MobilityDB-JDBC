@@ -32,7 +32,7 @@ class TTextTest {
 
     @Test
     void testConstructor_tTextSeq() throws SQLException {
-        String value = "[abcd@2001-01-01 08:00:00+02, efghi@2001-01-03 08:00:00+02)";
+        String value = "(abcd@2001-01-01 08:00:00+02, efghi@2001-01-03 08:00:00+02]";
         TText tText = new TText(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tText.getTemporalType());
         assertTrue(tText.getTemporal() instanceof TTextSeq);
@@ -42,7 +42,7 @@ class TTextTest {
 
     @Test
     void testConstructor_tTextSeqSet() throws SQLException {
-        String value = "{[abcd@2001-01-01 08:00:00+02, efgh@2001-01-03 08:00:00+02), " +
+        String value = "{(abcd@2001-01-01 08:00:00+02, efgh@2001-01-03 08:00:00+02], " +
                 "[ijkl@2001-01-04 08:00:00+02, mnop@2001-01-05 08:00:00+02, qrst@2001-01-06 08:00:00+02]}";
         TText tText = new TText(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE_SET, tText.getTemporalType());

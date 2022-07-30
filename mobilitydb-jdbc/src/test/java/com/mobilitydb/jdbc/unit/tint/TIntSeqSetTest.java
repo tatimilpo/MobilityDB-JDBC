@@ -143,7 +143,7 @@ class TIntSeqSetTest {
         OffsetDateTime timestamp = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(189, tIntSeqSet.valueAtTimestamp(timestamp));
     }
@@ -151,7 +151,7 @@ class TIntSeqSetTest {
     @Test
     void testNumTimestamps() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(5, tIntSeqSet.numTimestamps());
     }
@@ -170,7 +170,7 @@ class TIntSeqSetTest {
         OffsetDateTime fifthExpectedDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(5, tIntSeqSet.timestamps().length);
         assertEquals(firstExpectedDate, tIntSeqSet.timestamps()[0]);
@@ -186,7 +186,7 @@ class TIntSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 3,
                 8, 0, 0, 0, tz);
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tIntSeqSet.timestampN(1));
     }
@@ -194,7 +194,7 @@ class TIntSeqSetTest {
     @Test
     void testTimestampNNoValue() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -209,7 +209,7 @@ class TIntSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tIntSeqSet.startTimestamp());
     }
@@ -220,7 +220,7 @@ class TIntSeqSetTest {
         OffsetDateTime expectedDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(expectedDate, tIntSeqSet.endTimestamp());
     }
@@ -228,33 +228,33 @@ class TIntSeqSetTest {
     @Test
     void testPeriod() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         OffsetDateTime endDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
-        Period period = new Period(initialDate, endDate,true,true);
+        Period period = new Period(initialDate, endDate,false,true);
         assertEquals(period, tIntSeqSet.period());
     }
 
     @Test
     void testGetTime() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialExpectedDate = OffsetDateTime.of(2001,1, 1,
                 8, 0, 0, 0, tz);
         OffsetDateTime endExpectedDate = OffsetDateTime.of(2001,1, 3,
                 8, 0, 0, 0, tz);
-        Period firstPeriod = new Period(initialExpectedDate,endExpectedDate,true,false);
+        Period firstPeriod = new Period(initialExpectedDate,endExpectedDate,false,true);
         initialExpectedDate = OffsetDateTime.of(2001,1, 4,
                 8, 0, 0, 0, tz);
         endExpectedDate = OffsetDateTime.of(2001,1, 6,
                 8, 0, 0, 0, tz);
-        Period secondPeriod = new Period(initialExpectedDate,endExpectedDate,true,true);
+        Period secondPeriod = new Period(initialExpectedDate, endExpectedDate,true,true);
         PeriodSet periodSet = new PeriodSet(firstPeriod, secondPeriod);
         assertEquals(periodSet, tIntSeqSet.getTime());
     }
@@ -262,7 +262,7 @@ class TIntSeqSetTest {
     @Test
     void testNumInstants() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(5, tIntSeqSet.numInstants());
     }
@@ -270,7 +270,7 @@ class TIntSeqSetTest {
     @Test
     void testStartInstant() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntInst tIntInst = new TIntInst("189@2001-01-01 08:00:00+02");
         assertEquals(tIntInst, tIntSeqSet.startInstant());
@@ -279,7 +279,7 @@ class TIntSeqSetTest {
     @Test
     void testEndInstant() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntInst tIntInst = new TIntInst("3@2001-01-06 08:00:00+02");
         assertEquals(tIntInst, tIntSeqSet.endInstant());
@@ -288,7 +288,7 @@ class TIntSeqSetTest {
     @Test
     void testInstantN() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntInst tIntInst = new TIntInst("3@2001-01-05 08:00:00+02");
         assertEquals(tIntInst, tIntSeqSet.instantN(3));
@@ -297,7 +297,7 @@ class TIntSeqSetTest {
     @Test
     void testInstantNNoValue() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -309,7 +309,7 @@ class TIntSeqSetTest {
     @Test
     void testGetInstants() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ArrayList<TIntInst> list = new ArrayList<>();
         TIntInst firstInst = new TIntInst("189@2001-01-01 08:00:00+02");
@@ -329,7 +329,7 @@ class TIntSeqSetTest {
     @Test
     void testDuration() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
@@ -348,7 +348,7 @@ class TIntSeqSetTest {
     @Test
     void testTimespan() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime initialDate = OffsetDateTime.of(2001,1, 1,
@@ -362,10 +362,10 @@ class TIntSeqSetTest {
     @Test
     void testShift() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntSeqSet otherTIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-03 08:00:00+02, 1@2001-01-05 08:00:00+02), " +
+                "{(189@2001-01-03 08:00:00+02, 1@2001-01-05 08:00:00+02], " +
                         "[2@2001-01-06 08:00:00+02, 3@2001-01-07 08:00:00+02, 3@2001-01-08 08:00:00+02]}");
         tIntSeqSet.shift(Duration.ofDays(2));
         assertEquals(otherTIntSeqSet, tIntSeqSet);
@@ -374,7 +374,7 @@ class TIntSeqSetTest {
     @Test
     void testIntersectsTimestamp() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{[1@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2001,1, 1,
@@ -385,7 +385,7 @@ class TIntSeqSetTest {
     @Test
     void testNoIntersectsTimestamp() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ZoneOffset tz = ZoneOffset.of("+02:00");
         OffsetDateTime date = OffsetDateTime.of(2021,1, 1,
@@ -396,7 +396,7 @@ class TIntSeqSetTest {
     @Test
     void testIntersectsPeriod() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         Period period = new Period("[2001-01-02 08:00:00+02, 2001-01-10 00:00:00+01)");
         assertTrue(tIntSeqSet.intersectsPeriod(period));
@@ -405,7 +405,7 @@ class TIntSeqSetTest {
     @Test
     void testNoIntersectsPeriod() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
         assertFalse(tIntSeqSet.intersectsPeriod(period));
@@ -414,7 +414,7 @@ class TIntSeqSetTest {
     @Test
     void testNumSequences() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         assertEquals(2, tIntSeqSet.numSequences());
     }
@@ -422,16 +422,16 @@ class TIntSeqSetTest {
     @Test
     void testStartSequence() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
-        TIntSeq tIntSeq = new TIntSeq("[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02)");
+        TIntSeq tIntSeq = new TIntSeq("(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02]");
         assertEquals(tIntSeq, tIntSeqSet.startSequence());
     }
 
     @Test
     void testEndSequence() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntSeq tIntSeq = new TIntSeq(
                 "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]");
@@ -441,7 +441,7 @@ class TIntSeqSetTest {
     @Test
     void testSequenceN() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         TIntSeq tIntSeq = new TIntSeq(
                 "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]");
@@ -451,7 +451,7 @@ class TIntSeqSetTest {
     @Test
     void testSequenceNNoValue() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -463,11 +463,11 @@ class TIntSeqSetTest {
     @Test
     void testSequences() throws SQLException {
         TIntSeqSet tIntSeqSet = new TIntSeqSet(
-                "{[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
+                "{(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02], " +
                         "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}");
         ArrayList<TIntSeq> list = new ArrayList<>();
         list.add(new TIntSeq(
-                "[189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02)"));
+                "(189@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02]"));
         list.add(new TIntSeq(
                 "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]"));
         assertEquals(list, tIntSeqSet.sequences());

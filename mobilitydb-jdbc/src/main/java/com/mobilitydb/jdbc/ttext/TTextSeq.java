@@ -9,8 +9,7 @@ import java.sql.SQLException;
  */
 public class TTextSeq extends TSequence<String> {
     public TTextSeq(String value) throws SQLException {
-        super(value, TTextInst::new, TText::compareValue);
-        stepwise = true;
+        super(true, value, TTextInst::new, TText::compareValue);
     }
 
     public TTextSeq(String[] values) throws SQLException {
