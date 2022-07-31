@@ -6,8 +6,7 @@ import java.sql.SQLException;
 
 public class TIntSeqSet extends TSequenceSet<Integer> {
     public TIntSeqSet(String value) throws SQLException {
-        super(value, TIntSeq::new, TInt::compareValue);
-        stepwise = true;
+        super(true, value, TIntSeq::new, TInt::compareValue);
     }
 
     public TIntSeqSet(String[] values) throws SQLException {

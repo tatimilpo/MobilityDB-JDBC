@@ -6,8 +6,7 @@ import java.sql.SQLException;
 
 public class TTextSeqSet extends TSequenceSet<String> {
     public TTextSeqSet(String value) throws SQLException {
-        super(value, TTextSeq::new, TText::compareValue);
-        stepwise = true;
+        super(true, value, TTextSeq::new, TText::compareValue);
     }
 
     public TTextSeqSet(String[] values) throws SQLException {

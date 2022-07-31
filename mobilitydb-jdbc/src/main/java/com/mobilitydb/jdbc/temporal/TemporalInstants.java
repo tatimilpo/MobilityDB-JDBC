@@ -193,7 +193,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return value != null ? value.hashCode() : 0;
     }
 
-    protected void validate(String type) throws SQLException {
+    protected void validateInstantList(String type) throws SQLException {
         if (instantList.isEmpty()) {
             throw new SQLException(String.format("%s must be composed of at least one instant.", type));
         }

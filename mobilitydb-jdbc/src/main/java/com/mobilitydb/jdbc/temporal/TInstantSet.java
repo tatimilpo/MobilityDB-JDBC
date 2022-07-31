@@ -40,7 +40,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        validate("Temporal instant set");
+        validateInstantList("Temporal instant set");
     }
 
     @Override

@@ -28,6 +28,17 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
     }
 
     protected TSequenceSet(boolean stepwise,
+                           String value,
+                           GetTemporalSequenceFunction<V> getTemporalSequenceFunction,
+                           CompareValueFunction<V> compareValueFunction) throws SQLException {
+        super(TemporalType.TEMPORAL_SEQUENCE_SET);
+        this.compareValueFunction = compareValueFunction;
+        parseValue(value, getTemporalSequenceFunction);
+        this.stepwise = stepwise;
+        validate();
+    }
+
+    protected TSequenceSet(boolean stepwise,
                            String[] values,
                            GetTemporalSequenceFunction<V> getTemporalSequenceFunction,
                            CompareValueFunction<V> compareValueFunction) throws SQLException {
@@ -36,7 +47,6 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         this.stepwise = stepwise;
         for (String val : values) {
             TSequence<V> sequence = getTemporalSequenceFunction.run(val);
-            validateSequence(sequence);
             sequenceList.add(sequence);
         }
         validate();
@@ -48,16 +58,40 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         super(TemporalType.TEMPORAL_SEQUENCE_SET);
         this.compareValueFunction = compareValueFunction;
         this.stepwise = stepwise;
-        for (TSequence<V> sequence: values) {
-            validateSequence(sequence);
-            sequenceList.add(sequence);
-        }
+        sequenceList.addAll(Arrays.asList(values));
         validate();
     }
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        // TODO: Implement
+        if (sequenceList.isEmpty()) {
+            throw new SQLException("Sequence set must be composed of at least one sequence.");
+        }
+
+        for (int i = 0; i < sequenceList.size(); i++) {
+            TSequence<V> x = sequenceList.get(i);
+            validateSequence(x);
+
+            if (i + 1 < sequenceList.size()) {
+                TSequence<V>  y = sequenceList.get(i + 1);
+                validateSequence(y);
+
+                if (x.endTimestamp().isAfter(y.startTimestamp()) ||
+                    (x.endTimestamp().isEqual(y.startTimestamp()) && x.isUpperInclusive() && y.isLowerInclusive())) {
+                    throw new SQLException("The sequences of a sequence set cannot overlap.");
+                }
+            }
+        }
+    }
+
+    private void validateSequence(TSequence<V> sequence) throws SQLException {
+        if (sequence == null) {
+            throw new SQLException("Sequence cannot be null.");
+        }
+
+        if (sequence.stepwise != this.stepwise) {
+            throw new SQLException("Sequence should have the same interpolation.");
+        }
     }
 
     @Override
@@ -95,16 +129,6 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
                 seq = TemporalConstants.STEPWISE + seq;
             }
             sequenceList.add(getTemporalSequenceFunction.run(seq));
-        }
-    }
-
-    private void validateSequence(TSequence<V> sequence) throws SQLException {
-        if (sequence == null) {
-            throw new SQLException("Sequence cannot be null.");
-        }
-
-        if (sequence.stepwise != this.stepwise) {
-            throw new SQLException("Sequence should have the same interpolation.");
         }
     }
 

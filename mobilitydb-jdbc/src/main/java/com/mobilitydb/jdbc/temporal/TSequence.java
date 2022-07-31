@@ -112,7 +112,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
 
     @Override
     protected void validateTemporalDataType() throws SQLException {
-        validate("Temporal sequence");
+        validateInstantList("Temporal sequence");
 
         if (instantList.size() == 1 && (!lowerInclusive || !upperInclusive)) {
             throw new SQLException("The lower and upper bounds must be inclusive for an instant temporal sequence.");
