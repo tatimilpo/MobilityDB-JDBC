@@ -38,15 +38,23 @@ public abstract class TPoint extends TemporalDataType<Point> {
     }
 
     public static TemporalValue<Point> getSingleTemporalValue(String value) throws SQLException {
-        String[] values = value.trim().split("@");
-        // TODO add validations to the string to avoid null exceptions
-        // GeometryBuilder doesn't parse correctly if the geometry type is not in upper case
-        Geometry geo = GeometryBuilder.geomFromString(values[0].toUpperCase(), new BinaryParser());
+        if (value == null) {
+            throw new SQLException("Value cannot be null.");
+        }
 
-        // 1 is point
+        String[] values = value.trim().split("@");
+
+        if (values.length == 0) {
+            throw new SQLException(String.format("%s is not a valid temporal value.", value));
+        }
+
+        // GeometryBuilder doesn't parse correctly if the geometry type is not in upper case
+        String type = values[0].toUpperCase();
+        Geometry geo = GeometryBuilder.geomFromString(type, new BinaryParser());
+
+        // 1 is POINT
         if (geo.getType() != 1) {
-            // TODO Set correct validation message
-            throw new SQLException("Invalid type?");
+            throw new SQLException(String.format("%s is an invalid Postgis geometry type for temporal point.", type));
         }
 
         return new TemporalValue<>((Point)geo, DateTimeFormatHelper.getDateTimeFormat(values[1]));

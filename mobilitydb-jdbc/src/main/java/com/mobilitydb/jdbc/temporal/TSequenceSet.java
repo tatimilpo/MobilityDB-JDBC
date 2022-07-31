@@ -111,7 +111,6 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
             throws SQLException {
         String newValue = preprocessValue(value);
 
-        // TODO: Investigate if case insensitive comparison is required
         if (newValue.startsWith(TemporalConstants.STEPWISE)) {
             stepwise = true;
             newValue = newValue.substring(TemporalConstants.STEPWISE.length());
