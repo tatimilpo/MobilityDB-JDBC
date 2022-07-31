@@ -117,18 +117,24 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         }
 
         newValue = newValue.replace("{", "").replace("}", "").trim();
-        Matcher m = Pattern.compile("[\\[|\\(].*?[^\\]\\)][\\]|\\)]")
-                .matcher(newValue);
-        List<String> seqValues = new ArrayList<>();
-        while (m.find()) {
-            seqValues.add(m.group());
-        }
+        List<String> seqValues = getSequenceValues(newValue);
+
         for (String seq : seqValues) {
             if (stepwise && !seq.startsWith(TemporalConstants.STEPWISE)) {
                 seq = TemporalConstants.STEPWISE + seq;
             }
             sequenceList.add(getTemporalSequenceFunction.run(seq));
         }
+    }
+
+    protected List<String> getSequenceValues(String value) {
+        Matcher m = Pattern.compile("[\\[|\\(].*?[^\\]\\)][\\]|\\)]")
+                .matcher(value);
+        List<String> seqValues = new ArrayList<>();
+        while (m.find()) {
+            seqValues.add(m.group());
+        }
+        return seqValues;
     }
 
     protected boolean explicitInterpolation() {

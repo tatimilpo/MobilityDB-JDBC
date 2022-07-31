@@ -1,11 +1,11 @@
 package com.mobilitydb.jdbc.temporal;
 
-class TemporalConstants {
+public class TemporalConstants {
     private TemporalConstants() {}
 
-    static final String LOWER_INCLUSIVE = "[";
-    static final String LOWER_EXCLUSIVE = "(";
-    static final String UPPER_INCLUSIVE = "]";
-    static final String UPPER_EXCLUSIVE = ")";
-    static final String STEPWISE = "Interp=Stepwise;";
+    public static final String LOWER_INCLUSIVE = "[";
+    public static final String LOWER_EXCLUSIVE = "(";
+    public static final String UPPER_INCLUSIVE = "]";
+    public static final String UPPER_EXCLUSIVE = ")";
+    public static final String STEPWISE = "Interp=Stepwise;";
 }

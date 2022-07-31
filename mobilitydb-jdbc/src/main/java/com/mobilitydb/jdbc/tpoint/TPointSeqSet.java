@@ -2,12 +2,16 @@ package com.mobilitydb.jdbc.tpoint;
 
 import com.mobilitydb.jdbc.temporal.TSequence;
 import com.mobilitydb.jdbc.temporal.TSequenceSet;
+import com.mobilitydb.jdbc.temporal.TemporalConstants;
 import com.mobilitydb.jdbc.temporal.delegates.GetTemporalSequenceFunction;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParseResponse;
 import com.mobilitydb.jdbc.tpoint.helpers.SRIDParser;
 import org.postgis.Point;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 public class TPointSeqSet extends TSequenceSet<Point> {
     private int srid;
@@ -57,5 +61,23 @@ public class TPointSeqSet extends TSequenceSet<Point> {
     public int hashCode() {
         // It is not required to include the SRID since it is applied to the temporal values
         return super.hashCode();
+    }
+
+    @Override
+    protected List<String> getSequenceValues(String value) {
+        String delimiter = ",";
+        String[] values = value.split(delimiter, -1);
+        List<String> seqValues = new ArrayList<>();
+        StringJoiner joiner = new StringJoiner(delimiter);
+
+        for (String val : values) {
+            joiner.add(val);
+            if (val.endsWith(TemporalConstants.UPPER_EXCLUSIVE) || val.endsWith(TemporalConstants.UPPER_INCLUSIVE)) {
+                seqValues.add(joiner.toString().trim());
+                joiner = new StringJoiner(delimiter);
+            }
+        }
+
+        return seqValues;
     }
 }
