@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
+public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> implements TemporalSequences<V> {
     protected ArrayList<TSequence<V>> sequenceList = new ArrayList<>();
     protected boolean stepwise;
     private final CompareValueFunction<V> compareValueFunction;
@@ -380,10 +380,12 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         return value != null ? value.hashCode() : 0;
     }
 
+    @Override
     public int numSequences() {
         return sequenceList.size();
     }
 
+    @Override
     public TSequence<V> startSequence() {
         if (sequenceList.isEmpty()) {
             return null;
@@ -392,6 +394,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         return sequenceList.get(0);
     }
 
+    @Override
     public TSequence<V> endSequence() {
         if (sequenceList.isEmpty()) {
             return null;
@@ -400,6 +403,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         return sequenceList.get(sequenceList.size() - 1);
     }
 
+    @Override
     public TSequence<V> sequenceN(int n) throws SQLException {
         if (n >= 0 && n < sequenceList.size()) {
             return sequenceList.get(n);
@@ -408,6 +412,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> {
         throw new SQLException("There is no sequence at this index.");
     }
 
+    @Override
     public List<TSequence<V>> sequences() {
         return new ArrayList<>(sequenceList);
     }

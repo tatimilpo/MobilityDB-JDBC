@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
-public abstract class TSequence<V extends Serializable> extends TemporalInstants<V> {
+public abstract class TSequence<V extends Serializable> extends TemporalInstants<V> implements TemporalSequences<V> {
     protected boolean stepwise;
     private boolean lowerInclusive;
     private boolean upperInclusive;
@@ -239,18 +239,22 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
         return upperInclusive;
     }
 
+    @Override
     public int numSequences() {
         return 1;
     }
 
+    @Override
     public TSequence<V> startSequence() {
         return this;
     }
 
+    @Override
     public TSequence<V> endSequence() {
         return this;
     }
 
+    @Override
     public TSequence<V> sequenceN(int n) throws SQLException {
         if (n == 0) {
             return this;
@@ -259,6 +263,7 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
         throw new SQLException("There is no sequence at this index.");
     }
 
+    @Override
     public List<TSequence<V>> sequences() {
         ArrayList<TSequence<V>> list = new ArrayList<>();
         list.add(this);
