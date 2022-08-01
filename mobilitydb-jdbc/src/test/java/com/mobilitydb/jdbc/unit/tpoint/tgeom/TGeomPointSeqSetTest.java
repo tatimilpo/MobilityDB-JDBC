@@ -3,6 +3,7 @@ package com.mobilitydb.jdbc.unit.tpoint.tgeom;
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.time.Period;
 import com.mobilitydb.jdbc.time.PeriodSet;
+import com.mobilitydb.jdbc.tpoint.helpers.TPointConstants;
 import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPointInst;
 import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPointSeq;
 import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPointSeqSet;
@@ -48,6 +49,66 @@ class TGeomPointSeqSetTest {
         TGeomPointSeqSet firstTemporal = new TGeomPointSeqSet(value);
         TGeomPointSeqSet secondTemporal = new TGeomPointSeqSet(sequences);
         TGeomPointSeqSet thirdTemporal = new TGeomPointSeqSet(stringSequences);
+
+        assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
+        assertEquals(firstTemporal, secondTemporal);
+        assertEquals(firstTemporal, thirdTemporal);
+    }
+    
+    @Test
+    void testStepwiseConstructors() throws SQLException {
+        String value = "Interp=Stepwise;{[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02), " +
+                "[POINT(1 1)@2001-01-04 08:00:00+02, POINT(2 2)@2001-01-05 08:00:00+02, " +
+                "POINT(3 3)@2001-01-06 08:00:00+02]}";
+
+        TGeomPointSeq[] sequences = new TGeomPointSeq[]{
+                new TGeomPointSeq("Interp=Stepwise;[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02)"),
+                new TGeomPointSeq("Interp=Stepwise;[" +
+                        "POINT(1 1)@2001-01-04 08:00:00+02, " +
+                        "POINT(2 2)@2001-01-05 08:00:00+02, " +
+                        "POINT(3 3)@2001-01-06 08:00:00+02]")
+        };
+        String[] stringSequences = new String[]{
+                "Interp=Stepwise;[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02)",
+                "Interp=Stepwise;[POINT(1 1)@2001-01-04 08:00:00+02, POINT(2 2)@2001-01-05 08:00:00+02, " +
+                        "POINT(3 3)@2001-01-06 08:00:00+02]"
+        };
+
+        TGeomPointSeqSet firstTemporal = new TGeomPointSeqSet(value);
+        TGeomPointSeqSet secondTemporal = new TGeomPointSeqSet(true, sequences);
+        TGeomPointSeqSet thirdTemporal = new TGeomPointSeqSet(true, stringSequences);
+        TGeomPointSeqSet fourthTemporal = new TGeomPointSeqSet(TPointConstants.EMPTY_SRID,true, sequences);
+        TGeomPointSeqSet fifthTemporal = new TGeomPointSeqSet(TPointConstants.EMPTY_SRID,true, stringSequences);
+
+        assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
+        assertEquals(firstTemporal, secondTemporal);
+        assertEquals(firstTemporal, thirdTemporal);
+        assertEquals(firstTemporal, fourthTemporal);
+        assertEquals(firstTemporal, fifthTemporal);
+    }
+
+    @Test
+    void testSRIDConstructors() throws SQLException {
+        String value = "SRID=4326;{[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02), " +
+                "[POINT(1 1)@2001-01-04 08:00:00+02, POINT(2 2)@2001-01-05 08:00:00+02, " +
+                "POINT(3 3)@2001-01-06 08:00:00+02]}";
+
+        TGeomPointSeq[] sequences = new TGeomPointSeq[]{
+                new TGeomPointSeq("SRID=4326;[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02)"),
+                new TGeomPointSeq("SRID=4326;[" +
+                        "POINT(1 1)@2001-01-04 08:00:00+02, " +
+                        "POINT(2 2)@2001-01-05 08:00:00+02, " +
+                        "POINT(3 3)@2001-01-06 08:00:00+02]")
+        };
+        String[] stringSequences = new String[]{
+                "SRID=4326;[POINT(1 1)@2001-01-01 08:00:00+02, POINT(1 1)@2001-01-03 08:00:00+02)",
+                "SRID=4326;[POINT(1 1)@2001-01-04 08:00:00+02, POINT(2 2)@2001-01-05 08:00:00+02, " +
+                        "POINT(3 3)@2001-01-06 08:00:00+02]"
+        };
+
+        TGeomPointSeqSet firstTemporal = new TGeomPointSeqSet(value);
+        TGeomPointSeqSet secondTemporal = new TGeomPointSeqSet(TPointConstants.DEFAULT_SRID, sequences);
+        TGeomPointSeqSet thirdTemporal = new TGeomPointSeqSet(TPointConstants.DEFAULT_SRID, stringSequences);
 
         assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
         assertEquals(firstTemporal, secondTemporal);

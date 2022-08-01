@@ -44,7 +44,7 @@ public abstract class TPoint extends TemporalDataType<Point> {
 
         String[] values = value.trim().split("@");
 
-        if (values.length == 0) {
+        if (values.length != 2) {
             throw new SQLException(String.format("%s is not a valid temporal value.", value));
         }
 

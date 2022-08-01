@@ -3,6 +3,7 @@ package com.mobilitydb.jdbc.unit.tpoint.tgeog;
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.time.Period;
 import com.mobilitydb.jdbc.time.PeriodSet;
+import com.mobilitydb.jdbc.tpoint.helpers.TPointConstants;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInst;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointSeq;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,74 @@ class TGeogPointSeqTest {
         TGeogPointSeq thirdTemporal = new TGeogPointSeq(stringInstants);
         TGeogPointSeq fourthTemporal = new TGeogPointSeq(instants, true, false);
         TGeogPointSeq fifthTemporal = new TGeogPointSeq(stringInstants, true, false);
+
+        assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
+        assertEquals(firstTemporal, secondTemporal);
+        assertEquals(firstTemporal, thirdTemporal);
+        assertEquals(firstTemporal, fourthTemporal);
+        assertEquals(firstTemporal, fifthTemporal);
+    }
+
+    @Test
+    void testStepwiseConstructors() throws SQLException {
+        String value = "Interp=Stepwise;[Point(1 1)@2001-01-01 08:00:00+02, Point(1 1)@2001-01-03 08:00:00+02)";
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime dateOne = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime dateTwo = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        TGeogPointInst[] instants = new TGeogPointInst[]{
+                new TGeogPointInst(new Point(1, 1), dateOne),
+                new TGeogPointInst(new Point(1, 1), dateTwo)
+        };
+        String[] stringInstants = new String[]{
+                "Point(1 1)@2001-01-01 08:00:00+02",
+                "Point(1 1)@2001-01-03 08:00:00+02"
+        };
+
+        TGeogPointSeq firstTemporal = new TGeogPointSeq(value);
+        TGeogPointSeq secondTemporal = new TGeogPointSeq(true, instants);
+        TGeogPointSeq thirdTemporal = new TGeogPointSeq(true, stringInstants);
+        TGeogPointSeq fourthTemporal = new TGeogPointSeq(true, instants, true, false);
+        TGeogPointSeq fifthTemporal = new TGeogPointSeq(true, stringInstants, true, false);
+        TGeogPointSeq sixthTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, true, instants);
+        TGeogPointSeq seventhTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID,true, stringInstants);
+        TGeogPointSeq eighthTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, true, instants, true, false);
+        TGeogPointSeq ninthTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, true, stringInstants, true, false);
+
+        assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
+        assertEquals(firstTemporal, secondTemporal);
+        assertEquals(firstTemporal, thirdTemporal);
+        assertEquals(firstTemporal, fourthTemporal);
+        assertEquals(firstTemporal, fifthTemporal);
+        assertEquals(firstTemporal, sixthTemporal);
+        assertEquals(firstTemporal, seventhTemporal);
+        assertEquals(firstTemporal, eighthTemporal);
+        assertEquals(firstTemporal, ninthTemporal);
+    }
+
+    @Test
+    void testSRIDConstructors() throws SQLException {
+        String value = "SRID=4326;[Point(1 1)@2001-01-01 08:00:00+02, Point(2 2)@2001-01-03 08:00:00+02)";
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime dateOne = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime dateTwo = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+        TGeogPointInst[] instants = new TGeogPointInst[]{
+                new TGeogPointInst(new Point(1, 1), dateOne),
+                new TGeogPointInst(new Point(2, 2), dateTwo)
+        };
+        String[] stringInstants = new String[]{
+                "Point(1 1)@2001-01-01 08:00:00+02",
+                "Point(2 2)@2001-01-03 08:00:00+02"
+        };
+
+        TGeogPointSeq firstTemporal = new TGeogPointSeq(value);
+        TGeogPointSeq secondTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, instants);
+        TGeogPointSeq thirdTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, stringInstants);
+        TGeogPointSeq fourthTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, instants, true, false);
+        TGeogPointSeq fifthTemporal = new TGeogPointSeq(TPointConstants.DEFAULT_SRID, stringInstants, true, false);
 
         assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
         assertEquals(firstTemporal, secondTemporal);

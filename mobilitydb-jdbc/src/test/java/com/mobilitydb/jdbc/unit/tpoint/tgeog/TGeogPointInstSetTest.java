@@ -3,6 +3,7 @@ package com.mobilitydb.jdbc.unit.tpoint.tgeog;
 import com.mobilitydb.jdbc.temporal.TemporalType;
 import com.mobilitydb.jdbc.time.Period;
 import com.mobilitydb.jdbc.time.PeriodSet;
+import com.mobilitydb.jdbc.tpoint.helpers.TPointConstants;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInst;
 import com.mobilitydb.jdbc.tpoint.tgeog.TGeogPointInstSet;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,32 @@ class TGeogPointInstSetTest {
 
         assertEquals(tGeogPointInstSet.getValues(), otherTGeogPointInstSet.getValues());
         assertEquals(tGeogPointInstSet, otherTGeogPointInstSet);
+    }
+
+    @Test
+    void testSRIDConstructors() throws SQLException {
+        String value = "SRID=4326;{Point(0 0)@2001-01-01 08:00:00+02, Point(1 1)@2001-01-03 08:00:00+02}";
+        ZoneOffset tz = ZoneOffset.of("+02:00");
+        OffsetDateTime dateOne = OffsetDateTime.of(2001,1, 1,
+                8, 0, 0, 0, tz);
+        OffsetDateTime dateTwo = OffsetDateTime.of(2001,1, 3,
+                8, 0, 0, 0, tz);
+
+        TGeogPointInstSet firstTemporal = new TGeogPointInstSet(value);
+        TGeogPointInst[] instants = new TGeogPointInst[]{
+                new TGeogPointInst(new Point(0, 0), dateOne),
+                new TGeogPointInst(new Point (1, 1), dateTwo)
+        };
+        String[] values = new String[]{
+                "SRID=4326;Point(0 0)@2001-01-01 08:00:00+02",
+                "SRID=4326;Point(1 1)@2001-01-03 08:00:00+02"
+        };
+        TGeogPointInstSet secondTemporal = new TGeogPointInstSet(TPointConstants.DEFAULT_SRID, instants);
+        TGeogPointInstSet thirdTemporal = new TGeogPointInstSet(TPointConstants.DEFAULT_SRID, values);
+
+        assertEquals(firstTemporal.getValues(), secondTemporal.getValues());
+        assertEquals(firstTemporal, secondTemporal);
+        assertEquals(firstTemporal, thirdTemporal);
     }
 
     @Test
