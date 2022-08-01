@@ -462,4 +462,29 @@ class TBoolSeqSetTest {
         list.add(new TBoolSeq("[true@2001-01-04 08:00:00+02, false@2001-01-05 08:00:00+02]"));
         assertEquals(list, tBoolSeqSet.sequences());
     }
+
+    @Test
+    void testEmpty() {
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolSeq[] values = new TBoolSeq[0];
+                    TBoolSeqSet temporal = new TBoolSeqSet(values);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("Sequence set must be composed of at least one sequence."));
+    }
+
+    @Test
+    void testOverlap() {
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolSeqSet temporal = new TBoolSeqSet(
+                            "{[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02), " +
+                                    "[true@2001-01-02 08:00:00+02, false@2001-01-05 08:00:00+02]}");
+                }
+        );
+        assertTrue(thrown.getMessage().contains("The sequences of a sequence set cannot overlap."));
+    }
 }

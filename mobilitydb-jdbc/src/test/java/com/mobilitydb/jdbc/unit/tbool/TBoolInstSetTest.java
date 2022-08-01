@@ -366,4 +366,28 @@ class TBoolInstSetTest {
         Period period = new Period("[2021-09-08 00:00:00+01, 2021-09-10 00:00:00+01)");
         assertFalse(tBoolInstSet.intersectsPeriod(period));
     }
+
+    @Test
+    void testEmpty() {
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolInst[] values = new TBoolInst[0];
+                    TBoolInstSet temporal = new TBoolInstSet(values);
+                }
+        );
+        assertTrue(thrown.getMessage().contains(" must be composed of at least one instant."));
+    }
+
+    @Test
+    void testInvalid() {
+        String value = "{false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-01 08:00:00+02}";
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolInstSet temporal = new TBoolInstSet(value);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("The timestamps of a Temporal instant set must be increasing."));
+    }
 }

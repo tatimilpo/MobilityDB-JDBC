@@ -410,4 +410,52 @@ class TBoolSeqTest {
         list.add(tBoolSeq);
         assertEquals(list, tBoolSeq.sequences());
     }
+
+    @Test
+    void testEmpty() {
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolInst[] values = new TBoolInst[0];
+                    TBoolSeq temporal = new TBoolSeq(values);
+                }
+        );
+        assertTrue(thrown.getMessage().contains(" must be composed of at least one instant."));
+    }
+
+    @Test
+    void testInvalid() {
+        String value = "(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-01 08:00:00+02]";
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolSeq temporal = new TBoolSeq(value);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("The timestamps of a Temporal sequence must be increasing."));
+    }
+
+    @Test
+    void testInvalidInstant() {
+        String value = "(false@2001-01-01 08:00:00+02]";
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolSeq temporal = new TBoolSeq(value);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("The lower and upper bounds must be inclusive for an instant temporal sequence."));
+    }
+
+    @Test
+    void testInvalidStepwise() {
+        String value = "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)";
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolSeq temporal = new TBoolSeq(value);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("The last two values of a temporal sequence with exclusive upper bound and stepwise interpolation must be equal."));
+    }
 }

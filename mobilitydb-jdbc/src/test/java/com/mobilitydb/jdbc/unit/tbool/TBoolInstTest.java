@@ -54,6 +54,17 @@ class TBoolInstTest {
     }
 
     @Test
+    void testNullTimestamp() {
+        SQLException thrown = assertThrows(
+                SQLException.class,
+                () -> {
+                    TBoolInst tBoolInst = new TBoolInst(true, null);
+                }
+        );
+        assertTrue(thrown.getMessage().contains("Timestamp cannot be null."));
+    }
+
+    @Test
     void testGetValue() throws SQLException {
         TBoolInst tBoolInst = new TBoolInst("false@2019-09-08 06:04:32+02");
         assertEquals(false, tBoolInst.getValue());
