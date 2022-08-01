@@ -6,6 +6,8 @@ import com.mobilitydb.jdbc.tbool.TBoolSeq;
 import com.mobilitydb.jdbc.time.Period;
 import com.mobilitydb.jdbc.time.PeriodSet;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.sql.SQLException;
 import java.time.Duration;
@@ -423,39 +425,22 @@ class TBoolSeqTest {
         assertTrue(thrown.getMessage().contains(" must be composed of at least one instant."));
     }
 
-    @Test
-    void testInvalid() {
-        String value = "(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-01 08:00:00+02]";
+    @ParameterizedTest
+    @CsvSource({
+            "'(false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02, true@2001-01-01 08:00:00+02]', " +
+                    "'The timestamps of a Temporal sequence must be increasing.'",
+            "'(false@2001-01-01 08:00:00+02]', " +
+                    "'The lower and upper bounds must be inclusive for an instant temporal sequence.'",
+            "'[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)', " +
+                    "'The last two values of a temporal sequence with exclusive upper bound and stepwise interpolation must be equal.'",
+    })
+    void testInvalids(String value, String error) {
         SQLException thrown = assertThrows(
                 SQLException.class,
                 () -> {
                     TBoolSeq temporal = new TBoolSeq(value);
                 }
         );
-        assertTrue(thrown.getMessage().contains("The timestamps of a Temporal sequence must be increasing."));
-    }
-
-    @Test
-    void testInvalidInstant() {
-        String value = "(false@2001-01-01 08:00:00+02]";
-        SQLException thrown = assertThrows(
-                SQLException.class,
-                () -> {
-                    TBoolSeq temporal = new TBoolSeq(value);
-                }
-        );
-        assertTrue(thrown.getMessage().contains("The lower and upper bounds must be inclusive for an instant temporal sequence."));
-    }
-
-    @Test
-    void testInvalidStepwise() {
-        String value = "[false@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02)";
-        SQLException thrown = assertThrows(
-                SQLException.class,
-                () -> {
-                    TBoolSeq temporal = new TBoolSeq(value);
-                }
-        );
-        assertTrue(thrown.getMessage().contains("The last two values of a temporal sequence with exclusive upper bound and stepwise interpolation must be equal."));
+        assertTrue(thrown.getMessage().contains(error));
     }
 }
