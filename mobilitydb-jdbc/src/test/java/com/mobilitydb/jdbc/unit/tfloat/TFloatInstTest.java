@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,8 @@ class TFloatInstTest {
     void testBuildValue() throws SQLException {
         String value = "1.8@2019-09-08 06:04:32";
         ZoneOffset tz = OffsetDateTime.now().getOffset();
-        value = value + tz.toString().substring(0, 3);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("X");
+        value = value + format.format(tz);
         TFloatInst tFloatInst = new TFloatInst(value);
         String newValue = tFloatInst.buildValue();
         assertEquals(value, newValue);
