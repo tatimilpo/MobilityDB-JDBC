@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,9 +146,10 @@ class TGeogPointSeqTest {
     @Test
     void testBuildValue() throws SQLException {
         ZoneOffset tz = OffsetDateTime.now().getOffset();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("X");
         String value = String.format(
             "[SRID=4326;POINT(1 1)@2001-01-01 08:00:00%1$s, SRID=4326;POINT(2 2)@2001-01-03 08:00:00%1$s)",
-            tz.toString().substring(0, 3)
+            format.format(tz)
         );
         TGeogPointSeq temporal = new TGeogPointSeq(value);
         String newValue = temporal.buildValue();
