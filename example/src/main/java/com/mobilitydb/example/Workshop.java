@@ -1,10 +1,19 @@
 package com.mobilitydb.example;
 
+import com.mobilitydb.jdbc.tfloat.TFloat;
+import com.mobilitydb.jdbc.tfloat.TFloatInst;
+import com.mobilitydb.jdbc.tfloat.TFloatSeq;
+import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPoint;
+import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPointInst;
+import com.mobilitydb.jdbc.tpoint.tgeom.TGeomPointSeq;
 import org.apache.commons.lang3.time.StopWatch;
+import org.postgis.PGgeometry;
+import org.postgis.Point;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,19 +24,11 @@ public class Workshop {
     public static void main(String[] args) {
         try {
             Connection con = Common.createConnection(25433, "DanishAIS");
-            StopWatch watch = new StopWatch();
-            watch.start();
             createSchema(con);
-            System.out.println("createSchema: " + watch.getTime());
             loadFromCSV(con);
-            System.out.println("loadFromCSV: " + watch.getTime());
             cleanupData(con);
-            System.out.println("cleanupData " + watch.getTime());
             filterData(con);
-            System.out.println("filterData " + watch.getTime());
             loadShipData(con);
-            System.out.println("loadShipData " + watch.getTime());
-            watch.stop();
             con.close();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(Playground.class.getName());
@@ -36,6 +37,8 @@ public class Workshop {
     }
 
     private static void createSchema(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
         String inputTable  = "CREATE TABLE IF NOT EXISTS AISInput( " +
                 "T timestamp, " +
                 "TypeOfMobile varchar(50), " +
@@ -80,9 +83,13 @@ public class Workshop {
         Statement shipsStatement = con.createStatement();
         shipsStatement.execute(shipsTable);
         shipsStatement.close();
+        watch.stop();
+        System.out.println("createSchema: " + watch.getTime() + "ms");
     }
 
     private static void loadFromCSV(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
         String sql = "COPY AISInput(T, TypeOfMobile, MMSI, Latitude, Longitude, NavigationalStatus, " +
                 "ROT, SOG, COG, Heading, IMO, CallSign, Name, ShipType, CargoType, Width, Length, " +
                 "TypeOfPositionFixingDevice, Draught, Destination, ETA, DataSourceType, " +
@@ -92,9 +99,13 @@ public class Workshop {
         Statement st = con.createStatement();
         st.execute(sql);
         st.close();
+        watch.stop();
+        System.out.println("loadFromCSV: " + watch.getTime() + "ms");
     }
 
     private static void cleanupData(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
         String sql = "UPDATE AISInput SET " +
                 "NavigationalStatus = CASE NavigationalStatus WHEN 'Unknown value' THEN NULL END, " +
                 "IMO = CASE IMO WHEN 'Unknown' THEN NULL END, " +
@@ -106,9 +117,13 @@ public class Workshop {
         Statement st = con.createStatement();
         st.execute(sql);
         st.close();
+        watch.stop();
+        System.out.println("cleanupData: " + watch.getTime() + "ms");
     }
 
     private static void filterData(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
         String sql = "CREATE TABLE AISInputFiltered AS " +
                 "SELECT DISTINCT ON(MMSI,T) * " +
                 "FROM AISInput " +
@@ -117,9 +132,81 @@ public class Workshop {
         Statement st = con.createStatement();
         st.execute(sql);
         st.close();
+        watch.stop();
+        System.out.println("filterData: " + watch.getTime() + "ms");
     }
 
-    private static void loadShipData(Connection con) {
+    private static void loadShipData(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        String sql = "SELECT MMSI, T, ST_Transform(Geom, 25832), SOG, COG " +
+                "FROM AISInputFiltered " +
+                "ORDER BY MMSI, T; ";
+        Statement readStatement = con.createStatement();
+        ResultSet rs = readStatement.executeQuery(sql);
+        boolean first = false;
+        int currentMmsi = 0;
+        List<TGeomPointInst> pointList = new ArrayList<>();
+        List<TFloatInst> sogList = new ArrayList<>();
+        List<TFloatInst> cogList = new ArrayList<>();
 
+        while (rs.next()) {
+            int mmsi = rs.getInt(1);
+
+            if (!first) {
+                currentMmsi = mmsi;
+            }
+
+            if (mmsi != currentMmsi) {
+                saveShip(con, currentMmsi, pointList, sogList, cogList);
+                currentMmsi = mmsi;
+                pointList = new ArrayList<>();
+                sogList = new ArrayList<>();
+                cogList = new ArrayList<>();
+            }
+
+            OffsetDateTime time = rs.getObject(2, OffsetDateTime.class);
+            PGgeometry pgGeometry = (PGgeometry) rs.getObject(3);
+            pointList.add(new TGeomPointInst((Point)pgGeometry.getGeometry(), time));
+            float sog = rs.getFloat(4);
+
+            if (!rs.wasNull()) {
+                sogList.add(new TFloatInst(sog, time));
+            }
+
+            float cog = rs.getFloat(5);
+
+            if (!rs.wasNull()) {
+                cogList.add(new TFloatInst(cog, time));
+            }
+
+            first = true;
+        }
+
+        saveShip(con, currentMmsi, pointList, sogList, cogList);
+
+        readStatement.close();
+        watch.stop();
+        System.out.println("loadShipData: " + watch.getTime() + "ms");
+    }
+
+    private static void saveShip(Connection con, int msi,
+                                 List<TGeomPointInst> pointList,
+                                 List<TFloatInst> sogList,
+                                 List<TFloatInst> cogList) throws SQLException {
+        TGeomPointSeq pointSeq = new TGeomPointSeq(pointList.toArray(new TGeomPointInst[0]));
+        TFloatSeq sogSeq = new TFloatSeq(sogList.toArray(new TFloatInst[0]));
+        TFloatSeq cogSeq = new TFloatSeq(cogList.toArray(new TFloatInst[0]));
+
+        PreparedStatement insertStatement = con.prepareStatement(
+                "INSERT INTO ships( " +
+                        "mmsi, trip, sog, cog) " +
+                        "VALUES (?, ?, ?, ?);");
+        insertStatement.setInt(1, msi);
+        insertStatement.setObject(2, new TGeomPoint(pointSeq));
+        insertStatement.setObject(3, new TFloat(sogSeq));
+        insertStatement.setObject(4, new TFloat(cogSeq));
+        insertStatement.execute();
+        insertStatement.close();
     }
 }

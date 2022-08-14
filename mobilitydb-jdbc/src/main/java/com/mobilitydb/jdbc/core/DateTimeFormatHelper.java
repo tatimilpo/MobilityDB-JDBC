@@ -1,13 +1,27 @@
 package com.mobilitydb.jdbc.core;
 
 import java.time.OffsetDateTime;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 
 /**
  * Helper to format dateTime values
  */
 public final class DateTimeFormatHelper {
-    private static final String FORMAT = "yyyy-MM-dd HH:mm:ssX";
+    private static final DateTimeFormatter offsetFormatter = (new DateTimeFormatterBuilder())
+            .appendOffset("+HH", "+00")
+            .toFormatter();
+
+    private static final DateTimeFormatter formatter = (new DateTimeFormatterBuilder())
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)
+            .appendLiteral(" ")
+            .append(DateTimeFormatter.ISO_LOCAL_TIME)
+            .appendOptional(offsetFormatter)
+            .parseDefaulting(ChronoField.OFFSET_SECONDS, 0)
+            .toFormatter();
 
     private DateTimeFormatHelper() {}
 
@@ -17,8 +31,7 @@ public final class DateTimeFormatHelper {
      * @return OffsetDateTime
      */
     public static OffsetDateTime getDateTimeFormat(String value) {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern(FORMAT);
-        return OffsetDateTime.parse(value.trim(), format);
+        return OffsetDateTime.parse(value.trim(), formatter);
     }
 
     /**
@@ -26,8 +39,7 @@ public final class DateTimeFormatHelper {
      * @param value OffsetDateTime
      * @return String
      */
-    public static String getStringFormat(OffsetDateTime value){
-        DateTimeFormatter format = DateTimeFormatter.ofPattern(FORMAT);
-        return format.format(value);
+    public static String getStringFormat(OffsetDateTime value) {
+        return formatter.format(value);
     }
 }
