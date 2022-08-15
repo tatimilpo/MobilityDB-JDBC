@@ -29,6 +29,7 @@ public class Workshop {
             cleanupData(con);
             filterData(con);
             loadShipData(con);
+            setTrajectory(con);
             con.close();
         } catch (SQLException ex) {
             Logger lgr = Logger.getLogger(Playground.class.getName());
@@ -73,7 +74,8 @@ public class Workshop {
                 "MMSI integer, " +
                 "Trip tgeompoint, " +
                 "SOG tfloat, " +
-                "COG tfloat" +
+                "COG tfloat, " +
+                "Traj geometry" +
                 "); ";
 
         Statement inputStatement = con.createStatement();
@@ -190,7 +192,7 @@ public class Workshop {
         System.out.println("loadShipData: " + watch.getTime() + "ms");
     }
 
-    private static void saveShip(Connection con, int msi,
+    private static void saveShip(Connection con, int mmsi,
                                  List<TGeomPointInst> pointList,
                                  List<TFloatInst> sogList,
                                  List<TFloatInst> cogList) throws SQLException {
@@ -202,10 +204,39 @@ public class Workshop {
                 "INSERT INTO ships( " +
                         "mmsi, trip, sog, cog) " +
                         "VALUES (?, ?, ?, ?);");
-        insertStatement.setInt(1, msi);
+        insertStatement.setInt(1, mmsi);
         insertStatement.setObject(2, new TGeomPoint(pointSeq));
         insertStatement.setObject(3, new TFloat(sogSeq));
         insertStatement.setObject(4, new TFloat(cogSeq));
+        insertStatement.execute();
+        insertStatement.close();
+    }
+
+    private static void setTrajectory(Connection con) throws SQLException {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        String sql = "SELECT MMSI, TRIP FROM SHIPS;";
+        Statement readStatement = con.createStatement();
+        ResultSet rs = readStatement.executeQuery(sql);
+
+        while (rs.next()) {
+            int mmsi = rs.getInt(1);
+            TGeomPoint tGeomPoint = (TGeomPoint) rs.getObject(2);
+            updateShipTrajectory(con, mmsi, tGeomPoint);
+        }
+
+        readStatement.close();
+        watch.stop();
+        System.out.println("setTrajectory: " + watch.getTime() + "ms");
+    }
+
+    private static void updateShipTrajectory(Connection con, int mmsi, TGeomPoint tGeomPoint) throws SQLException {
+        PreparedStatement insertStatement = con.prepareStatement(
+                "UPDATE ships " +
+                        "SET traj=trajectory(?) " +
+                        "WHERE mmsi=?;");
+        insertStatement.setObject(1, tGeomPoint);
+        insertStatement.setInt(2, mmsi);
         insertStatement.execute();
         insertStatement.close();
     }
