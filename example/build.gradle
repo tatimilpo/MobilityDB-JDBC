@@ -5,7 +5,9 @@ plugins {
 group 'com.mobilitydb'
 version '1.0-SNAPSHOT'
 
-mainClassName = 'com.mobilitydb.example.Main'
+application {
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "NULL"
+}
 
 repositories {
     mavenCentral()

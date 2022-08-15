@@ -37,6 +37,12 @@ public class Workshop {
         }
     }
 
+    /**
+     * Creates the required tables.
+     * See Workshop documentation 1.4 Preparing the Database
+     * @param con - SQL connection
+     * @throws SQLException - when the create fails
+     */
     private static void createSchema(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
@@ -89,6 +95,12 @@ public class Workshop {
         System.out.println("createSchema: " + watch.getTime() + "ms");
     }
 
+    /**
+     * Load the workshop data to AISInput table
+     * See Workshop documentation 1.5 Loading the Data
+     * @param con - SQL connection
+     * @throws SQLException - If the copy fails
+     */
     private static void loadFromCSV(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
@@ -105,6 +117,12 @@ public class Workshop {
         System.out.println("loadFromCSV: " + watch.getTime() + "ms");
     }
 
+    /**
+     * Cleanup AISInput table
+     * See Workshop documentation 1.5 Loading the Data
+     * @param con - SQL connection
+     * @throws SQLException - If the update fails
+     */
     private static void cleanupData(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
@@ -123,6 +141,12 @@ public class Workshop {
         System.out.println("cleanupData: " + watch.getTime() + "ms");
     }
 
+    /**
+     * Filter the data that it is outside a defined window and then saves it to AISInputFiltered
+     * See Workshop documentation 1.5 Loading the Data
+     * @param con - SQL connection
+     * @throws SQLException - If filter fails
+     */
     private static void filterData(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
@@ -138,6 +162,12 @@ public class Workshop {
         System.out.println("filterData: " + watch.getTime() + "ms");
     }
 
+    /**
+     * Load the ship data using MobilityDB JDBC instead of a query to test the driver
+     * See Workshop documentation 1.6 Constructing Trajectories
+     * @param con - SQL connection
+     * @throws SQLException - If load fails
+     */
     private static void loadShipData(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
@@ -212,6 +242,12 @@ public class Workshop {
         insertStatement.close();
     }
 
+    /**
+     * Set the trajectory using MobilityDB JDBC instead of a query to test the driver
+     * See Workshop documentation 1.6 Constructing Trajectories
+     * @param con - SQL connection
+     * @throws SQLException - If load fails
+     */
     private static void setTrajectory(Connection con) throws SQLException {
         StopWatch watch = new StopWatch();
         watch.start();
