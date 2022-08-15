@@ -28,6 +28,9 @@ Also, have the database DanishAIS created with the MobilityDB extension:
 
     CREATE EXTENSION MobilityDB CASCADE;
 
-Finally, to execute it with gradle run:
+Then to execute it with gradle run:
 
     ./gradlew -PmainClass=com.mobilitydb.example.Workshop run
+
+Finally, the generated trajectories can be displayed on QGIS:  
+![Trajectoy on QGIS](assets/trajectoryQGis.jpg)
