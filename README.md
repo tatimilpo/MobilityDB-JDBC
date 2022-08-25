@@ -1,5 +1,15 @@
 # MobilityDB-JDBC
-JDBC driver for MobilityDB
+
+**Author: Tatiana Millan Poveda**<br>
+**Email: tatimilpo@gmail.com**
+
+JDBC driver for MobilityDB has been performed as the Master Thesis of the MSc in Computer Science of ULB.
+
+
+## Abstract
+The purpose of this project is the creation of Java Database Connectivity Driver (JDBC) that helps programs written in Java to connect with MobilityDB databases by extending PostgreSQL JDBC types. MobilityDB is an open-source database management system extension of PostgreSQL, that offers support for object moving data and special temporal data.
+The MobilityDB-JDBC driver provides support for the new MobilityDB  types: Period, PeriodSet, TimestampSet, TBox, STBox , TInt, TBool, TFloat, TText, TGeomPoint and TGeogPoint and also the temporal types TInstant, TInstantSet, TSequence and TSequenceSet, and was built based on the MobilityDB Python adapter with the objective of acquire feature parity.
+
 
 ## Development
 ### Requirements
@@ -7,7 +17,7 @@ JDBC driver for MobilityDB
 - Docker
 
 ### Build
-The project is using gradle for building and maven for the dependencies but it is not required to install any of them, it is possible to build the project by running the following command on the root folder:
+The project is using Gradle for building and Maven for the dependencies, but it is not required to install any of them, it is possible to build the project by running the following command on the root folder:
  
 On Linux:
 
@@ -26,7 +36,7 @@ On Windows:
     gradlew.bat test
 
 ### Code Analysis 
-To run the code analysis is required to have a project configured on Sonaqube and then execute the command:
+To run the code analysis it is required to have a project configured on Sonarqube and then execute the command:
 
 On Linux:
 
@@ -35,7 +45,7 @@ On Windows:
 
     gradlew.bat sonarqube -Dsonar.projectKey={project key} -Dsonar.host.url={host} -Dsonar.login={token}
 
-#### Sonarqube docker image
+#### Sonarqube Docker Image
 To configure the Sonarqube project it is recommended to run the docker image.
 For more details check [the Sonarqube setup guide.](https://docs.sonarqube.org/latest/setup/get-started-2-minutes/)
 
@@ -66,13 +76,15 @@ Create a new project
     ./gradlew sonarqube -Dsonar.projectKey=MobilityDB-JDBC -Dsonar.host.url=http://localhost:9000 -Dsonar.login=1234
     
 - Review the results on Sonarqube
-### Running integration tests
-To run the integration tests is required to have a PostgreSQL data base with MobilityDB extension.
+### Running Integration Tests
+To run the integration tests it is required to have a PostgreSQL database with MobilityDB extension.
 The integration tests uses the connection string:
     
     jdbc:postgresql://localhost:25432/mobilitydb
+    
 but it can be modified in BaseIntegrationTest class.
 To execute them run the command:
+
 On Linux:
 
     ./gradlew integrationTests
@@ -80,7 +92,7 @@ On Windows:
 
     gradlew.bat integrationTests
 
-#### MobilityDB docker image
+#### MobilityDB Docker Image
 It is recommended to run the MobilityDB docker image for the integration tests.
 For more details check https://github.com/MobilityDB/MobilityDB#docker-container
 
