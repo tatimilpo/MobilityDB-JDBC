@@ -11,14 +11,27 @@ import java.sql.SQLException;
 
 @TypeName(name = "tint")
 public class TInt extends TemporalDataType<Integer> {
+
+    /**
+     * The default constructor
+     */
     public TInt() {
         super();
     }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TInt value
+     * @throws SQLException
+     */
     public TInt(final String value) throws SQLException {
         super(value);
     }
 
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TIntInst, TIntInstSet, TIntSeq or a TIntSeqSet
+     */
     public TInt(Temporal<Integer> temporal) {
         super();
         this.temporal = temporal;
@@ -48,6 +61,13 @@ public class TInt extends TemporalDataType<Integer> {
         return new TemporalValue<>(Integer.parseInt(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
 
+    /**
+     * Compares two integers
+     * @param first - the first int to compare
+     * @param second - the second int to compare
+     * @return 0 is both ints are equals, a positive value in case first is greater than second or a negative value
+     * if first is less than second
+     */
     public static int compareValue(Integer first, Integer second) {
         return first.compareTo(second);
     }

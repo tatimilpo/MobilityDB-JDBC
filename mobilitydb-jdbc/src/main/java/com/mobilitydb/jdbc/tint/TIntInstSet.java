@@ -6,17 +6,29 @@ import java.sql.SQLException;
 
 public class TIntInstSet extends TInstantSet<Integer> {
 
-    //String of "{10@2019-09-08, 20@2019-09-09, 20@2019-09-10}"
+    /**
+     * The string constructor
+     * @param value - the string with the TIntInstSet value
+     * @throws SQLException
+     */
     public TIntInstSet(String value) throws SQLException {
         super(value, TIntInst::new, TInt::compareValue);
     }
 
-    //Array of strings "10@2019-09-08"
+    /**
+     * The string array constructor
+     * @param values - an array of strings
+     * @throws SQLException
+     */
     public TIntInstSet(String[] values) throws SQLException {
         super(values, TIntInst::new, TInt::compareValue);
     }
 
-    //Array of TIntInst
+    /**
+     * The TIntInst array constructor
+     * @param values - an array of TIntInst
+     * @throws SQLException
+     */
     public TIntInstSet(TIntInst[] values) throws SQLException {
         super(values, TInt::compareValue);
     }

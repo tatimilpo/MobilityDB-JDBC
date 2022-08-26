@@ -38,6 +38,11 @@ public enum DataTypeHandler {
         types.add(TGeogPoint.class);
     }
 
+    /**
+     * Registers the type based on the annotation of the class
+     * @param connection - the PGConnection
+     * @throws SQLException
+     */
     public void registerTypes(PGConnection connection) throws SQLException {
         for (Class<? extends DataType> clazz : types) {
             if (clazz.isAnnotationPresent(TypeName.class)) {

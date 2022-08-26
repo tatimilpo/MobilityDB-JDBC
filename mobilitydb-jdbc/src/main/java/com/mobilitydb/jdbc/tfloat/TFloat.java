@@ -11,12 +11,25 @@ import java.sql.SQLException;
 
 @TypeName(name = "tfloat")
 public class TFloat extends TemporalDataType<Float> {
+
+    /**
+     * The default constructor
+     */
     public TFloat() { super(); }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TFloat value
+     * @throws SQLException
+     */
     public TFloat(String value) throws SQLException {
         super(value);
     }
 
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TFloatInst, TFloatInstSet, TFloatSeq or a TFloatSeqSet
+     */
     public TFloat(Temporal<Float> temporal) {
         super();
         this.temporal = temporal;
@@ -46,6 +59,13 @@ public class TFloat extends TemporalDataType<Float> {
         return new TemporalValue<>(Float.parseFloat(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
 
+    /**
+     * Compares two floats
+     * @param first - the first float to compare
+     * @param second - the second float to compare
+     * @return 0 is both floats are equals, a positive value in case first is greater than second or a negative value
+     * if first is less than second
+     */
     public static int compareValue(Float first, Float second) {
         return first.compareTo(second);
     }

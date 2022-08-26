@@ -11,14 +11,27 @@ import java.sql.SQLException;
 
 @TypeName(name = "tbool")
 public class TBool extends TemporalDataType<Boolean> {
+
+    /**
+     * The default constructor
+     */
     public TBool() {
         super();
     }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TBool value
+     * @throws SQLException
+     */
     public TBool(final String value) throws SQLException {
         super(value);
     }
 
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TBoolInst, TBoolInstSet,TBoolSeq or a TBoolSeqSet
+     */
     public TBool(Temporal<Boolean> temporal) {
         super();
         this.temporal = temporal;
@@ -54,6 +67,13 @@ public class TBool extends TemporalDataType<Boolean> {
         return new TemporalValue<>(b, DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
 
+    /**
+     * Compares two booleans
+     * @param first - the first boolean to compare
+     * @param second - the second boolean to compare
+     * @return 0 is both booleans are equals, a positive value in case first is greater than second or a negative value
+     * if first is less than second
+     */
     public static int compareValue(Boolean first, Boolean second) {
         return first.compareTo(second);
     }

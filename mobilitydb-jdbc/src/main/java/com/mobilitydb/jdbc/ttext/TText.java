@@ -11,13 +11,26 @@ import java.sql.SQLException;
 
 @TypeName(name = "ttext")
 public class TText extends TemporalDataType<String> {
+
+    /**
+     * The default constructor
+     */
     public TText() {super();}
 
+    /**
+     * The string constructor
+     * @param value - the string with the TText value
+     * @throws SQLException
+     */
     public TText(final String value) throws SQLException {
         super();
         setValue(value);
     }
 
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TTextInst, TTextInstSet, TTextSeq or a TTextSeqSet
+     */
     public TText(Temporal<String> temporal) {
         super();
         this.temporal = temporal;
@@ -50,6 +63,13 @@ public class TText extends TemporalDataType<String> {
         return new TemporalValue<>(String.format("%s",values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
 
+    /**
+     * Compares two strings
+     * @param first - the first string to compare
+     * @param second - the second string to compare
+     * @return 0 is both strings are equals, a positive value in case first is greater than second or a negative value
+     * if first is less than second
+     */
     public static int compareValue(String first, String second) {
         return first.compareTo(second);
     }
