@@ -2,18 +2,35 @@ package com.mobilitydb.jdbc.boxes;
 
 import java.io.Serializable;
 
+/**
+ * Class that represents points with coordinates
+ */
 public class Point implements Serializable {
     private Double x = null;
     private Double y = null;
     private Double z = null;
 
+    /**
+     * The default constructor
+     */
     public Point(){}
 
+    /**
+     * The constructor with x and y coordinates
+     * @param x - the x coordinate
+     * @param y - the y coordinate
+     */
     public Point(Double x, Double y){
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * The constructor with x, y and z coordinates
+     * @param x - the x coordinate
+     * @param y - the y coordinate
+     * @param z - the z coordinate
+     */
     public Point(Double x, Double y, Double z){
         this.x = x;
         this.y = y;

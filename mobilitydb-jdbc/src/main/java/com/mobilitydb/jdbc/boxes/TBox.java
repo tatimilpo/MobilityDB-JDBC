@@ -7,6 +7,9 @@ import com.mobilitydb.jdbc.core.TypeName;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
+/**
+ * Class that represents the MobilityDB type TBox
+ */
 @TypeName(name = "tbox")
 public class TBox extends DataType {
     private double xmin = 0.0f;
@@ -14,27 +17,52 @@ public class TBox extends DataType {
     private OffsetDateTime tmin;
     private OffsetDateTime tmax;
 
+    /**
+     * The default constructor
+     */
     public TBox() {
         super();
     }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TBox value
+     * @throws SQLException
+     */
     public TBox(final String value) throws SQLException {
         super();
         setValue(value);
     }
 
+    /**
+     * The constructor for only value dimension x
+     * @param xmin - minimum x value
+     * @param xmax - maximum x value
+     */
     public TBox(Double xmin, Double xmax) {
         super();
         this.xmin = xmin;
         this.xmax = xmax;
     }
 
+    /**
+     * The constructor for only time dimension
+     * @param tmin - minimum time dimension
+     * @param tmax - maximum time dimension
+     */
     public TBox(OffsetDateTime tmin, OffsetDateTime tmax) {
         super();
         this.tmin = tmin;
         this.tmax = tmax;
     }
 
+    /**
+     * The constructor for value dimension x and time dimension
+     * @param xmin - minimum x value
+     * @param tmin - minimum time dimension
+     * @param xmax - maximum x value
+     * @param tmax - maximum time dimension
+     */
     public TBox(Double xmin, OffsetDateTime tmin, Double xmax, OffsetDateTime tmax) {
         super();
         this.xmin = xmin;

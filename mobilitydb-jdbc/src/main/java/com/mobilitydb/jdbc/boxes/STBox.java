@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 
+/**
+ * Class that represents the MobilityDB type STBox
+ */
 @TypeName(name = "stbox")
 public class STBox extends DataType {
     private Point pMin = null;
@@ -17,20 +20,28 @@ public class STBox extends DataType {
     private boolean isGeodetic = false;
     private int srid = 0;
 
+    /**
+     * The default constructor
+     */
     public STBox() {
         super();
     }
 
+    /**
+     * The string constructor
+     * @param value - STBox value
+     * @throws SQLException
+     */
     public STBox(final String value) throws SQLException {
         super();
         setValue(value);
     }
 
     /**
-     * Constructor for only value dimension (x,y) or (x,y,z)
+     * The constructor for only value dimension (x,y) or (x,y,z)
      *
-     * @param pMin coordinates for minimum bound
-     * @param pMax coordinates for maximum bound
+     * @param pMin - coordinates for minimum bound
+     * @param pMax - coordinates for maximum bound
      * @throws SQLException
      */
     public STBox(Point pMin, Point pMax) throws SQLException {
@@ -41,12 +52,12 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for value dimension (x,y) or (x,y,z) and time dimension
+     * The constructor for value dimension (x,y) or (x,y,z) and time dimension
      *
-     * @param pMin coordinates for minimum bound
-     * @param tMin minimum time dimension
-     * @param pMax coordinates for maximum bound
-     * @param tMax maximum time dimension
+     * @param pMin - coordinates for minimum bound
+     * @param tMin - minimum time dimension
+     * @param pMax - coordinates for maximum bound
+     * @param tMax - maximum time dimension
      * @throws SQLException
      */
     public STBox(Point pMin, OffsetDateTime tMin, Point pMax, OffsetDateTime tMax) throws SQLException {
@@ -59,10 +70,10 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for only time dimension
+     * The constructor for only time dimension
      *
-     * @param tMin minimum time dimension
-     * @param tMax maximum time dimension
+     * @param tMin - minimum time dimension
+     * @param tMax - maximum time dimension
      * @throws SQLException
      */
     public STBox(OffsetDateTime tMin, OffsetDateTime tMax) throws SQLException {
@@ -73,10 +84,10 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for value dimension (x,y,z) with geodetic coordinates
+     * The constructor for value dimension (x,y,z) with geodetic coordinates
      *
-     * @param pMin coordinates for minimum bound
-     * @param pMax coordinates for maximum bound
+     * @param pMin - coordinates for minimum bound
+     * @param pMax - coordinates for maximum bound
      * @throws SQLException
      */
     public STBox(Point pMin, Point pMax, boolean isGeodetic) throws SQLException {
@@ -88,12 +99,12 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for value dimension (x,y,z) with geodetic coordinates and time dimension
+     * The constructor for value dimension (x,y,z) with geodetic coordinates and time dimension
      *
-     * @param pMin coordinates for minimum bound
-     * @param tMin minimum time dimension
-     * @param pMax coordinates for maximum bound
-     * @param tMax maximum time dimension
+     * @param pMin - coordinates for minimum bound
+     * @param tMin - minimum time dimension
+     * @param pMax - coordinates for maximum bound
+     * @param tMax - maximum time dimension
      * @throws SQLException
      */
     public STBox(Point pMin, OffsetDateTime tMin, Point pMax, OffsetDateTime tMax, boolean isGeodetic)
@@ -108,10 +119,10 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for geodetic box with only time dimension
+     * The constructor for geodetic box with only time dimension
      *
-     * @param tMin minimum time dimension
-     * @param tMax maximum time dimension
+     * @param tMin - minimum time dimension
+     * @param tMax - maximum time dimension
      * @throws SQLException
      */
     public STBox(OffsetDateTime tMin, OffsetDateTime tMax, boolean isGeodetic) throws SQLException {
@@ -123,11 +134,11 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for only value dimension (x,y) or (x,y,z) and SRID
+     * The constructor for only value dimension (x,y) or (x,y,z) and SRID
      *
-     * @param pMin coordinates for minimum bound
-     * @param pMax coordinates for maximum bound
-     * @param srid spatial reference identifier
+     * @param pMin - coordinates for minimum bound
+     * @param pMax - coordinates for maximum bound
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(Point pMin, Point pMax, int srid) throws SQLException {
@@ -139,13 +150,13 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for value dimension (x,y) or (x,y,z), time dimension and SRID
+     * The constructor for value dimension (x,y) or (x,y,z), time dimension and SRID
      *
-     * @param pMin coordinates for minimum bound
-     * @param tMin minimum time dimension
-     * @param pMax coordinates for maximum bound
-     * @param tMax maximum time dimension
-     * @param srid spatial reference identifier
+     * @param pMin - coordinates for minimum bound
+     * @param tMin - minimum time dimension
+     * @param pMax - coordinates for maximum bound
+     * @param tMax - maximum time dimension
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(Point pMin, OffsetDateTime tMin, Point pMax, OffsetDateTime tMax, int srid) throws SQLException {
@@ -159,11 +170,11 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for only time dimension and SRID
+     * The constructor for only time dimension and SRID
      *
-     * @param tMin minimum time dimension
-     * @param tMax maximum time dimension
-     * @param srid spatial reference identifier
+     * @param tMin - minimum time dimension
+     * @param tMax - maximum time dimension
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(OffsetDateTime tMin, OffsetDateTime tMax, int srid) throws SQLException {
@@ -175,11 +186,11 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for value dimension (x,y,z) with geodetic coordinates and SRID
+     * The constructor for value dimension (x,y,z) with geodetic coordinates and SRID
      *
-     * @param pMin coordinates for minimum bound
-     * @param pMax coordinates for maximum bound
-     * @param srid spatial reference identifier
+     * @param pMin - coordinates for minimum bound
+     * @param pMax - coordinates for maximum bound
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(Point pMin, Point pMax, boolean isGeodetic, int srid) throws SQLException {
@@ -192,13 +203,13 @@ public class STBox extends DataType {
     }
 
     /**
-     * CConstructor for value dimension (x,y,z) with geodetic coordinates, time dimension and SRID
+     * The constructor for value dimension (x,y,z) with geodetic coordinates, time dimension and SRID
      *
-     * @param pMin coordinates for minimum bound
-     * @param tMin minimum time dimension
-     * @param pMax coordinates for maximum bound
-     * @param tMax maximum time dimension
-     * @param srid spatial reference identifier
+     * @param pMin - coordinates for minimum bound
+     * @param tMin - minimum time dimension
+     * @param pMax - coordinates for maximum bound
+     * @param tMax - maximum time dimension
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(Point pMin, OffsetDateTime tMin, Point pMax, OffsetDateTime tMax, boolean isGeodetic, int srid)
@@ -214,11 +225,11 @@ public class STBox extends DataType {
     }
 
     /**
-     * Constructor for geodetic box with only time dimension and SRID
+     * The constructor for geodetic box with only time dimension and SRID
      *
-     * @param tMin minimum time dimension
-     * @param tMax maximum time dimension
-     * @param srid spatial reference identifier
+     * @param tMin - minimum time dimension
+     * @param tMax - maximum time dimension
+     * @param srid - spatial reference identifier
      * @throws SQLException
      */
     public STBox(OffsetDateTime tMin, OffsetDateTime tMax, boolean isGeodetic, int srid) throws SQLException {
@@ -325,6 +336,11 @@ public class STBox extends DataType {
         return false;
     }
 
+    /**
+     * Compares if the values in time dimension are the same
+     * @param other - a STBox to compare
+     * @return true if they are equals; otherwise false
+     */
     public boolean tIsEqual(STBox other){
         boolean tMinIsEqual;
         boolean tMaxIsEqual;
@@ -390,6 +406,10 @@ public class STBox extends DataType {
         return srid;
     }
 
+    /**
+     * Validates that the received fields are valid
+     * @throws SQLException
+     */
     private void validate() throws SQLException {
         if (tMin == null ^ tMax == null) {
             throw new SQLException("Both tmin and tmax should have a value.");
@@ -414,6 +434,11 @@ public class STBox extends DataType {
         }
     }
 
+    /**
+     * Gets a string for geodetic values
+     * @param sridPrefix - a string that contains the SRID
+     * @return the STBox string with geodetic values
+     */
     private String getGeodeticValue(String sridPrefix) {
         if (tMin != null) {
             if (pMin != null) {
@@ -426,6 +451,11 @@ public class STBox extends DataType {
                 pMin.getX(), pMin.getY(), pMin.getZ(), pMax.getX(), pMax.getY(), pMax.getZ());
     }
 
+    /**
+     * Gets a string for non-geodetic values
+     * @param sridPrefix - a string that contains the SRID
+     * @return the STBox string with non-geodetic values
+     */
     private String getNonGeodeticValue(String sridPrefix) {
         if (pMin == null) {
             if (tMin != null) {
