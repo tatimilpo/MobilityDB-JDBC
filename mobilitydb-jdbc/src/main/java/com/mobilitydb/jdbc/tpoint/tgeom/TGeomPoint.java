@@ -9,6 +9,9 @@ import org.postgis.Point;
 
 import java.sql.SQLException;
 
+/**
+ * Class that represents the MobilityDB type TGeomPoint
+ */
 @TypeName(name = "tgeompoint")
 public class TGeomPoint extends TPoint {
     public TGeomPoint() { super(); }

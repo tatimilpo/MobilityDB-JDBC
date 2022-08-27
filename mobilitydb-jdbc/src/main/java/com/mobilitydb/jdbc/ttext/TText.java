@@ -9,6 +9,9 @@ import com.mobilitydb.jdbc.temporal.TemporalValue;
 
 import java.sql.SQLException;
 
+/**
+ * Class that represents the MobilityDB type TText
+ */
 @TypeName(name = "ttext")
 public class TText extends TemporalDataType<String> {
 

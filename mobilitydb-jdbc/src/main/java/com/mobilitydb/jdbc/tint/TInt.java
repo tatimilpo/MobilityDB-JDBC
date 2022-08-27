@@ -9,6 +9,9 @@ import com.mobilitydb.jdbc.temporal.Temporal;
 
 import java.sql.SQLException;
 
+/**
+ * Class that represents the MobilityDB type TInt
+ */
 @TypeName(name = "tint")
 public class TInt extends TemporalDataType<Integer> {
 

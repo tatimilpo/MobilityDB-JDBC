@@ -13,19 +13,42 @@ import org.postgis.binary.BinaryParser;
 
 import java.sql.SQLException;
 
+/**
+ * Parent class for TGeomPoint and TGeogPoint
+ */
 public abstract class TPoint extends TemporalDataType<Point> {
 
+    /**
+     * The default constructor
+     */
     protected TPoint() { super(); }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TGeomPoint or TGeogPoint value
+     * @throws SQLException
+     */
     protected TPoint(String value) throws SQLException {
         super(value);
     }
 
+
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TGeomPointInst, TGeomPointInstSet, TGeomPointSeq, TGeomPointSeqSet
+     *                 TGeogPointInst, TGeogPointInstSet, TGeogPointSeq or a TGeogPointSeqSet
+     */
     protected TPoint(Temporal<Point> temporal) {
         super();
         this.temporal = temporal;
     }
 
+    /**
+     * Gets the corresponding Temporal type for the string
+     * @param value - a string
+     * @return a TemporalType
+     * @throws SQLException
+     */
     protected TemporalType getTemporalType(String value) throws SQLException {
         String newValue = value;
 
@@ -60,6 +83,13 @@ public abstract class TPoint extends TemporalDataType<Point> {
         return new TemporalValue<>((Point)geo, DateTimeFormatHelper.getDateTimeFormat(values[1]));
     }
 
+    /**
+     * Compares two strings
+     * @param first - the first string to compare
+     * @param second - the second string to compare
+     * @return 0 is both strings are equals, a positive value in case first is greater than second or a negative value
+     * if first is less than second
+     */
     public static int compareValue(Point first, Point second) {
         throw new UnsupportedOperationException(String.format("Cannot compare points %s , %s", first, second));
     }

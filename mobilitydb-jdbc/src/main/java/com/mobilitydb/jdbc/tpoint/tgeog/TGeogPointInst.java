@@ -9,10 +9,22 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 
 public class TGeogPointInst extends TInstant<Point> {
+
+    /**
+     * The string constructor
+     * @param value - the string with the TGeogPointInst value
+     * @throws SQLException
+     */
     public TGeogPointInst(String value) throws SQLException {
         super(value, TGeogPoint::getSingleTemporalValue);
     }
 
+    /**
+     * The value and timestamp constructor
+     * @param value - a Point
+     * @param time - a timestamp
+     * @throws SQLException
+     */
     public TGeogPointInst(Point value, OffsetDateTime time) throws SQLException {
         super(value, time);
     }

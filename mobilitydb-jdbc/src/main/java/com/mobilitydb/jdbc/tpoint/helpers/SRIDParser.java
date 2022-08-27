@@ -10,7 +10,7 @@ public class SRIDParser {
 
     /**
      * Retrieves the initial SRID from the value
-     * @param value - Temporal value in string representation
+     * @param value - a Temporal value in string representation
      * @return Temporal value without initial SRID and the SRID value
      * @throws SQLException - When the SRID is invalid
      */
@@ -45,7 +45,7 @@ public class SRIDParser {
     /**
      * Applies the SRID to the given temporal values
      * If it is not defined it will use the first defined SRID
-     * @param srid - current SRID
+     * @param srid - the current SRID
      * @param temporalValues - Temporal values
      * @returns the modified SRID
      * @throws SQLException - If any value has a different SRID defined
@@ -77,6 +77,11 @@ public class SRIDParser {
         return srid;
     }
 
+    /**
+     * Gets the first SRID
+     * @param temporalValues - the list of temporal values
+     * @return the SRID
+     */
     private static int getFirstSRID(List<Point> temporalValues) {
         for (Point temporalValue : temporalValues) {
             int currentSRID = temporalValue.getSrid();

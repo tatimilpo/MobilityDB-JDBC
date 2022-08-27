@@ -9,6 +9,10 @@ import com.mobilitydb.jdbc.temporal.Temporal;
 
 import java.sql.SQLException;
 
+
+/**
+ * Class that represents the MobilityDB type TFloat
+ */
 @TypeName(name = "tfloat")
 public class TFloat extends TemporalDataType<Float> {
 

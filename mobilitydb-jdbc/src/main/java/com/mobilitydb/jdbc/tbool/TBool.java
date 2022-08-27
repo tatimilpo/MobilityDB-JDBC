@@ -9,6 +9,10 @@ import com.mobilitydb.jdbc.temporal.Temporal;
 
 import java.sql.SQLException;
 
+
+/**
+ * Class that represents the MobilityDB type TBool
+ */
 @TypeName(name = "tbool")
 public class TBool extends TemporalDataType<Boolean> {
 

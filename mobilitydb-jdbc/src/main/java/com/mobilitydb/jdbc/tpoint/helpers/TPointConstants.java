@@ -1,5 +1,8 @@
 package com.mobilitydb.jdbc.tpoint.helpers;
 
+/**
+ * The constants used for TGeomPoint and TGeogPoint
+ */
 public class TPointConstants {
     private TPointConstants() {}
 
