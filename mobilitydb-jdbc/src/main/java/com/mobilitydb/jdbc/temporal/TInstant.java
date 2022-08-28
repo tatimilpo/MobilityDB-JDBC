@@ -52,12 +52,18 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         return temporalValue.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Gets the temporal value
+     * @return the temporal value wrapper
+     */
     public TemporalValue<V> getTemporalValue() {
         return temporalValue;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Gets the value
+     * @return the value
+     */
     public V getValue() {
         return temporalValue.getValue();
     }
