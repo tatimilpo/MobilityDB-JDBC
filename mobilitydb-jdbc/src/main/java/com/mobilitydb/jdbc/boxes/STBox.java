@@ -407,7 +407,7 @@ public class STBox extends DataType {
     }
 
     /**
-     * Validates that the received fields are valid
+     * Verifies that the received fields are valid
      * @throws SQLException
      */
     private void validate() throws SQLException {

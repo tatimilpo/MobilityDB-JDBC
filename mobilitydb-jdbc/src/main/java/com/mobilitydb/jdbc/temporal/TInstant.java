@@ -48,10 +48,18 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         return temporalValue.toString();
     }
 
+    /**
+     * Gets the temporal value
+     * @return a TemporalValue type V
+     */
     public TemporalValue<V> getTemporalValue() {
         return temporalValue;
     }
 
+    /**
+     * Gets the value
+     * @return a value type V
+     */
     public V getValue() {
         return temporalValue.getValue();
     }
@@ -190,6 +198,10 @@ public abstract class TInstant<V extends Serializable> extends Temporal<V> {
         return period.contains(temporalValue.getTime());
     }
 
+    /**
+     * Gets the timestamp
+     * @return a timestamp
+     */
     public OffsetDateTime getTimestamp() {
         return temporalValue.getTime();
     }

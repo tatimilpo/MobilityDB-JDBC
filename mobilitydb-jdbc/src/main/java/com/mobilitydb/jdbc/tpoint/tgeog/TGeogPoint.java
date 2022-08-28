@@ -16,12 +16,25 @@ import java.sql.SQLException;
  */
 @TypeName(name = "tgeogpoint")
 public class TGeogPoint extends TPoint {
+
+    /**
+     * The default constructor
+     */
     public TGeogPoint() { super(); }
 
+    /**
+     * The string constructor
+     * @param value - the string with the TGeogPoint value
+     * @throws SQLException
+     */
     public TGeogPoint(String value) throws SQLException {
         super(value);
     }
 
+    /**
+     * The constructor for temporal types
+     * @param temporal - a TGeogPointInst, TGeogPointInstSet, TGeogPointSeq or a TGeogPointSeqSet
+     */
     public TGeogPoint(Temporal<Point> temporal) {
         super(temporal);
     }

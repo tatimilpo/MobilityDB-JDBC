@@ -13,9 +13,9 @@ public enum TemporalType {
 
     /**
      * Gets the temporal type based on the string received.
-     * @param value The string to be analyzed
-     * @param temporalDataTypeName The name of the calling class
-     * @return TemporalType
+     * @param value - the string to be analyzed
+     * @param temporalDataTypeName - the name of the calling class
+     * @return a TemporalType
      * @throws SQLException
      */
     public static TemporalType getTemporalType(String value, String temporalDataTypeName) throws SQLException {

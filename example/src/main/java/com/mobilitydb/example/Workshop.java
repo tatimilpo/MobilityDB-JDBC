@@ -96,7 +96,7 @@ public class Workshop {
     }
 
     /**
-     * Load the workshop data to AISInput table
+     * Loads the workshop data to AISInput table
      * See Workshop documentation 1.5 Loading the Data
      * @param con - SQL connection
      * @throws SQLException - If the copy fails
@@ -118,7 +118,7 @@ public class Workshop {
     }
 
     /**
-     * Cleanup AISInput table
+     * Cleans up AISInput table
      * See Workshop documentation 1.5 Loading the Data
      * @param con - SQL connection
      * @throws SQLException - If the update fails
@@ -142,7 +142,7 @@ public class Workshop {
     }
 
     /**
-     * Filter the data that it is outside a defined window and then saves it to AISInputFiltered
+     * Filters the data that is outside a defined window and then saves it to AISInputFiltered
      * See Workshop documentation 1.5 Loading the Data
      * @param con - SQL connection
      * @throws SQLException - If filter fails
@@ -163,7 +163,7 @@ public class Workshop {
     }
 
     /**
-     * Load the ship data using MobilityDB JDBC instead of a query to test the driver
+     * Loads the ship data using MobilityDB JDBC instead of a query to test the driver
      * See Workshop documentation 1.6 Constructing Trajectories
      * @param con - SQL connection
      * @throws SQLException - If load fails
@@ -243,7 +243,7 @@ public class Workshop {
     }
 
     /**
-     * Set the trajectory using MobilityDB JDBC instead of a query to test the driver
+     * Sets the trajectory using MobilityDB JDBC instead of a query to test the driver
      * See Workshop documentation 1.6 Constructing Trajectories
      * @param con - SQL connection
      * @throws SQLException - If load fails

@@ -1,5 +1,8 @@
 package com.mobilitydb.jdbc.temporal;
 
+/**
+ * The constants for temporal types
+ */
 public class TemporalConstants {
     private TemporalConstants() {}
 

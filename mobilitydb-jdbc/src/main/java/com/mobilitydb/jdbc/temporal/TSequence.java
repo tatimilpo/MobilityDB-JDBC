@@ -123,6 +123,10 @@ public abstract class TSequence<V extends Serializable> extends TemporalInstants
         }
     }
 
+    /**
+     * If the interpolation is explicit or implicit
+     * @return true if the interpolation is explicit; otherwise false
+     */
     protected boolean explicitInterpolation() {
         return true;
     }
