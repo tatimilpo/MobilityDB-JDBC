@@ -55,7 +55,7 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
     protected abstract void validateTemporalDataType() throws SQLException;
 
     /**
-     * Parse the object to string representation in the form required by org.postgresql.
+     * Parses the object to string representation in the form required by org.postgresql.
      * @return the value in string representation of this temporal sub type
      */
     public abstract String buildValue();

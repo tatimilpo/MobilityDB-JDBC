@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 /**
- * Delegate to parse the a string representation of an instant to a Temporal Value wrapper.
+ * Delegate to parse the string representation of an instant to a Temporal Value wrapper.
  * Required since it is not possible to create a new instant of the generic type
  * @param <V>
  */

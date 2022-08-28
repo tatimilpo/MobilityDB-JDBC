@@ -44,7 +44,7 @@ public class TPointSeqSet extends TSequenceSet<Point> {
     }
 
     /**
-     * Parse the SRID value
+     * Parses the SRID value
      * @param value - a string with the value
      * @return the string without SRID
      * @throws SQLException if it is invalid

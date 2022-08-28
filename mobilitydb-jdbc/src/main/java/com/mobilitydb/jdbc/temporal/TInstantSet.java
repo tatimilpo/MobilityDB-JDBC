@@ -111,7 +111,7 @@ public abstract class TInstantSet<V extends Serializable> extends TemporalInstan
     }
 
     /**
-     * Parse the string representation of the value
+     * Parses the string representation of the value
      * @param value string representation
      * @param getTemporalFunction delegate used to create a new temporal instant
      * @throws SQLException if it is invalid

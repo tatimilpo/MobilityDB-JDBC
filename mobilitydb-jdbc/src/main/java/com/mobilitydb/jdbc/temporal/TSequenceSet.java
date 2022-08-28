@@ -110,7 +110,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
     }
 
     /**
-     * Parse the string representation of the value
+     * Parses the string representation of the value
      * @param value string representation
      * @param getTemporalSequenceFunction delegate used to create a new temporal sequence
      * @throws SQLException
@@ -136,7 +136,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
     }
 
     /**
-     * Split the value into a list of string representations of sequences
+     * Splits the value into a list of string representations of sequences
      * @param value the sequence set value
      * @return list of values
      */

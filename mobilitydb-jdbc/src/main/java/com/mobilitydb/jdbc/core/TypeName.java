@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to define the Postgres type name of a class extending PGobject
+ * Annotation to define the PostgreSQL type name of a class extending PGobject
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
