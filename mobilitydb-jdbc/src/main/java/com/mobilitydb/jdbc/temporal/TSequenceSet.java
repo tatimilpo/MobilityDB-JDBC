@@ -62,6 +62,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         validate();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void validateTemporalDataType() throws SQLException {
         if (sequenceList.isEmpty()) {
@@ -94,6 +95,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String buildValue() {
         StringJoiner sj = new StringJoiner(", ");
@@ -107,6 +109,12 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
                 sj.toString());
     }
 
+    /**
+     * Parse the string representation of the value
+     * @param value string representation
+     * @param getTemporalSequenceFunction delegate used to create a new temporal sequence
+     * @throws SQLException
+     */
     private void parseValue(String value, GetTemporalSequenceFunction<V> getTemporalSequenceFunction)
             throws SQLException {
         String newValue = preprocessValue(value);
@@ -127,6 +135,11 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         }
     }
 
+    /**
+     * Split the value into a list of string representations of sequences
+     * @param value the sequence set value
+     * @return list of values
+     */
     protected List<String> getSequenceValues(String value) {
         Matcher m = Pattern.compile("[\\[|\\(].*?[^\\]\\)][\\]|\\)]")
                 .matcher(value);
@@ -141,6 +154,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
@@ -150,6 +164,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return values;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V startValue() {
         if (sequenceList.isEmpty()) {
@@ -159,6 +174,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return sequenceList.get(0).startValue();
     }
 
+    /** {@inheritDoc} */
     @Override
     public V endValue() {
         if (sequenceList.isEmpty()) {
@@ -168,6 +184,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return sequenceList.get(sequenceList.size() - 1).endValue();
     }
 
+    /** {@inheritDoc} */
     @Override
     public V minValue() {
         if (sequenceList.isEmpty()) {
@@ -187,6 +204,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return min;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V maxValue() {
         if (sequenceList.isEmpty()) {
@@ -206,6 +224,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return max;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V valueAtTimestamp(OffsetDateTime timestamp) {
         for (TSequence<V> sequence : sequenceList) {
@@ -218,11 +237,13 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int numTimestamps() {
         return timestamps().length;
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime[] timestamps() {
         LinkedHashSet<OffsetDateTime> timestamps = new LinkedHashSet<>();
@@ -234,6 +255,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return timestamps.toArray(new OffsetDateTime[0]);
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime timestampN(int n) throws SQLException {
         OffsetDateTime[] timestamps = timestamps();
@@ -244,16 +266,19 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         throw new SQLException("There is no timestamp at this index.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime startTimestamp() {
         return sequenceList.get(0).startTimestamp();
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime endTimestamp() {
         return sequenceList.get(sequenceList.size() - 1).endTimestamp();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Period period() throws SQLException {
         TSequence<V> first = sequenceList.get(0);
@@ -262,6 +287,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
                 first.isLowerInclusive(), last.isUpperInclusive());
     }
 
+    /** {@inheritDoc} */
     @Override
     public PeriodSet getTime() throws SQLException {
         ArrayList<Period> periods = new ArrayList<>();
@@ -271,21 +297,25 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return new PeriodSet(periods.toArray(new Period[0]));
     }
 
+    /** {@inheritDoc} */
     @Override
     public int numInstants() {
         return instants().size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> startInstant() {
         return sequenceList.get(0).startInstant();
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> endInstant() {
         return sequenceList.get(sequenceList.size() - 1).endInstant();
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> instantN(int n) throws SQLException {
         List<TInstant<V>> instants = instants();
@@ -297,6 +327,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         throw new SQLException("There is no instant at this index.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<TInstant<V>> instants() {
         ArrayList<TInstant<V>> list = new ArrayList<>();
@@ -306,6 +337,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return list;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Duration duration() {
         Duration duration = Duration.ZERO;
@@ -315,11 +347,13 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return duration;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Duration timespan() {
         return Duration.between(startTimestamp(), endTimestamp());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void shift(Duration duration) {
         for (TSequence<V> sequence : sequenceList) {
@@ -327,6 +361,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersectsTimestamp(OffsetDateTime dateTime) {
         for (TSequence<V> sequence : sequenceList) {
@@ -337,6 +372,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersectsPeriod(Period period) {
         for (TSequence<V> sequence : sequenceList) {
@@ -385,11 +421,13 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return value != null ? value.hashCode() : 0;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int numSequences() {
         return sequenceList.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public TSequence<V> startSequence() {
         if (sequenceList.isEmpty()) {
@@ -399,6 +437,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return sequenceList.get(0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public TSequence<V> endSequence() {
         if (sequenceList.isEmpty()) {
@@ -408,6 +447,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         return sequenceList.get(sequenceList.size() - 1);
     }
 
+    /** {@inheritDoc} */
     @Override
     public TSequence<V> sequenceN(int n) throws SQLException {
         if (n >= 0 && n < sequenceList.size()) {
@@ -417,6 +457,7 @@ public abstract class TSequenceSet<V extends Serializable> extends Temporal<V> i
         throw new SQLException("There is no sequence at this index.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<TSequence<V>> sequences() {
         return new ArrayList<>(sequenceList);

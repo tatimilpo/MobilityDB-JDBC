@@ -9,6 +9,10 @@ import org.postgis.Point;
 
 import java.sql.SQLException;
 
+/**
+ * Base abstract class for TGeomPointSeq and TGeogPointSeq
+ * Contains logic for handling SRID
+ */
 public class TPointSeq extends TSequence<Point> {
     private int srid;
 
@@ -41,6 +45,12 @@ public class TPointSeq extends TSequence<Point> {
         this.srid = SRIDParser.applySRID(srid, getValues());
     }
 
+    /**
+     * Parse the SRID value
+     * @param value - a string with the value
+     * @return the string without SRID
+     * @throws SQLException if it is invalid
+     */
     @Override
     protected String preprocessValue(String value) throws SQLException {
         String newString = super.preprocessValue(value);

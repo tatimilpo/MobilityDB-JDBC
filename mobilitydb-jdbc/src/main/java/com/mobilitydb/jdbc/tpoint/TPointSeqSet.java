@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * Base abstract class for TGeomPointSeqSet and TGeogPointSeqSet
+ * Contains logic for handling SRID
+ */
 public class TPointSeqSet extends TSequenceSet<Point> {
     private int srid;
 
@@ -39,6 +43,12 @@ public class TPointSeqSet extends TSequenceSet<Point> {
         applySRID();
     }
 
+    /**
+     * Parse the SRID value
+     * @param value - a string with the value
+     * @return the string without SRID
+     * @throws SQLException if it is invalid
+     */
     @Override
     protected String preprocessValue(String value) throws SQLException {
         String newString = super.preprocessValue(value);
@@ -63,6 +73,11 @@ public class TPointSeqSet extends TSequenceSet<Point> {
         return super.hashCode();
     }
 
+    /**
+     * Special logic to split the sequence values since point values contains parentheses
+     * @param value the sequence set value
+     * @return list of values
+     */
     @Override
     protected List<String> getSequenceValues(String value) {
         String delimiter = ",";

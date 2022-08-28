@@ -40,6 +40,7 @@ public class TInt extends TemporalDataType<Integer> {
         this.temporal = temporal;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(final String value) throws SQLException {
         TemporalType temporalType = TemporalType.getTemporalType(value, this.getClass().getSimpleName());
@@ -59,6 +60,12 @@ public class TInt extends TemporalDataType<Integer> {
         }
     }
 
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<Integer> getSingleTemporalValue(String value) {
         String[] values = value.trim().split("@");
         return new TemporalValue<>(Integer.parseInt(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));

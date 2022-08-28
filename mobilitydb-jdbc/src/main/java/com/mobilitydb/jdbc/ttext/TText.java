@@ -39,6 +39,7 @@ public class TText extends TemporalDataType<String> {
         this.temporal = temporal;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(final String value) throws SQLException {
         TemporalType temporalType = TemporalType.getTemporalType(value, this.getClass().getSimpleName());
@@ -58,6 +59,12 @@ public class TText extends TemporalDataType<String> {
         }
     }
 
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<String> getSingleTemporalValue(String value) {
         String[] values = value.trim().split("@");
         if(values[0].startsWith("\"") && values[0].endsWith("\"")) {

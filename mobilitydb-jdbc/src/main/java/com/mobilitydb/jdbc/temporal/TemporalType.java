@@ -16,7 +16,7 @@ public enum TemporalType {
      * @param value - the string to be analyzed
      * @param temporalDataTypeName - the name of the calling class
      * @return a TemporalType
-     * @throws SQLException
+     * @throws SQLException if the value does not have a valid format
      */
     public static TemporalType getTemporalType(String value, String temporalDataTypeName) throws SQLException {
         if (value.startsWith("Interp=Stepwise;")) {

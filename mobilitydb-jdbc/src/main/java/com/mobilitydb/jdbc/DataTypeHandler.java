@@ -18,6 +18,9 @@ import org.postgresql.PGConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Singleton helper used to register all the MobilityDB data types to the connection.
+ */
 public enum DataTypeHandler {
     INSTANCE;
 
@@ -39,9 +42,9 @@ public enum DataTypeHandler {
     }
 
     /**
-     * Registers the type based on the annotation of the class
+     * Registers the type based on the TypeName annotation of the class
      * @param connection - the PGConnection
-     * @throws SQLException
+     * @throws SQLException if any of the classes does not implement PGobject
      */
     public void registerTypes(PGConnection connection) throws SQLException {
         for (Class<? extends DataType> clazz : types) {

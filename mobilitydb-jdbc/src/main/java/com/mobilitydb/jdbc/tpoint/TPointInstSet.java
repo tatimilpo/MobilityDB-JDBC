@@ -9,6 +9,10 @@ import org.postgis.Point;
 
 import java.sql.SQLException;
 
+/**
+ * Base abstract class for TGeomPointIntSet and TGeogPointIntSet
+ * Contains logic for handling SRID
+ */
 public abstract class TPointInstSet extends TInstantSet<Point> {
     private int srid;
 
@@ -29,6 +33,12 @@ public abstract class TPointInstSet extends TInstantSet<Point> {
         this.srid = SRIDParser.applySRID(srid, getValues());
     }
 
+    /**
+     * Parse the SRID value
+     * @param value - a string with the value
+     * @return the string without SRID
+     * @throws SQLException if it is invalid
+     */
     @Override
     protected String preprocessValue(String value) throws SQLException {
         String newString = super.preprocessValue(value);

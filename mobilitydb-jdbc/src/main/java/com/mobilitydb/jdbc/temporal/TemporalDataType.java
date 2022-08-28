@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 /**
- * Interface for Temporal Data Types (eg TInt, TFloat) common methods
+ * Base class for Temporal Data Types (eg TInt, TFloat)
  * @param <V>
  */
 public abstract class TemporalDataType<V extends Serializable> extends DataType {
@@ -21,14 +21,23 @@ public abstract class TemporalDataType<V extends Serializable> extends DataType 
         setValue(value);
     }
 
+    /**
+     * Returns the temporal subtype object.
+     * @return Temporal
+     */
     public Temporal<V> getTemporal() {
         return temporal;
     }
 
+    /**
+     * Gets the temporal subtype that can be used to cast the temporal to the correct subclass.
+     * @return TemporalType
+     */
     public TemporalType getTemporalType() {
         return temporal.getTemporalType();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getValue() {
         return temporal.buildValue();

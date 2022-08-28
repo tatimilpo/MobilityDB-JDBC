@@ -9,6 +9,10 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class that represents a collection of temporal instants
+ * @param <V>
+ */
 public abstract class TemporalInstants<V extends Serializable> extends Temporal<V> {
     protected final ArrayList<TInstant<V>> instantList = new ArrayList<>();
     private final CompareValueFunction<V> compareValueFunction;
@@ -18,6 +22,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         this.compareValueFunction = compareValueFunction;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<V> getValues() {
         List<V> values = new ArrayList<>();
@@ -27,6 +32,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return values;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V startValue() {
         if (instantList.isEmpty()) {
@@ -36,6 +42,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return instantList.get(0).getValue();
     }
 
+    /** {@inheritDoc} */
     @Override
     public V endValue() {
         if (instantList.isEmpty()) {
@@ -45,6 +52,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return instantList.get(instantList.size() - 1).getValue();
     }
 
+    /** {@inheritDoc} */
     @Override
     public V minValue() {
         if (instantList.isEmpty()) {
@@ -64,6 +72,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return min;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V maxValue() {
         if (instantList.isEmpty()) {
@@ -83,6 +92,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return max;
     }
 
+    /** {@inheritDoc} */
     @Override
     public V valueAtTimestamp(OffsetDateTime timestamp) {
         for (TInstant<V> temp : instantList) {
@@ -93,11 +103,13 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int numTimestamps() {
         return instantList.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime[] timestamps() {
         OffsetDateTime[] result = new OffsetDateTime[instantList.size()];
@@ -109,6 +121,7 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime timestampN(int n) throws SQLException {
         if (n >= 0 && n < instantList.size()) {
@@ -118,31 +131,37 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         throw new SQLException("There is no timestamp at this index.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime startTimestamp() {
         return instantList.get(0).getTimestamp();
     }
 
+    /** {@inheritDoc} */
     @Override
     public OffsetDateTime endTimestamp() {
         return instantList.get(instantList.size() - 1).getTimestamp();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int numInstants() {
         return instantList.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> startInstant() {
         return instantList.get(0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> endInstant() {
         return instantList.get(instantList.size() - 1);
     }
 
+    /** {@inheritDoc} */
     @Override
     public TInstant<V> instantN(int n) throws SQLException {
         if (n >= 0 && n < instantList.size()) {
@@ -152,11 +171,13 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         throw new SQLException("There is no instant at this index.");
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<TInstant<V>> instants() {
         return new ArrayList<>(instantList);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void shift(Duration duration) {
         for (TInstant<V> instant : instantList) {
@@ -193,6 +214,11 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         return value != null ? value.hashCode() : 0;
     }
 
+    /**
+     * Checks that the instanst are valid
+     * @param type to be used on validation messages
+     * @throws SQLException if the instant list is invalid
+     */
     protected void validateInstantList(String type) throws SQLException {
         if (instantList.isEmpty()) {
             throw new SQLException(String.format("%s must be composed of at least one instant.", type));
@@ -213,6 +239,11 @@ public abstract class TemporalInstants<V extends Serializable> extends Temporal<
         }
     }
 
+    /**
+     * Checks that a single instant is valid
+     * @param instant instant object
+     * @throws SQLException if the instant is invalid
+     */
     private void validateInstant(TInstant<V> instant) throws SQLException {
         if (instant == null) {
             throw new SQLException("All instants should have a value.");

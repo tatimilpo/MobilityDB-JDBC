@@ -37,6 +37,7 @@ public class TGeomPoint extends TPoint {
         super(temporal);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(String value) throws SQLException {
         TemporalType temporalType = getTemporalType(value);

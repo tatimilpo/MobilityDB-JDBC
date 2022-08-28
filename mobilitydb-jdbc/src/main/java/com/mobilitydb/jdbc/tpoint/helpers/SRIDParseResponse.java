@@ -1,5 +1,8 @@
 package com.mobilitydb.jdbc.tpoint.helpers;
 
+/**
+ * Wrapper class for SRID parse response
+ */
 public class SRIDParseResponse {
     private int srid;
     private String parsedValue;

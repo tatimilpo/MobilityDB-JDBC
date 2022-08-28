@@ -39,7 +39,12 @@ public class TGeogPoint extends TPoint {
         super(temporal);
     }
 
-
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<Point> getSingleTemporalValue(String value) throws SQLException {
         TemporalValue<Point> temporalValue = TPoint.getSingleTemporalValue(value);
 
@@ -50,6 +55,7 @@ public class TGeogPoint extends TPoint {
         return temporalValue;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(String value) throws SQLException {
         TemporalType temporalType = getTemporalType(value);

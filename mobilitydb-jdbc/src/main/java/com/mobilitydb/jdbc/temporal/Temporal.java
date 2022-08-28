@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
- * Wraps a Temporal data type
+ * Abstract class for Temporal sub types
  * @param <V> - Base type of the temporal data type eg. Integer, Boolean
  */
 public abstract class Temporal<V extends Serializable> implements Serializable {
@@ -24,15 +24,21 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
         validateTemporalDataType();
     }
 
+    /**
+     * Builds the temporal value. It can be overridden in child classes to change the behavior.
+     * @param value data type value
+     * @param time OffsetDateTime
+     * @return temporal value wrapper
+     */
     protected TemporalValue<V> buildTemporalValue(V value, OffsetDateTime time) {
         return new TemporalValue<>(value, time);
     }
 
     /**
-     * Verifies that the value is not null or empty
+     * It will be called before parsing the value, so the child classes can preprocess the value.
      * @param value - a string with the value
      * @return a string
-     * @throws SQLException
+     * @throws SQLException when the value is not valid, e.g when the value is not null or empty.
      */
     protected String preprocessValue(String value) throws SQLException {
         if (value == null || value.isEmpty()) {
@@ -43,47 +49,51 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
     }
 
     /**
-     * Throws an SQLException if Temporal data type is not valid
-     * @throws SQLException
+     * It will be called on validate and it should throw SQLException for any validation errors.
+     * @throws SQLException when the temporal data type is invalid
      */
     protected abstract void validateTemporalDataType() throws SQLException;
 
+    /**
+     * Parse the object to string representation in the form required by org.postgresql.
+     * @return the value in string representation of this temporal sub type
+     */
     public abstract String buildValue();
 
     /**
      * Gets all values
-     * @return a list of V values
+     * @return a list of values
      */
     public abstract List<V> getValues();
 
     /**
      * Gets the first value
-     * @return a value type V
+     * @return the first value
      */
     public abstract V startValue();
 
     /**
      * Gets the last value
-     * @return a value type V
+     * @return the last value
      */
     public abstract V endValue();
 
     /**
      * Gets the minimum value
-     * @return a value type V
+     * @return min value
      */
     public abstract V minValue();
 
     /**
      * Gets the maximum value
-     * @return a value type V
+     * @return max value
      */
     public abstract V maxValue();
 
     /**
      * Gets the value in the given timestamp
      * @param timestamp - the timestamp
-     * @return
+     * @return value at the timestamp or null
      */
     public abstract V valueAtTimestamp(OffsetDateTime timestamp);
 
@@ -103,7 +113,7 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
      * Gets the timestamp located at the index position
      * @param n - the index
      * @return a timestamp
-     * @throws SQLException
+     * @throws SQLException if the index is out of range
      */
     public abstract OffsetDateTime timestampN(int n) throws SQLException;
 
@@ -141,27 +151,27 @@ public abstract class Temporal<V extends Serializable> implements Serializable {
 
     /**
      * Gets the first instant
-     * @return a temporal instant type V
+     * @return first temporal instant
      */
     public abstract TInstant<V> startInstant();
 
     /**
      * Gets the last instant
-     * @return a temporal instant type V
+     * @return last temporal instant
      */
     public abstract TInstant<V> endInstant();
 
     /**
      * Gets the instant in the given index
      * @param n - the index
-     * @return a temporal instant type V
-     * @throws SQLException
+     * @return the temporal instant at n
+     * @throws SQLException if the index is out of range
      */
     public abstract TInstant<V> instantN(int n) throws SQLException;
 
     /**
      * Gets all temporal instants
-     * @return a list of temporal instants type V
+     * @return the list of all temporal instants
      */
     public abstract List<TInstant<V>> instants();
 
