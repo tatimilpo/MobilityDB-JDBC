@@ -4,7 +4,9 @@
 **Email: tatimilpo@gmail.com**
 
 JDBC driver for MobilityDB has been performed as the Master Thesis of the MSc in Computer Science of ULB.
-
+The original repository can be found [here](https://github.com/tatimilpo/MobilityDB-JDBC/). <br> 
+A report with the detailed information is available [here](https://docs.mobilitydb.com/pub/MobilityDB-JDBC.pdf) or in 
+this [folder](https://github.com/tatimilpo/MobilityDB-JDBC/tree/main/files).
 
 ## Abstract
 The purpose of this project is the creation of Java Database Connectivity Driver (JDBC) that helps programs written in Java to connect with MobilityDB databases by extending PostgreSQL JDBC types. MobilityDB is an open-source database management system extension of PostgreSQL, that offers support for object moving data and special temporal data.
@@ -99,6 +101,18 @@ For more details check https://github.com/MobilityDB/MobilityDB#docker-container
     docker pull mobilitydb/mobilitydb
     docker volume create mobilitydb_data
     docker run --name "mobilitydb" -d -p 25432:5432 -v mobilitydb_data:/var/lib/postgresql mobilitydb/mobilitydb
+### Generating Javadocs
+The documentation for the classes could be found in the folder [docs](https://github.com/tatimilpo/MobilityDB-JDBC/tree/main/docs).
+In case it is needed to generate again the documentation, run the following command:
+
+On Linux:
+
+    ./gradlew javadoc
+On Windows:
+
+    gradlew.bat javadoc
+    
+It will generate the documentation under the folder **mobilitydb-jdbc\build\docs**.
 
 ## Running The Examples
 ### Playground

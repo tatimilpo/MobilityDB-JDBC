@@ -50,7 +50,7 @@ public class SRIDParser {
      * If it is not defined it will use the first defined SRID
      * @param srid - the current SRID
      * @param temporalValues - Temporal values
-     * @returns the modified SRID
+     * @return the modified SRID
      * @throws SQLException - If any value has a different SRID defined
      */
     public static int applySRID(int srid, List<Point> temporalValues) throws SQLException {

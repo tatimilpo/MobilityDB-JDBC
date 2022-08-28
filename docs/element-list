@@ -1,0 +1,14 @@
+com.mobilitydb.jdbc
+com.mobilitydb.jdbc.boxes
+com.mobilitydb.jdbc.core
+com.mobilitydb.jdbc.tbool
+com.mobilitydb.jdbc.temporal
+com.mobilitydb.jdbc.temporal.delegates
+com.mobilitydb.jdbc.tfloat
+com.mobilitydb.jdbc.time
+com.mobilitydb.jdbc.tint
+com.mobilitydb.jdbc.tpoint
+com.mobilitydb.jdbc.tpoint.helpers
+com.mobilitydb.jdbc.tpoint.tgeog
+com.mobilitydb.jdbc.tpoint.tgeom
+com.mobilitydb.jdbc.ttext

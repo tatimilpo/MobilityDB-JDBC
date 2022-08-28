@@ -66,6 +66,7 @@ public abstract class TPoint extends TemporalDataType<Point> {
      * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
      * @param value string representation of the value
      * @return Temporal value wrapper with the value parsed
+     * @throws SQLException
      */
     public static TemporalValue<Point> getSingleTemporalValue(String value) throws SQLException {
         if (value == null) {

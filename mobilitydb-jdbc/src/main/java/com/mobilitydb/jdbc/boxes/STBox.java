@@ -88,6 +88,7 @@ public class STBox extends DataType {
      *
      * @param pMin - coordinates for minimum bound
      * @param pMax - coordinates for maximum bound
+     * @param isGeodetic - if the coordinates are spherical
      * @throws SQLException
      */
     public STBox(Point pMin, Point pMax, boolean isGeodetic) throws SQLException {
@@ -105,6 +106,7 @@ public class STBox extends DataType {
      * @param tMin - minimum time dimension
      * @param pMax - coordinates for maximum bound
      * @param tMax - maximum time dimension
+     * @param isGeodetic - if the coordinates are spherical
      * @throws SQLException
      */
     public STBox(Point pMin, OffsetDateTime tMin, Point pMax, OffsetDateTime tMax, boolean isGeodetic)
@@ -123,6 +125,7 @@ public class STBox extends DataType {
      *
      * @param tMin - minimum time dimension
      * @param tMax - maximum time dimension
+     * @param isGeodetic - if the coordinates are spherical
      * @throws SQLException
      */
     public STBox(OffsetDateTime tMin, OffsetDateTime tMax, boolean isGeodetic) throws SQLException {
@@ -190,6 +193,7 @@ public class STBox extends DataType {
      *
      * @param pMin - coordinates for minimum bound
      * @param pMax - coordinates for maximum bound
+     * @param isGeodetic - if the coordinates are spherical
      * @param srid - spatial reference identifier
      * @throws SQLException
      */
@@ -209,6 +213,7 @@ public class STBox extends DataType {
      * @param tMin - minimum time dimension
      * @param pMax - coordinates for maximum bound
      * @param tMax - maximum time dimension
+     * @param isGeodetic - if the coordinates are spherical
      * @param srid - spatial reference identifier
      * @throws SQLException
      */
@@ -229,6 +234,7 @@ public class STBox extends DataType {
      *
      * @param tMin - minimum time dimension
      * @param tMax - maximum time dimension
+     * @param isGeodetic - if the coordinates are spherical
      * @param srid - spatial reference identifier
      * @throws SQLException
      */

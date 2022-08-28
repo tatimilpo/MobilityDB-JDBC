@@ -191,7 +191,6 @@ public class PeriodSet extends DataType {
      * Gets the timestamp located at the index position
      * @param n - the index
      * @return a timestamp
-     * @throws SQLException
      */
     public OffsetDateTime timestampN(int n) {
         return timestamps()[n];
@@ -234,7 +233,6 @@ public class PeriodSet extends DataType {
      * Gets the Period located at the index position
      * @param n - the index
      * @return a Period
-     * @throws SQLException
      */
     public Period periodN(int n) {
         return periodList.get(n);
