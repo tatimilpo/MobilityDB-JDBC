@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TPointTest {
     @Test
-    void testGetSingleTemporalValue_valid() throws SQLException {
+    void testGetSingleTemporalValueValid() throws SQLException {
         String value = "Point(1 1)@2019-09-08 06:04:32+02";
         TemporalValue<Point> temporalValue = TPoint.getSingleTemporalValue(value);
         assertEquals(new Point(1, 1), temporalValue.getValue());
     }
 
     @Test
-    void testGetSingleTemporalValue_null() {
+    void testGetSingleTemporalValueNull() {
         SQLException thrown = assertThrows(
                 SQLException.class,
                 () -> TPoint.getSingleTemporalValue(null)
@@ -30,7 +30,7 @@ class TPointTest {
     }
 
     @Test
-    void testGetSingleTemporalValue_invalidFormat() {
+    void testGetSingleTemporalValueInvalidFormat() {
         String value = "random string";
         SQLException thrown = assertThrows(
                 SQLException.class,
@@ -41,7 +41,7 @@ class TPointTest {
     }
 
     @Test
-    void testGetSingleTemporalValue_invalidType() {
+    void testGetSingleTemporalValueInvalidType() {
         String value = "POLYGON(1 1)@2019-09-08 06:04:32+02";
         SQLException thrown = assertThrows(
                 SQLException.class,

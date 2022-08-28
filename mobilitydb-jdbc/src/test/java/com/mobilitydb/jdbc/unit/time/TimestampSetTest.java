@@ -98,7 +98,7 @@ class TimestampSetTest {
                 SQLException.class,
                 () -> new TimestampSet(value)
         );
-        assertEquals("The timestamps of a timestamp set must be increasing.", thrown.getMessage());
+        assertEquals("The timestamps of a timestamp set must be in increasing order.", thrown.getMessage());
     }
 
     @Test

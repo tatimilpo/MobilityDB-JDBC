@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TIntTest {
     @Test
-    void testConstructor_tIntInst() throws SQLException {
+    void testConstructorTIntInst() throws SQLException {
         String value = "10@2019-09-08 06:04:32+02";
         TInt tInt = new TInt(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT, tInt.getTemporalType());
@@ -21,7 +21,7 @@ class TIntTest {
     }
 
     @Test
-    void testConstructor_tIntInstSet() throws SQLException {
+    void testConstructorTIntInstSet() throws SQLException {
         String value = "{1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02}";
         TInt tInt = new TInt(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT_SET, tInt.getTemporalType());
@@ -31,7 +31,7 @@ class TIntTest {
     }
 
     @Test
-    void testConstructor_tIntSeq() throws SQLException {
+    void testConstructorTIntSeq() throws SQLException {
         String value = "(1@2001-01-01 08:00:00+02, 2@2001-01-03 08:00:00+02]";
         TInt tInt = new TInt(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tInt.getTemporalType());
@@ -41,7 +41,7 @@ class TIntTest {
     }
 
     @Test
-    void testConstructor_tIntSeqSet() throws SQLException {
+    void testConstructorTIntSeqSet() throws SQLException {
         String value = "{[1@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
                 "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}";
         TInt tInt = new TInt(value);

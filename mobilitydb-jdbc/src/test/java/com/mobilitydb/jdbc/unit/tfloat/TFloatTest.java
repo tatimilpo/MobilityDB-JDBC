@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TFloatTest {
     @Test
-    void testConstructor_tFloatInst() throws SQLException {
+    void testConstructorTFloatInst() throws SQLException {
         String value = "10.5@2019-09-08 06:04:32+02";
         TFloat tFloat = new TFloat(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT, tFloat.getTemporalType());
@@ -21,7 +21,7 @@ class TFloatTest {
     }
 
     @Test
-    void testConstructor_tFloatInstSet() throws SQLException {
+    void testConstructorTFloatInstSet() throws SQLException {
         String value = "{1.3@2001-01-01 08:00:00+02, 2.6@2001-01-03 08:00:00+02}";
         TFloat tFloat = new TFloat(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT_SET, tFloat.getTemporalType());
@@ -31,7 +31,7 @@ class TFloatTest {
     }
 
     @Test
-    void testConstructor_tFloatSeq() throws SQLException {
+    void testConstructorTFloatSeq() throws SQLException {
         String value = "[16.98@2001-01-01 08:00:00+02, 42.36@2001-01-03 08:00:00+02)";
         TFloat tFloat = new TFloat(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tFloat.getTemporalType());
@@ -41,7 +41,7 @@ class TFloatTest {
     }
 
     @Test
-    void testConstructor_tFloatSeqSet() throws SQLException {
+    void testConstructorTFloatSeqSet() throws SQLException {
         String value = "{[1@2001-01-01 08:00:00+02, 1@2001-01-03 08:00:00+02), " +
                 "[2@2001-01-04 08:00:00+02, 3@2001-01-05 08:00:00+02, 3@2001-01-06 08:00:00+02]}";
         TFloat tFloat = new TFloat(value);

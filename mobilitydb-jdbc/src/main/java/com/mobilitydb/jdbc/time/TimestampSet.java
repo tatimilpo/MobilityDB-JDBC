@@ -214,7 +214,7 @@ public class TimestampSet extends DataType {
                 validateTimestamp(y);
 
                 if (x.isAfter(y) || x.isEqual(y)) {
-                    throw new SQLException("The timestamps of a timestamp set must be increasing.");
+                    throw new SQLException("The timestamps of a timestamp set must be in increasing order.");
                 }
             }
         }

@@ -101,6 +101,7 @@ public class PeriodSet extends DataType {
      * Gets the interval on which the temporal value is defined
      * @return a duration
      */
+
     public Duration duration() {
         Duration d = Duration.ZERO;
 

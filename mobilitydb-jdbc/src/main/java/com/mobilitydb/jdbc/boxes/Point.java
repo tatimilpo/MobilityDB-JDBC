@@ -37,27 +37,27 @@ public class Point implements Serializable {
         this.z = z;
     }
 
-    public Double getX() {
+    protected Double getX() {
         return x;
     }
 
-    public void setX(Double x) {
+    protected void setX(Double x) {
         this.x = x;
     }
 
-    public Double getY() {
+    protected Double getY() {
         return y;
     }
 
-    public void setY(Double y) {
+    protected void setY(Double y) {
         this.y = y;
     }
 
-    public Double getZ() {
+    protected Double getZ() {
         return z;
     }
 
-    public void setZ(Double z) {
+    protected void setZ(Double z) {
         this.z = z;
     }
 

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TBoolTest {
     @Test
-    void testConstructor_tBoolInst() throws SQLException {
+    void testConstructorTBoolInst() throws SQLException {
         String value = "true@2019-09-08 06:04:32+02";
         TBool tBool = new TBool(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT, tBool.getTemporalType());
@@ -21,7 +21,7 @@ class TBoolTest {
     }
 
     @Test
-    void testConstructor_tBoolInstSet() throws SQLException {
+    void testConstructorTBoolInstSet() throws SQLException {
         String value = "{true@2001-01-01 08:00:00+02,false@2001-01-03 08:00:00+02}";
         TBool tBool = new TBool(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT_SET, tBool.getTemporalType());
@@ -31,7 +31,7 @@ class TBoolTest {
     }
 
     @Test
-    void testConstructor_tBoolSeq() throws SQLException {
+    void testConstructorTBoolSeq() throws SQLException {
         String value = "(true@2001-01-01 08:00:00+02, false@2001-01-03 08:00:00+02]";
         TBool tBool = new TBool(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tBool.getTemporalType());
@@ -41,7 +41,7 @@ class TBoolTest {
     }
 
     @Test
-    void testConstructor_tBoolSeqSet() throws SQLException {
+    void testConstructorTBoolSeqSet() throws SQLException {
         String value = "{[true@2001-01-01 08:00:00+02, true@2001-01-03 08:00:00+02), " +
                 "[true@2001-01-04 08:00:00+02, false@2001-01-05 08:00:00+02, false@2001-01-06 08:00:00+02]}";
         TBool tBool = new TBool(value);

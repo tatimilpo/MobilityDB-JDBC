@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TTextTest {
     @Test
-    void testConstructor_tTextInst() throws SQLException {
+    void testConstructorTTextInst() throws SQLException {
         String value = "ABCDE@2019-09-08 06:04:32+02";
         TText tText = new TText(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT, tText.getTemporalType());
@@ -21,7 +21,7 @@ class TTextTest {
     }
 
     @Test
-    void testConstructor_tTextInstSet() throws SQLException {
+    void testConstructorTTextInstSet() throws SQLException {
         String value = "{ABCDE@2001-01-01 08:00:00+02, FGHIJ@2001-01-03 08:00:00+02}";
         TText tText = new TText(value);
         assertEquals(TemporalType.TEMPORAL_INSTANT_SET, tText.getTemporalType());
@@ -31,7 +31,7 @@ class TTextTest {
     }
 
     @Test
-    void testConstructor_tTextSeq() throws SQLException {
+    void testConstructorTTextSeq() throws SQLException {
         String value = "(abcd@2001-01-01 08:00:00+02, efghi@2001-01-03 08:00:00+02]";
         TText tText = new TText(value);
         assertEquals(TemporalType.TEMPORAL_SEQUENCE, tText.getTemporalType());
@@ -41,7 +41,7 @@ class TTextTest {
     }
 
     @Test
-    void testConstructor_tTextSeqSet() throws SQLException {
+    void testConstructorTTextSeqSet() throws SQLException {
         String value = "{(abcd@2001-01-01 08:00:00+02, efgh@2001-01-03 08:00:00+02], " +
                 "[ijkl@2001-01-04 08:00:00+02, mnop@2001-01-05 08:00:00+02, qrst@2001-01-06 08:00:00+02]}";
         TText tText = new TText(value);

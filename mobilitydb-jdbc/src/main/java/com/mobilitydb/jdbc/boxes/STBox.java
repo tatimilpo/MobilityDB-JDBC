@@ -256,8 +256,8 @@ public class STBox extends DataType {
 
     @Override
     public void setValue(String value) throws SQLException {
-        boolean hasZ = false;
-        boolean hasT = false;
+        boolean hasZ;
+        boolean hasT;
         if (value.startsWith("SRID")) {
             String[] initialValues = value.split(";");
             srid = Integer.parseInt(initialValues[0].split("=")[1]);
