@@ -11,20 +11,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Class that represents the MobilityDB type PeriodSet
+ */
 @TypeName(name = "periodset")
 public class PeriodSet extends DataType {
     private final List<Period> periodList;
 
+    /**
+     * The default constructor
+     */
     public PeriodSet() {
         super();
         periodList = new ArrayList<>();
     }
 
+    /**
+     * The string constructor
+     * @param value - a string with a PeriodSet value
+     * @throws SQLException
+     */
     public PeriodSet(String value) throws SQLException {
         this();
         setValue(value);
     }
 
+    /**
+     * The array of Periods constructor
+     * @param periods - an array of Periods or Periods separated by a comma
+     * @throws SQLException
+     */
     public PeriodSet(Period... periods) throws SQLException {
         this();
         Collections.addAll(periodList, periods);
@@ -73,11 +89,19 @@ public class PeriodSet extends DataType {
         return value != null ? value.hashCode() : 0;
     }
 
-    public Period[] getPeriods() {
+    /**
+     * Gets all the Periods
+     * @return an array of Periods
+     */
+    public Period[] periods() {
         return periodList.toArray(new Period[0]);
     }
 
-    public Duration getDuration() {
+    /**
+     * Gets the interval on which the temporal value is defined
+     * @return a duration
+     */
+    public Duration duration() {
         Duration d = Duration.ZERO;
 
         for (Period p : periodList) {
@@ -87,15 +111,25 @@ public class PeriodSet extends DataType {
         return d;
     }
 
-    public Duration getTimespan() {
+    /**
+     * Gets the interval on which the temporal
+     * value is defined ignoring the potential time gaps
+     * @return a Duration
+     */
+    public Duration timespan() {
         if (periodList.isEmpty()) {
             return Duration.ZERO;
         }
 
-        return Duration.between(getStartTimestamp(), getEndTimestamp());
+        return Duration.between(startTimestamp(), endTimestamp());
     }
 
-    public Period getPeriod() throws SQLException {
+    /**
+     * Gets the period
+     * @return a Period
+     * @throws SQLException
+     */
+    public Period period() throws SQLException {
         if (periodList.isEmpty()) {
             return null;
         }
@@ -106,7 +140,11 @@ public class PeriodSet extends DataType {
         return new Period(first.getLower(), last.getUpper(), first.isLowerInclusive(), last.isUpperInclusive());
     }
 
-    public OffsetDateTime[] getTimestamps() {
+    /**
+     * Get all timestamps
+     * @return an array with the timestamps
+     */
+    public OffsetDateTime[] timestamps() {
         LinkedHashSet<OffsetDateTime> timestamps = new LinkedHashSet<>();
 
         for (Period period : periodList) {
@@ -117,11 +155,19 @@ public class PeriodSet extends DataType {
         return timestamps.toArray(new OffsetDateTime[0]);
     }
 
+    /**
+     * Get the number of timestamps
+     * @return a number
+     */
     public int numTimestamps() {
-        return getTimestamps().length;
+        return timestamps().length;
     }
 
-    public OffsetDateTime getStartTimestamp() {
+    /**
+     * Gets the first timestamp
+     * @return a timestamp
+     */
+    public OffsetDateTime startTimestamp() {
         if (periodList.isEmpty()) {
             return null;
         }
@@ -129,7 +175,11 @@ public class PeriodSet extends DataType {
         return periodList.get(0).getLower();
     }
 
-    public OffsetDateTime getEndTimestamp() {
+    /**
+     * Gets the last timestamp
+     * @return a timestamp
+     */
+    public OffsetDateTime endTimestamp() {
         if (periodList.isEmpty()) {
             return null;
         }
@@ -137,15 +187,29 @@ public class PeriodSet extends DataType {
         return periodList.get(periodList.size() - 1).getUpper();
     }
 
+    /**
+     * Gets the timestamp located at the index position
+     * @param n - the index
+     * @return a timestamp
+     * @throws SQLException
+     */
     public OffsetDateTime timestampN(int n) {
-        return getTimestamps()[n];
+        return timestamps()[n];
     }
 
+    /**
+     * Gets the number of periods
+     * @return a number
+     */
     public int numPeriods() {
         return periodList.size();
     }
 
-    public Period getStartPeriod() {
+    /**
+     * Get the first Period
+     * @return a Period
+     */
+    public Period startPeriod() {
         if (periodList.isEmpty()) {
             return null;
         }
@@ -153,7 +217,11 @@ public class PeriodSet extends DataType {
         return periodList.get(0);
     }
 
-    public Period getEndPeriod() {
+    /**
+     * Get the last Period
+     * @return a Period
+     */
+    public Period endPeriod() {
         if (periodList.isEmpty()) {
             return null;
         }
@@ -161,10 +229,21 @@ public class PeriodSet extends DataType {
         return periodList.get(periodList.size() - 1);
     }
 
+
+    /**
+     * Gets the Period located at the index position
+     * @param n - the index
+     * @return a Period
+     * @throws SQLException
+     */
     public Period periodN(int n) {
         return periodList.get(n);
     }
 
+    /**
+     * Shifts the duration sent
+     * @param duration - the duration to shift
+     */
     public PeriodSet shift(Duration duration) throws SQLException {
         ArrayList<Period> periods = new ArrayList<>();
 
@@ -175,6 +254,10 @@ public class PeriodSet extends DataType {
         return new PeriodSet(periods.toArray(new Period[0]));
     }
 
+    /**
+     * Verifies that the received fields are valid
+     * @throws SQLException
+     */
     private void validate() throws SQLException {
         if (periodList == null || periodList.isEmpty()) {
             throw new SQLException("Period set must contain at least one element.");
@@ -202,6 +285,11 @@ public class PeriodSet extends DataType {
         }
     }
 
+    /**
+     * Checks if the Period is invalid
+     * @param period - a Period
+     * @return true if the Period is invalid; otherwise false
+     */
     private boolean periodIsInvalid(Period period) {
         return period == null || period.getValue() == null;
     }

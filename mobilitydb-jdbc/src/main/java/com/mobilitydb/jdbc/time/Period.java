@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
+/**
+ * Class that represents the MobilityDB type Period
+ */
 @TypeName(name = "period")
 public class Period extends DataType {
     private OffsetDateTime lower;
@@ -20,15 +23,29 @@ public class Period extends DataType {
     private static final String UPPER_INCLUSIVE = "]";
     private static final String UPPER_EXCLUSIVE = ")";
 
+    /**
+     * The default constructor
+     */
     public Period() {
         super();
     }
 
+    /**
+     * The string constructor
+     * @param value - a string with a Period value
+     * @throws SQLException
+     */
     public Period(final String value) throws SQLException {
         super();
         setValue(value);
     }
 
+    /**
+     * The timestamps constructor
+     * @param lower - a timestamp for the lower bound
+     * @param upper - a timestamp for the upper bound
+     * @throws SQLException
+     */
     public Period(OffsetDateTime lower, OffsetDateTime upper) throws SQLException {
         super();
         this.lower = lower;
@@ -38,6 +55,14 @@ public class Period extends DataType {
         validate();
     }
 
+    /**
+     * The timestamps and bounds constructor
+     * @param lower - a timestamp for the lower bound
+     * @param upper - a timestamp for the upper bound
+     * @param lowerInclusive - if the lower bound is inclusive
+     * @param upperInclusive - if the upper bound is inclusive
+     * @throws SQLException
+     */
     public Period(OffsetDateTime lower, OffsetDateTime upper, boolean lowerInclusive, boolean upperInclusive)
             throws SQLException {
         super();
@@ -108,6 +133,7 @@ public class Period extends DataType {
         validate();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Period) {
@@ -149,24 +175,46 @@ public class Period extends DataType {
         return value != null ? value.hashCode() : 0;
     }
 
+    /**
+     * Gets the interval on which the temporal value is defined
+     * @return a duration
+     */
     public Duration duration() {
         return Duration.between(lower, upper);
     }
 
+    /**
+     * Shifts the duration sent
+     * @param duration - the duration to shift
+     */
     public Period shift(Duration duration) throws SQLException {
         return new Period(lower.plus(duration), upper.plus(duration), lowerInclusive, upperInclusive);
     }
 
+    /**
+     * Checks if the OffsetDatetime is contained in the Period
+     * @param dateTime - a datetime
+     * @return true if the received datetime is contained in the current Period; otherwise false
+     */
     public boolean contains(OffsetDateTime dateTime) {
         return (lower.isBefore(dateTime) && upper.isAfter(dateTime)) ||
                 (lowerInclusive && lower.isEqual(dateTime)) ||
                 (upperInclusive && upper.isEqual(dateTime));
     }
 
+    /**
+     * Checks if there any timestamp in common
+     * @param period - a Period
+     * @return true if the received period overlaps the current Period; otherwise false
+     */
     public boolean overlap(Period period) {
         return contains(period.lower) || contains(period.upper);
     }
 
+    /**
+     * Verifies that the received fields are valid
+     * @throws SQLException
+     */
     private void validate() throws SQLException {
         if (lower == null || upper == null) {
             throw new SQLException("The lower and upper bounds must be defined.");

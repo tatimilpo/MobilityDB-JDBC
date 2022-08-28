@@ -179,23 +179,23 @@ class PeriodSetTest {
     })
     void testsGetPeriods(String value) throws SQLException {
         PeriodSet periodSet = new PeriodSet(value);
-        Period[] periods = periodSet.getPeriods();
+        Period[] periods = periodSet.periods();
         assertEquals(periodSet.numPeriods(), periods.length);
-        assertEquals(periodSet.getStartPeriod(), periods[0]);
-        assertEquals(periodSet.getEndPeriod(), periods[periods.length - 1]);
+        assertEquals(periodSet.startPeriod(), periods[0]);
+        assertEquals(periodSet.endPeriod(), periods[periods.length - 1]);
         assertEquals(periodSet.periodN(0), periods[0]);
     }
 
     @Test
     void testEmptyPeriodSet() throws SQLException {
         PeriodSet periodSet = new PeriodSet();
-        assertEquals(Duration.ZERO, periodSet.getDuration());
-        assertEquals(Duration.ZERO, periodSet.getTimespan());
-        assertNull(periodSet.getPeriod());
-        assertNull(periodSet.getStartTimestamp());
-        assertNull(periodSet.getEndTimestamp());
-        assertNull(periodSet.getStartPeriod());
-        assertNull(periodSet.getEndPeriod());
+        assertEquals(Duration.ZERO, periodSet.duration());
+        assertEquals(Duration.ZERO, periodSet.timespan());
+        assertNull(periodSet.period());
+        assertNull(periodSet.startTimestamp());
+        assertNull(periodSet.endTimestamp());
+        assertNull(periodSet.startPeriod());
+        assertNull(periodSet.endPeriod());
     }
 
     @Test
@@ -203,16 +203,16 @@ class PeriodSetTest {
         Period periodA = new Period("[2019-09-08 00:00:00+01, 2019-09-10 00:00:00+01]");
         Period periodB = new Period("[2019-09-11 00:00:00+01, 2019-09-12 00:00:00+01]");
         PeriodSet periodSet = new PeriodSet(periodA, periodB);
-        assertEquals(Duration.ofDays(3), periodSet.getDuration());
-        assertEquals(periodA.duration().plus(periodB.duration()), periodSet.getDuration());
-        assertEquals(Duration.ofDays(4), periodSet.getTimespan());
+        assertEquals(Duration.ofDays(3), periodSet.duration());
+        assertEquals(periodA.duration().plus(periodB.duration()), periodSet.duration());
+        assertEquals(Duration.ofDays(4), periodSet.timespan());
     }
 
     @Test
     void testTimespan() throws SQLException {
         String value = "{[2019-09-08 00:00:00+01, 2019-09-10 00:00:00+01], [2019-09-11 00:00:00+01, 2019-09-12 00:00:00+01]}";
         PeriodSet periodSet = new PeriodSet(value);
-        assertEquals(Duration.ofDays(4), periodSet.getTimespan());
+        assertEquals(Duration.ofDays(4), periodSet.timespan());
     }
 
     @Test
@@ -220,19 +220,19 @@ class PeriodSetTest {
         Period expected = new Period("[2019-09-08 00:00:00+01, 2019-09-12 00:00:00+01)");
         String value = "{[2019-09-08 00:00:00+01, 2019-09-10 00:00:00+01], [2019-09-11 00:00:00+01, 2019-09-12 00:00:00+01)}";
         PeriodSet periodSet = new PeriodSet(value);
-        assertEquals(expected, periodSet.getPeriod());
+        assertEquals(expected, periodSet.period());
     }
 
     @Test
     void testGetTimestamps() throws SQLException {
         String value = "{[2019-09-08 00:00:00+01, 2019-09-10 00:00:00+01), [2019-09-10 00:00:00+01, 2019-09-12 00:00:00+01)}";
         PeriodSet periodSet = new PeriodSet(value);
-        OffsetDateTime[] timestamps = periodSet.getTimestamps();
+        OffsetDateTime[] timestamps = periodSet.timestamps();
         assertEquals(3, timestamps.length);
         assertEquals(periodSet.numTimestamps(), timestamps.length);
-        assertEquals(periodSet.getStartTimestamp(), timestamps[0]);
+        assertEquals(periodSet.startTimestamp(), timestamps[0]);
         assertEquals(periodSet.timestampN(1), timestamps[1]);
-        assertEquals(periodSet.getEndTimestamp(), timestamps[2]);
+        assertEquals(periodSet.endTimestamp(), timestamps[2]);
     }
 
     @Test
