@@ -41,6 +41,7 @@ public class TBool extends TemporalDataType<Boolean> {
         this.temporal = temporal;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(final String value) throws SQLException {
         TemporalType temporalType = TemporalType.getTemporalType(value, this.getClass().getSimpleName());
@@ -60,6 +61,12 @@ public class TBool extends TemporalDataType<Boolean> {
         }
     }
 
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<Boolean> getSingleTemporalValue(String value) {
         boolean b;
         String[] values = value.trim().split("@");

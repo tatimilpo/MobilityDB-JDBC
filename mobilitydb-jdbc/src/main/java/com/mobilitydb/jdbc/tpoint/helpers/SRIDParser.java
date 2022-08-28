@@ -5,6 +5,9 @@ import org.postgis.Point;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Helper class for parsing SRID from string representation
+ */
 public class SRIDParser {
     private SRIDParser() { }
 

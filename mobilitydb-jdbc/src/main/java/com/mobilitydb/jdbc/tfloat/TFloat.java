@@ -39,6 +39,7 @@ public class TFloat extends TemporalDataType<Float> {
         this.temporal = temporal;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(String value) throws SQLException {
         TemporalType temporalType = TemporalType.getTemporalType(value, this.getClass().getSimpleName());
@@ -58,6 +59,12 @@ public class TFloat extends TemporalDataType<Float> {
         }
     }
 
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<Float> getSingleTemporalValue(String value) {
         String[] values = value.trim().split("@");
         return new TemporalValue<>(Float.parseFloat(values[0]), DateTimeFormatHelper.getDateTimeFormat(values[1]));

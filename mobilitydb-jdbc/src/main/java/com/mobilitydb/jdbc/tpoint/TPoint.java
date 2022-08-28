@@ -14,7 +14,8 @@ import org.postgis.binary.BinaryParser;
 import java.sql.SQLException;
 
 /**
- * Parent class for TGeomPoint and TGeogPoint
+ * Base abstract class for TGeomPoint and TGeogPoint
+ * Contains logic for handling SRID
  */
 public abstract class TPoint extends TemporalDataType<Point> {
 
@@ -60,6 +61,12 @@ public abstract class TPoint extends TemporalDataType<Point> {
         return TemporalType.getTemporalType(newValue, this.getClass().getSimpleName());
     }
 
+    /**
+     * Method with compatible signature for delegate
+     * {@link com.mobilitydb.jdbc.temporal.delegates.GetSingleTemporalValueFunction}
+     * @param value string representation of the value
+     * @return Temporal value wrapper with the value parsed
+     */
     public static TemporalValue<Point> getSingleTemporalValue(String value) throws SQLException {
         if (value == null) {
             throw new SQLException("Value cannot be null.");
